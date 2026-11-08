@@ -1,0 +1,14 @@
+[package]
+name = "gc-sys"
+description = "Guardian's Crusade's memory by name: struct layouts, globals and every function, generated from the decomp"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+# No dependencies: the remaster, hooks and Living Tool all read the game through it.
+
+[dev-dependencies]
+# The shifted-base check compares with Living Tool's own layout map (LT_TEST_BASE).
+lt-core = { path = "../lt-core" }
+serde_json.workspace = true

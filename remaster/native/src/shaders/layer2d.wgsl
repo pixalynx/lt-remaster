@@ -1,0 +1,637 @@
+// Living Tool Remaster's 2D layer (LT-111). Vendored from PSoXide's hardware renderer
+// (pixalynx/PSoXide-emulator b27fff9, emu/crates/psx-gpu-render/src/shaders/prim.wgsl,
+// GPL-2.0-or-later) and changed in four places, each marked "LT-111":
+// - the target is the display area at the internal scale, not all of VRAM (`u_view`);
+// - each vertex carries its ordering-table bucket; a fragment is dropped where the native 3D
+//   polygon under it is in the same or a nearer bucket (`u_order`), as the GPU's painting would;
+// - a second output marks the 2D layer's coverage (green channel);
+// - a fragment's PSX pixel adds the display origin (attribute planes, dither).
+//
+// PSX hardware-renderer shader - VRAM-shaped target.
+//
+// The target is a `(1024 * S) × (512 * S)` texture (S = internal
+// resolution multiplier). PSX vertex coords are in VRAM space
+// (`pos.x ∈ 0..1024`, `pos.y ∈ 0..512`); the vertex shader maps them
+// directly to NDC of that target. The wgpu viewport == target dims,
+// so the rasterizer rasterises at S× density automatically - no
+// per-S math anywhere in the shader.
+//
+// `HwVertex::flags` bit layout (must mirror `pipeline::flags`):
+//   bits  0..=3   tpage_x_units   (× 64 = pixel x)
+//   bit       4   tpage_y_index   (× 256 = pixel y; 0 or 256)
+//   bits  5..=6   tex_depth        (0=4bpp, 1=8bpp, 2=15bpp)
+//   bits  7..=12  clut_x_units    (× 16 = pixel x)
+//   bits 13..=21  clut_y          (pixel y, 0..=511)
+//   bit      22   TEXTURED
+//   bit      23   RAW_TEXTURE     (skip tint modulate)
+//   bit      24   PIXEL_COLOUR
+//   bit      25   TEX_OPAQUE_PASS (discard STP texels)
+//   bit      26   TEX_SEMI_PASS   (keep only STP texels)
+//   bit      27   DITHER          (GP0(E1) bit 9 -- 4x4 ordered dither)
+//   bit      28   CORNER_SAMPLED  (GP0 polygon: shifted half a pixel, see vs_main)
+//
+// `HwVertex::tex_window` packs GP0(E2) as four bytes:
+//   bits  0..=7   mask_x in pixels
+//   bits  8..=15  mask_y in pixels
+//   bits 16..=23  offset_x in pixels
+//   bits 24..=31  offset_y in pixels
+
+// Which blend the pipeline applies (`pipeline::BlendKind`): 0 opaque, 1 average,
+// 2 add, 3 subtract, 4 add-quarter. Set per pipeline at creation.
+override BLEND_KIND: u32 = 0u;
+
+const VRAM_W: u32 = 1024u;
+const VRAM_H: u32 =  512u;
+const VRAM_W_F: f32 = 1024.0;
+const VRAM_H_F: f32 =  512.0;
+
+@group(0) @binding(0) var vram: texture_2d<u32>;
+// Texture filter in `.x`: 0 = nearest (PSX-native), 1 = edge (edge-directed,
+// docs/texture-filters-spec.md). Global per frame; set by the toolbar toggle. `.y` holds the internal-resolution
+// multiplier S, used to map a fragment back to its PSX-native pixel.
+@group(0) @binding(1) var<uniform> u_texfilter: vec4<u32>;
+// LT-111: the display area in VRAM pixels: origin x, y, width, height.
+@group(0) @binding(2) var<uniform> u_view: vec4<f32>;
+// LT-111: the bucket + 1 of the native 3D polygon at each target pixel (0 where none).
+@group(0) @binding(3) var u_order: texture_2d<f32>;
+
+struct VertexIn {
+    @location(0) pos:   vec2<i32>,
+    @location(1) color: vec4<f32>,
+    @location(2) uv:    vec2<u32>,
+    @location(3) flags: u32,
+    @location(4) tex_window: u32,
+    // The CPU rasterizer's attribute planes (see `HwVertex::planes`).
+    @location(5) planes0: vec4<u32>,
+    @location(6) planes1: vec4<u32>,
+    @location(7) planes2: vec4<u32>,
+    @location(8) planes3: vec4<u32>,
+    // LT-111: the packet's bucket.
+    @location(9) bucket: f32,
+}
+
+struct VertexOut {
+    @builtin(position) position: vec4<f32>,
+    @location(0)       color:    vec4<f32>,
+    // UV interpolates as f32 so the rasterizer gives a fresh sample
+    // per fragment. WGSL can't interpolate integer types - passing
+    // `vec2<u32>` here was a silent no-op (defaults to flat) and the
+    // fragment got the provoking vertex's UV for every pixel.
+    @location(1)       uv:       vec2<f32>,
+    @location(2) @interpolate(flat) flags: u32,
+    @location(3) @interpolate(flat) tex_window: u32,
+    @location(4) @interpolate(flat) planes0: vec4<u32>,
+    @location(5) @interpolate(flat) planes1: vec4<u32>,
+    @location(6) @interpolate(flat) planes2: vec4<u32>,
+    @location(7) @interpolate(flat) planes3: vec4<u32>,
+    // LT-111: the packet's bucket.
+    @location(8) @interpolate(flat) bucket: f32,
+}
+
+// ---------------------------------------------------------------------------
+// Fullscreen VRAM->target blit. Used by wireframe mode to rebuild the scaled
+// persistent target from the (journal-clean) CPU VRAM every frame, so stale
+// edges never accumulate in the target at any internal scale. One oversized
+// triangle, no vertex buffer.
+// ---------------------------------------------------------------------------
+
+struct BlitOut {
+    @builtin(position) position: vec4<f32>,
+    @location(0) uv: vec2<f32>,
+}
+
+@vertex
+fn vs_blit(@builtin(vertex_index) vi: u32) -> BlitOut {
+    // (-1,-1), (3,-1), (-1,3): one triangle covering the whole target.
+    let x = f32(i32((vi & 1u) * 4u) - 1);
+    let y = f32(i32((vi >> 1u) * 4u) - 1);
+    var out: BlitOut;
+    out.position = vec4<f32>(x, y, 0.0, 1.0);
+    // NDC y points up, VRAM row 0 is the top row.
+    out.uv = vec2<f32>((x + 1.0) * 0.5, (1.0 - y) * 0.5);
+    return out;
+}
+
+@fragment
+fn fs_blit(in: BlitOut) -> @location(0) vec4<f32> {
+    let tx = min(u32(in.uv.x * 1024.0), 1023u);
+    let ty = min(u32(in.uv.y * 512.0), 511u);
+    let word = textureLoad(vram, vec2<u32>(tx, ty), 0).r;
+    return vec4<f32>(bgr15_to_rgb(word), 1.0);
+}
+
+const FLAG_TEXTURED:    u32 = 1u << 22u;
+const FLAG_PIXEL_COLOUR: u32 = 1u << 24u;
+const FLAG_RAW_TEXTURE: u32 = 1u << 23u;
+const FLAG_TEX_OPAQUE_PASS: u32 = 1u << 25u;
+const FLAG_TEX_SEMI_PASS:   u32 = 1u << 26u;
+const FLAG_DITHER:      u32 = 1u << 27u;
+const FLAG_CORNER_SAMPLED: u32 = 1u << 28u;
+const FLAG_PLANE_RGB:   u32 = 1u << 29u;
+const FLAG_PLANE_UV:    u32 = 1u << 30u;
+const FLAG_AXIS_UV:     u32 = 1u << 31u;
+
+// PSX-SPX signed 4x4 ordered-dither offsets, indexed by
+// `(y & 3) * 4 + (x & 3)` -- byte-for-byte the CPU rasterizer's
+// `DITHER_OFFSETS` (emulator-core gpu/blend.rs).
+const DITHER_OFFSETS = array<i32, 16>(
+    -4, 0, -3, 1,
+     2, -2, 3, -1,
+    -3, 1, -4, 0,
+     3, -1, 2, -2,
+);
+
+// Apply the ordered dither and truncate to 15bpp, then re-expand to
+// display codes the way `bgr15_to_rgb` does. `rgb` is in display-code
+// space (0..1 == 0..255); `frag` is the fragment's target-space
+// position, converted here to the PSX-native pixel the CPU indexes
+// the matrix by. Mirrors `dither_rgb`: add the signed offset to the
+// 8-bit channel, clamp to 0..=255, keep the high 5 bits.
+fn dither_to_bgr15(rgb: vec3<f32>, frag: vec2<f32>) -> vec3<f32> {
+    let scale = f32(max(u_texfilter.y, 1u));
+    // LT-111: plus the display origin.
+    let px = i32(floor(frag.x / scale)) + i32(u_view.x);
+    let py = i32(floor(frag.y / scale)) + i32(u_view.y);
+    let off = DITHER_OFFSETS[u32(py & 3) * 4u + u32(px & 3)];
+    var out: vec3<f32>;
+    for (var i = 0; i < 3; i++) {
+        let c8 = i32(round(rgb[i] * 255.0));
+        let c5 = u32(clamp(c8 + off, 0, 255) >> 3u);
+        out[i] = f32((c5 << 3u) | (c5 >> 2u)) / 255.0;
+    }
+    return out;
+}
+
+// The source a blended pipeline needs so that its fixed-function blender
+// (see `pipeline.rs`) lands on the CPU's 5-bit result.
+//
+// The CPU blends 5-bit codes. Here the target holds 8-bit values and the top
+// five bits of a value are its code, so the source is cut to its code first and
+// handed over as `8 * code`: the blender then adds or subtracts whole codes and
+// the low three bits of the destination can never carry into the code. The
+// average halves the code (`4 * code`) and the quarter mode keeps `code >> 2`,
+// which are the CPU's `(B + F) >> 1` and `B + F / 4` terms. Without the cut the
+// blender added the uncut 8-bit source, which is up to 7/8 of a code too bright
+// and tipped one code in four across.
+//
+// The edge texture filter exists to leave the PS1's 5-bit look behind, so under
+// it the source keeps all its bits and only the mode's scale is applied.
+fn blend_encode(rgb: vec3<f32>) -> vec3<f32> {
+    if BLEND_KIND == 0u {
+        return rgb;
+    }
+    let c8 = round(clamp(rgb, vec3<f32>(0.0), vec3<f32>(1.0)) * 255.0);
+    var v = c8;
+    if u_texfilter.x == 0u {
+        let code = floor(c8 / 8.0);
+        v = code * 8.0;
+        if BLEND_KIND == 4u {
+            v = floor(code / 4.0) * 8.0;
+        }
+    } else if BLEND_KIND == 4u {
+        v = c8 * 0.25;
+    }
+    if BLEND_KIND == 1u {
+        v = v * 0.5;
+    }
+    return v / 255.0;
+}
+
+@vertex
+fn vs_main(in: VertexIn) -> VertexOut {
+    // PSX-VRAM-space (0..1024, 0..512) → NDC (-1..+1, Y-flipped).
+    var pos_psx = vec2<f32>(f32(in.pos.x), f32(in.pos.y));
+    // The CPU rasterizer covers a polygon pixel when the pixel's top-left
+    // corner lies in the triangle (top-left tie rule, verified edge for edge
+    // against `tri_raster_setup`), and evaluates colour and UV at that corner.
+    // The host rasterizer samples pixel centres. Moving the polygon by half a
+    // pixel in both axes makes the centre sample land on the CPU's corner
+    // sample: same coverage, same ties, same interpolants, at any internal
+    // scale S (the shift is half a PSX pixel, not half a host pixel).
+    if (in.flags & FLAG_CORNER_SAMPLED) != 0u {
+        pos_psx += vec2<f32>(0.5, 0.5);
+    }
+    // LT-111: the display area, not all of VRAM; z is the bucket's depth.
+    let ndc_xy = ((pos_psx - u_view.xy) / u_view.zw) * 2.0 - 1.0;
+    var out: VertexOut;
+    out.position = vec4<f32>(ndc_xy.x, -ndc_xy.y, 0.0, 1.0);
+    out.bucket = in.bucket;
+    out.color    = in.color;
+    out.uv       = vec2<f32>(f32(in.uv.x), f32(in.uv.y));
+    out.flags    = in.flags;
+    out.tex_window = in.tex_window;
+    out.planes0 = in.planes0;
+    out.planes1 = in.planes1;
+    out.planes2 = in.planes2;
+    out.planes3 = in.planes3;
+    return out;
+}
+
+// PSX U/V are 8-bit per axis and wrap, including below zero: the CPU
+// rasterizer keeps `plane >> 24` as a `u8`, so a coordinate that extrapolates
+// to -2 on a sliver's far side samples row 254. Floor, then wrap in two's
+// complement; clamping at zero (as this once did) sampled row 0 instead, which
+// is a different texel and, on the Quake shotgun, its blue border.
+fn page_uv(uv: vec2<f32>) -> vec2<u32> {
+    let ix = bitcast<u32>(i32(floor(uv.x)));
+    let iy = bitcast<u32>(i32(floor(uv.y)));
+    return vec2<u32>(ix & 0xFFu, iy & 0xFFu);
+}
+
+fn apply_tex_window(uv8: vec2<u32>, tex_window: u32) -> vec2<u32> {
+    let mask_x = tex_window & 0xFFu;
+    let mask_y = (tex_window >> 8u) & 0xFFu;
+    let off_x = (tex_window >> 16u) & 0xFFu;
+    let off_y = (tex_window >> 24u) & 0xFFu;
+    return vec2<u32>(
+        (uv8.x & (~mask_x & 0xFFu)) | (off_x & mask_x),
+        (uv8.y & (~mask_y & 0xFFu)) | (off_y & mask_y),
+    );
+}
+
+fn tpage_origin(flags: u32) -> vec2<u32> {
+    let tx = (flags & 0xFu) * 64u;
+    let ty = ((flags >> 4u) & 1u) * 256u;
+    return vec2<u32>(tx, ty);
+}
+
+fn clut_origin(flags: u32) -> vec2<u32> {
+    let cx = ((flags >> 7u) & 0x3Fu) * 16u;
+    let cy = (flags >> 13u) & 0x1FFu;
+    return vec2<u32>(cx, cy);
+}
+
+fn tex_depth(flags: u32) -> u32 {
+    return (flags >> 5u) & 0x3u;
+}
+
+fn vram_load(x: u32, y: u32) -> u32 {
+    let xx = x & (VRAM_W - 1u);
+    let yy = y & (VRAM_H - 1u);
+    return textureLoad(vram, vec2<i32>(i32(xx), i32(yy)), 0).r;
+}
+
+// BGR15 → display-code 0..1 RGB. Bit-replicates 5→8 the same way
+// `Vram::to_rgba8` does on the CPU side, so colour quantisation
+// matches the existing reference. This is intentionally NOT linear:
+// PSX tint/modulate math happens in integer display-code space.
+fn bgr15_to_rgb(word: u32) -> vec3<f32> {
+    let r5 = word & 0x1Fu;
+    let g5 = (word >> 5u) & 0x1Fu;
+    let b5 = (word >> 10u) & 0x1Fu;
+    let r8 = (r5 << 3u) | (r5 >> 2u);
+    let g8 = (g5 << 3u) | (g5 >> 2u);
+    let b8 = (b5 << 3u) | (b5 >> 2u);
+    return vec3<f32>(f32(r8), f32(g8), f32(b8)) / 255.0;
+}
+
+// Sample the active texture page at PSX UV. Returns the raw 16-bit
+// BGR15 texel; texel == 0 is reserved for transparency (caller
+// discards).
+fn sample_texel(flags: u32, uv8: vec2<u32>) -> u32 {
+    let tp = tpage_origin(flags);
+    let depth = tex_depth(flags);
+    if depth == 0u {
+        // 4 bpp: 4 indices per VRAM word, picked by uv.x % 4.
+        let word = vram_load(tp.x + (uv8.x >> 2u), tp.y + uv8.y);
+        let nibble = (word >> ((uv8.x & 3u) * 4u)) & 0xFu;
+        let cl = clut_origin(flags);
+        return vram_load(cl.x + nibble, cl.y);
+    } else if depth == 1u {
+        // 8 bpp: 2 indices per VRAM word, picked by uv.x & 1.
+        let word = vram_load(tp.x + (uv8.x >> 1u), tp.y + uv8.y);
+        let byte = (word >> ((uv8.x & 1u) * 8u)) & 0xFFu;
+        let cl = clut_origin(flags);
+        return vram_load(cl.x + byte, cl.y);
+    }
+    // 15 bpp direct.
+    return vram_load(tp.x + uv8.x, tp.y + uv8.y);
+}
+
+// PSX modulate, in the CPU rasterizer's integer semantics
+// (`modulate_tint_dithered`, emulator-core gpu/blend.rs):
+//
+//     c8 = min(tint8 * (t5 << 3) / 0x80, 255)     // truncating integer divide
+//
+// The float form this replaced (`tex * tint * 2`) is `tex * tint * 2/255`, and
+// 2/255 != 1/128, so it ran ~0.4% bright -- up to 2/255 off, which is enough to
+// flip a channel across a dither bucket boundary.
+//
+// `texel_rgb` arrives bit-replicated 5->8 (`bgr15_to_rgb`), but the CPU
+// modulates `t5 << 3`. `t8 - floor(t8 / 32) == t5 << 3` for every 5-bit code,
+// so undo the replication rather than re-quantising to 5 bits (which would
+// band the filtered-texture paths).
+//
+// `RAW_TEXTURE` skips all of this and returns the texel verbatim.
+fn modulate(texel_rgb: vec3<f32>, tint_rgba: vec4<f32>, raw: bool) -> vec3<f32> {
+    if raw {
+        return texel_rgb;
+    }
+    let t8 = round(texel_rgb * 255.0);
+    let tex = t8 - floor(t8 / 32.0);
+    let tint = round(tint_rgba.rgb * 255.0);
+    return min(floor(tint * tex / 128.0), vec3<f32>(255.0)) / 255.0;
+}
+
+// ---------------------------------------------------------------------------
+// Edge (u_texfilter.x == 1) texture filter.
+// Specified in docs/texture-filters-spec.md; section numbers below refer to it.
+// ---------------------------------------------------------------------------
+
+// One raw filter tap (spec section 2): the texel at integer offset (dx, dy) from
+// the cell origin `b`, fetched through the window and CLUT exactly like the
+// nearest path. `.a` is 1 for an opaque texel and 0 for a transparent one.
+fn filter_tap(flags: u32, tex_window: u32, b: vec2<f32>, dx: f32, dy: f32) -> vec4<f32> {
+    let uv8 = apply_tex_window(page_uv(b + vec2<f32>(dx, dy)), tex_window);
+    let w = sample_texel(flags, uv8);
+    if w == 0u {
+        return vec4<f32>(0.0, 0.0, 0.0, 0.0);
+    }
+    return vec4<f32>(bgr15_to_rgb(w), 1.0);
+}
+
+// A transparent inner tap takes its opaque neighbour inside the cell (the one in
+// the same row first, then the one in the same column), so the colours at a
+// cut-out edge continue outwards instead of picking up whatever lies beyond.
+fn resolve_inner(own: vec4<f32>, row_mate: vec4<f32>, col_mate: vec4<f32>, nearest: vec3<f32>) -> vec3<f32> {
+    if own.a > 0.0 {
+        return own.rgb;
+    }
+    if row_mate.a > 0.0 {
+        return row_mate.rgb;
+    }
+    if col_mate.a > 0.0 {
+        return col_mate.rgb;
+    }
+    return nearest;
+}
+
+// An outer tap that is transparent takes the resolved inner tap whose
+// coordinates are its own clamped into the cell.
+fn resolve_outer(own: vec4<f32>, clamped: vec3<f32>) -> vec3<f32> {
+    if own.a > 0.0 {
+        return own.rgb;
+    }
+    return clamped;
+}
+
+// Colour distance, spec section 3.
+fn cdist(a: vec3<f32>, b: vec3<f32>) -> f32 {
+    let d = abs(a - b);
+    return (d.x + d.y + d.z) * (1.0 / 3.0);
+}
+
+// Linear blend whose transition tightens as the two colours differ more
+// (spec section 3: sharpen + edge_mix).
+fn edge_mix(a: vec3<f32>, b: vec3<f32>, f: f32) -> vec3<f32> {
+    let g = smoothstep(0.08, 0.25, cdist(a, b));
+    return mix(a, b, mix(f, smoothstep(0.3, 0.7, f), g));
+}
+
+// How well an apex colour `p` continues past the diagonal line of colour
+// `line_c` (spec section 5.6). 1 = a real edge, 0 = an isolated texel.
+fn apex_support(p: vec3<f32>, far: vec3<f32>, line_c: vec3<f32>) -> f32 {
+    let dfp = cdist(far, p);
+    let dfl = cdist(far, line_c);
+    let u = dfp / (dfp + dfl + 0.0001);
+    let rel = smoothstep(0.04, 0.12, cdist(p, line_c));
+    return mix(1.0, 1.0 - smoothstep(0.35, 0.65, u), rel);
+}
+
+// Edge-directed interpolation (spec section 5).
+fn filter_edge(flags: u32, tex_window: u32, b: vec2<f32>, f: vec2<f32>, nearest: vec3<f32>) -> vec3<f32> {
+    let ra = filter_tap(flags, tex_window, b, 0.0, 0.0);
+    let rb = filter_tap(flags, tex_window, b, 1.0, 0.0);
+    let rc = filter_tap(flags, tex_window, b, 0.0, 1.0);
+    let rd = filter_tap(flags, tex_window, b, 1.0, 1.0);
+    let ta = resolve_inner(ra, rb, rc, nearest);
+    let tb = resolve_inner(rb, ra, rd, nearest);
+    let tc = resolve_inner(rc, rd, ra, nearest);
+    let td = resolve_inner(rd, rc, rb, nearest);
+    let tz = resolve_outer(filter_tap(flags, tex_window, b, -1.0, -1.0), ta);
+    let ty = resolve_outer(filter_tap(flags, tex_window, b, 2.0, -1.0), tb);
+    let tv = resolve_outer(filter_tap(flags, tex_window, b, -1.0, 2.0), tc);
+    let tw = resolve_outer(filter_tap(flags, tex_window, b, 2.0, 2.0), td);
+
+    // Axis rendering (5.4).
+    let axis = edge_mix(edge_mix(ta, tb, f.x), edge_mix(tc, td, f.x), f.y);
+
+    // Orientation (5.3).
+    let cm = 2.0 * cdist(ta, td) + cdist(tz, ta) + cdist(td, tw);
+    let ca = 2.0 * cdist(tb, tc) + cdist(ty, tb) + cdist(tc, tv);
+    let r = abs(cm - ca) / (cm + ca + 0.0001);
+    let o = smoothstep(0.35, 0.8, r) * smoothstep(0.1, 0.3, max(cm, ca));
+    if o <= 0.0 {
+        return axis;
+    }
+
+    // Diagonal rendering (5.5) and isolated-texel support (5.6).
+    var diag: vec3<f32>;
+    var sup: f32;
+    if cm < ca {
+        // Main chain A-D is the line; apexes B and C.
+        let s = f.x - f.y;
+        let line_c = 0.5 * (ta + td);
+        if s >= 0.0 {
+            let q = clamp(f.y / max(1.0 - s, 0.0001), 0.0, 1.0);
+            diag = edge_mix(mix(ta, td, q), tb, s);
+        } else {
+            let q = clamp(f.x / max(1.0 + s, 0.0001), 0.0, 1.0);
+            diag = edge_mix(mix(ta, td, q), tc, -s);
+        }
+        sup = min(apex_support(tb, ty, line_c), apex_support(tc, tv, line_c));
+    } else {
+        // Anti chain B-C is the line; apexes A and D.
+        let u = f.x + f.y;
+        let line_c = 0.5 * (tb + tc);
+        if u < 1.0 {
+            let q = clamp(f.y / max(u, 0.0001), 0.0, 1.0);
+            diag = edge_mix(mix(tb, tc, q), ta, 1.0 - u);
+        } else {
+            let q = clamp((1.0 - f.x) / max(2.0 - u, 0.0001), 0.0, 1.0);
+            diag = edge_mix(mix(tb, tc, q), td, u - 1.0);
+        }
+        sup = min(apex_support(ta, tz, line_c), apex_support(td, tw, line_c));
+    }
+    return mix(axis, diag, o * sup);
+}
+
+// The CPU rasterizer's attribute planes for the triangle (see
+// `HwVertex::planes`): channel `ch` (0..5 = r, g, b, u, v) is the word
+// triple (dadx, dady, base) at 3 * ch, and
+// `attr(x, y) = (base + x * dadx + y * dady) >> 24` in wrapping u32
+// arithmetic, evaluated at a PSX pixel `(x, y)` -- the CPU's own per-pixel
+// rule, so the value is bit-exact at 1x. (u32 products wrap in WGSL; a
+// negative coordinate goes through bitcast, as the CPU's `x as u32` does.)
+fn plane_word(in: VertexOut, i: u32) -> u32 {
+    let q = i >> 2u;
+    var v = in.planes0;
+    if q == 1u { v = in.planes1; }
+    if q == 2u { v = in.planes2; }
+    if q == 3u { v = in.planes3; }
+    return v[i & 3u];
+}
+
+fn plane_attr(in: VertexOut, ch: u32, px: vec2<i32>) -> u32 {
+    let dadx = plane_word(in, ch * 3u);
+    let dady = plane_word(in, ch * 3u + 1u);
+    let base = plane_word(in, ch * 3u + 2u);
+    return (base + bitcast<u32>(px.x) * dadx + bitcast<u32>(px.y) * dady) >> 24u;
+}
+
+// Where inside its PSX pixel this fragment lies, from the pixel's centre
+// (0 at 1x, where the fragment is the CPU's sample point; a sub-pixel step
+// at higher internal scales). The planes are evaluated exactly at the PSX
+// pixel and this adds the gradient over the sub-pixel, so a scaled target
+// stays smooth while 1x stays bit-exact.
+//
+// The offset is built from the host pixel index in integers, so the centre
+// sub-pixel of an odd scale is exactly zero. Dividing the float fragment
+// position by the scale instead left a rounding residue of a few 1e-5 at
+// x ~ 300, and a sliver triangle's gradient (hundreds of levels per pixel)
+// turned that into a whole level: the centre sample, which must equal the
+// CPU's pixel, came out one code low on a handful of pixels a frame.
+fn plane_subpixel(frag: vec2<f32>) -> vec2<f32> {
+    let s = max(u_texfilter.y, 1u);
+    let r = vec2<i32>(vec2<u32>(floor(frag)) % vec2<u32>(s, s));
+    let twice = vec2<i32>(2 * r.x + 1 - i32(s), 2 * r.y + 1 - i32(s));
+    return vec2<f32>(twice) / f32(2u * s);
+}
+
+fn plane_delta(in: VertexOut, ch: u32, sub: vec2<f32>) -> f32 {
+    let gx = f32(bitcast<i32>(plane_word(in, ch * 3u)));
+    let gy = f32(bitcast<i32>(plane_word(in, ch * 3u + 1u)));
+    return clamp((sub.x * gx + sub.y * gy) / 16777216.0, -128.0, 128.0);
+}
+
+fn plane_pixel(frag: vec2<f32>) -> vec2<i32> {
+    let s = max(u_texfilter.y, 1u);
+    // LT-111: plus the display origin.
+    return vec2<i32>(vec2<u32>(floor(frag)) / vec2<u32>(s, s)) + vec2<i32>(u_view.xy);
+}
+
+// Output is the gamma-coded display value, written byte-for-byte: the draw
+// pass renders through the target's non-sRGB view (`target::RENDER_FORMAT`),
+// so the blender combines the same numbers the CPU rasterizer does.
+// LT-111: the colour, and the 2D layer's coverage in the mask's green channel.
+struct Out2d {
+    @location(0) colour: vec4<f32>,
+    @location(1) mask: vec4<f32>,
+}
+
+fn out2d(c: vec4<f32>) -> Out2d {
+    var o: Out2d;
+    o.colour = c;
+    o.mask = vec4<f32>(0.0, 1.0, 0.0, 1.0);
+    return o;
+}
+
+@fragment
+fn fs_main(in: VertexOut) -> Out2d {
+    // LT-111: behind a native polygon of the same or a nearer bucket (drawn after it by the GPU).
+    // The order target holds the polygon's bucket + 1, 0 where there's none.
+    let order = textureLoad(u_order, vec2<i32>(in.position.xy), 0).r;
+    if order > 0.5 && order - 1.0 <= in.bucket {
+        discard;
+    }
+    let textured = (in.flags & FLAG_TEXTURED) != 0u;
+    let dither = (in.flags & FLAG_DITHER) != 0u;
+    var color = in.color;
+    if (in.flags & FLAG_PLANE_RGB) != 0u {
+        let px = plane_pixel(in.position.xy);
+        // 2D quads keep the colour of their native pixel across its sub-pixels.
+        var sub = plane_subpixel(in.position.xy);
+        if (in.flags & FLAG_PIXEL_COLOUR) != 0u {
+            sub = vec2<f32>(0.0, 0.0);
+        }
+        let r = f32(plane_attr(in, 0u, px)) + plane_delta(in, 0u, sub);
+        let g = f32(plane_attr(in, 1u, px)) + plane_delta(in, 1u, sub);
+        let b = f32(plane_attr(in, 2u, px)) + plane_delta(in, 2u, sub);
+        color = vec4<f32>(clamp(vec3<f32>(r, g, b), vec3<f32>(0.0), vec3<f32>(255.0)) / 255.0, in.color.a);
+    }
+    if !textured {
+        var rgb = color.rgb;
+        if dither {
+            rgb = dither_to_bgr15(rgb, in.position.xy);
+        }
+        return out2d(vec4<f32>(blend_encode(rgb), in.color.a));
+    }
+    // A polygon is drawn half a pixel down-right (see `vs_main`), so the
+    // interpolant here is the plane at the pixel's top-left corner; the
+    // CPU rasterizer adds 0.5 and floors, i.e. rounds to the nearest texel.
+    // Rectangles are not shifted and their centre-sampled coordinate
+    // already carries that 0.5.
+    var suv = in.uv;
+    if (in.flags & FLAG_AXIS_UV) != 0u && u_texfilter.x == 0u {
+        // Half of a sprite-shaped quad: the CPU's four-edge walk, Q12 per row
+        // (see `translator::axis_quad_words` for the word layout).
+        let px = plane_pixel(in.position.xy);
+        let sub = plane_subpixel(in.position.xy);
+        let left = bitcast<i32>(plane_word(in, 0u));
+        let top = bitcast<i32>(plane_word(in, 1u));
+        let width = max(bitcast<i32>(plane_word(in, 2u)), 1);
+        let row = px.y - top;
+        let xoff = px.x - left;
+        var uv_fixed = vec2<i32>(0, 0);
+        var uv_step = vec2<f32>(0.0, 0.0);
+        for (var c = 0u; c < 2u; c = c + 1u) {
+            let l0 = bitcast<i32>(plane_word(in, 3u + c));
+            let r0 = bitcast<i32>(plane_word(in, 5u + c));
+            let dl = bitcast<i32>(plane_word(in, 7u + c));
+            let dr = bitcast<i32>(plane_word(in, 9u + c));
+            let lpos = l0 + row * dl;
+            let rpos = r0 + row * dr;
+            let dx = (rpos - lpos) / width;
+            uv_fixed[c] = (lpos + xoff * dx) >> 12u;
+            uv_step[c] = (sub.x * f32(dx) + sub.y * f32(dl)) / 4096.0;
+        }
+        suv = vec2<f32>(
+            f32(uv_fixed.x & 0xFF) + 0.5 + clamp(uv_step.x, -128.0, 128.0),
+            f32(uv_fixed.y & 0xFF) + 0.5 + clamp(uv_step.y, -128.0, 128.0),
+        );
+    } else if (in.flags & FLAG_PLANE_UV) != 0u && u_texfilter.x == 0u {
+        // The plane already carries the CPU's +0.5 rounding, so its integer
+        // value is the texel; `suv` is that texel's centre, plus the
+        // sub-pixel gradient on a scaled target. The edge filter keeps the
+        // host's smooth interpolation: it needs fractional coordinates.
+        let px = plane_pixel(in.position.xy);
+        let sub = plane_subpixel(in.position.xy);
+        suv = vec2<f32>(
+            f32(plane_attr(in, 3u, px)) + 0.5 + plane_delta(in, 3u, sub),
+            f32(plane_attr(in, 4u, px)) + 0.5 + plane_delta(in, 4u, sub),
+        );
+    } else if (in.flags & FLAG_CORNER_SAMPLED) != 0u {
+        suv += vec2<f32>(0.5, 0.5);
+    }
+    let uv8 = apply_tex_window(page_uv(suv), in.tex_window);
+    let texel = sample_texel(in.flags, uv8);
+    if texel == 0u {
+        discard;
+    }
+    let stp = (texel & 0x8000u) != 0u;
+    if ((in.flags & FLAG_TEX_OPAQUE_PASS) != 0u) && stp {
+        discard;
+    }
+    if ((in.flags & FLAG_TEX_SEMI_PASS) != 0u) && !stp {
+        discard;
+    }
+    var tex_rgb = bgr15_to_rgb(texel);
+    if u_texfilter.x == 1u {
+        // Edge filter: see docs/texture-filters-spec.md. The silhouette and STP
+        // tests above already ran on the nearest texel; a tap that lands on a
+        // transparent texel is replaced by an opaque neighbour (spec section 2).
+        let p = suv - vec2<f32>(0.5, 0.5);
+        let b = floor(p);
+        let f = p - b;
+        tex_rgb = filter_edge(in.flags, in.tex_window, b, f, tex_rgb);
+    }
+    let raw = (in.flags & FLAG_RAW_TEXTURE) != 0u;
+    var rgb = modulate(tex_rgb, color, raw);
+    // Raw-texture primitives bypass the modulator on silicon and are
+    // never dithered; the translator already withholds FLAG_DITHER
+    // for them, so `raw` needs no second check here.
+    if dither {
+        rgb = dither_to_bgr15(rgb, in.position.xy);
+    }
+    return out2d(vec4<f32>(blend_encode(rgb), 1.0));
+}

@@ -1,0 +1,13 @@
+[package]
+name = "lt-lockstep"
+description = "Living Tool Remaster's lockstep checker: two machines from one test-set scene, compared every frame, with the first difference named and traced"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+publish = false
+
+[dependencies]
+emulator-core = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b27fff97dc9b265d776fb031ca0c920c0f243f95" }
+lt-testset = { path = "../testset" }
+lt-emu-hooks = { path = "../../emu-host/hooks" }
+gc-sys = { path = "../../app/crates/gc-sys" }

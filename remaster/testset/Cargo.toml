@@ -1,0 +1,16 @@
+[package]
+name = "lt-testset"
+description = "Living Tool Remaster's test set: machine states and input recordings of Guardian's Crusade scenes, built from the player's disc"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+publish = false
+
+[dependencies]
+# The same core as lt-remaster: states only load into the build that saved them.
+emulator-core = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b27fff97dc9b265d776fb031ca0c920c0f243f95" }
+psx-iso = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b27fff97dc9b265d776fb031ca0c920c0f243f95" }
+postcard = { version = "1", features = ["alloc"] }
+# Standing the Knight on solid ground after a warp (the chunk's walk map), and the field's ids.
+lt-core = { path = "../../app/crates/lt-core" }
+sha1_smol = "1"

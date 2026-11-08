@@ -1,0 +1,138 @@
+{
+  "id": "darkbeat-ibkee",
+  "version": 1,
+  "title": "Darkbeat & Ibkee",
+  "summary": "Play as Darkbeat, with Ibkee as your partner: they walk, fly and fight in the Knight's and the Baby's place, in the retail story or your own.",
+  "release": "usa",
+  "source": "gc_decomp 69cc5658 (branch gc-decomp/extras-world-heroes), tools/hero_pack.py --pack darkbeat-ibkee (docs/PLAY_AS.md)",
+  "files": [
+    {
+      "id": "sys/6",
+      "patch": "sys-6.bps",
+      "patchSize": 34391,
+      "patchSha256": "0dd9103beeb3c4ed0fc7151359a692f5152dc60409490f9fedd2ee87ca169d11",
+      "sourceSize": 247808,
+      "sourceCrc32": "67c2ea20",
+      "targetSize": 61440,
+      "targetCrc32": "eba5a2c1",
+      "extraSources": [
+        "npc/0",
+        "npc/9"
+      ]
+    },
+    {
+      "id": "sys/5",
+      "patch": "sys-5.bps",
+      "patchSize": 34391,
+      "patchSha256": "21322ba023d619c2c738ab4989a96d941e8a04acae0d2141e7a3eb67848d3f02",
+      "sourceSize": 247808,
+      "sourceCrc32": "933611ee",
+      "targetSize": 61440,
+      "targetCrc32": "eba5a2c1",
+      "extraSources": [
+        "npc/0",
+        "npc/9"
+      ]
+    },
+    {
+      "id": "sys/14",
+      "patch": "sys-14.bps",
+      "patchSize": 6959,
+      "patchSha256": "b1395cc397baee922b937fc661bc0b1695ac41e347c5dd758d16539b219f465f",
+      "sourceSize": 221184,
+      "sourceCrc32": "729e42bf",
+      "targetSize": 32768,
+      "targetCrc32": "b67bbe64",
+      "extraSources": [
+        "npc/30"
+      ]
+    },
+    {
+      "id": "sys/13",
+      "patch": "sys-13.bps",
+      "patchSize": 6949,
+      "patchSha256": "46d6057e15f520f6cebe7423cc5409f55abc2182ff43962ca2a6e1199ccbedad",
+      "sourceSize": 251904,
+      "sourceCrc32": "2f3cdf82",
+      "targetSize": 32768,
+      "targetCrc32": "b67bbe64",
+      "extraSources": [
+        "sys/14",
+        "npc/30"
+      ]
+    },
+    {
+      "id": "knight/0",
+      "patch": "knight-0.bps",
+      "patchSize": 2623,
+      "patchSha256": "611558a74679802430bd68857fdf66d18904130b07846ec0dd338cda76c13701",
+      "sourceSize": 395264,
+      "sourceCrc32": "bfcb7865",
+      "targetSize": 141312,
+      "targetCrc32": "cab49e00",
+      "extraSources": [
+        "enemy/20"
+      ]
+    },
+    {
+      "id": "enemy/0",
+      "patch": "enemy-0.bps",
+      "patchSize": 2625,
+      "patchSha256": "f1142a156ea062b7346c182039bb995342dd7efba474809dd6e7df00ede0ab89",
+      "sourceSize": 647168,
+      "sourceCrc32": "fc2281c0",
+      "targetSize": 141312,
+      "targetCrc32": "cab49e00",
+      "extraSources": [
+        "knight/0",
+        "enemy/20"
+      ]
+    },
+    {
+      "id": "enemy/1",
+      "patch": "enemy-1.bps",
+      "patchSize": 2625,
+      "patchSha256": "62bde1b512cde885c581f5ffd6d40dff44f0b9a8ba17f64aea7fcf8ab0600092",
+      "sourceSize": 679936,
+      "sourceCrc32": "cff11b59",
+      "targetSize": 141312,
+      "targetCrc32": "cab49e00",
+      "extraSources": [
+        "knight/0",
+        "enemy/20"
+      ]
+    },
+    {
+      "id": "pb/0",
+      "patch": "pb-0.bps",
+      "patchSize": 82413,
+      "patchSha256": "6fe4f3d3e34f5a174f5d1ac503acbb266925b6168ef41adb26378061ae35ebed",
+      "sourceSize": 354304,
+      "sourceCrc32": "5052cc81",
+      "targetSize": 141312,
+      "targetCrc32": "fa6dfb8f",
+      "extraSources": [
+        "pb/16"
+      ]
+    }
+  ],
+  "flyover": null,
+  "playAs": {
+    "hero": "Darkbeat",
+    "partner": "Ibkee"
+  },
+  "exeWrites": [
+    {
+      "va": "0x801B5554",
+      "from": "426162790000000000000000",
+      "to": "49626b656500000000000000",
+      "what": "partner's name (the Baby's party template)"
+    },
+    {
+      "va": "0x801B557C",
+      "from": "ff030800",
+      "to": "3f000800",
+      "what": "partner's actions (no transformations: the transform effect waits for the Baby's pose 59)"
+    }
+  ]
+}

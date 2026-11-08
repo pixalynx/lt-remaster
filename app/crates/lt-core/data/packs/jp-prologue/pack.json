@@ -1,0 +1,34 @@
+{
+  "id": "jp-prologue",
+  "version": 1,
+  "title": "Knight & Baby's prologue",
+  "summary": "The in-engine prologue the Japanese release plays after New Game: the camera flies over the world and Orgo while four pages of the legend fade in, in English. Guardian's Crusade cut it; it plays between the stork movie and the bedroom. Its flight and pages can be edited.",
+  "release": "usa",
+  "source": "gc_decomp b77d415 (branch gc-decomp/jp-prologue-usa), make MOD_CPP_FLAGS=-DMOD_JP_PROLOGUE (docs/JP_PROLOGUE.md)",
+  "files": [
+    {
+      "id": "ovr/1",
+      "patch": "ovr01.bps",
+      "patchSize": 65,
+      "patchSha256": "9a93b2ee9317a511f95c13d7ca5764a649a471bbab23f5acbfe746f12b535f50",
+      "sourceSize": 22528,
+      "sourceCrc32": "2be418e1",
+      "targetSize": 22528,
+      "targetCrc32": "fc4edb14"
+    },
+    {
+      "id": "ovr/25",
+      "patch": "ovr25.bps",
+      "patchSize": 4015,
+      "patchSha256": "5ecc63689e1fbdb2d84384596dab70a3d483abc01b0252cb3c3557ca08b1faef",
+      "sourceSize": 10240,
+      "sourceCrc32": "b215c5a1",
+      "targetSize": 15466,
+      "targetCrc32": "e9d7767d"
+    }
+  ],
+  "flyover": {
+    "file": "ovr/25",
+    "magic": "LTFY"
+  }
+}

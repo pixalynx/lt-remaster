@@ -1,0 +1,17 @@
+[package]
+name = "lt-assets"
+description = "Living Tool Remaster's assets: captured draws matched to Living Tool's decoded chunks and models, the textures the game animates in VRAM, and a GPU cache that uploads each once"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+publish = false
+
+[dependencies]
+emulator-core = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b27fff97dc9b265d776fb031ca0c920c0f243f95" }
+lt-emu-hooks = { path = "../../emu-host/hooks" }
+lt-core = { path = "../../app/crates/lt-core" }
+lt-scene = { path = "../scene" }
+lt-testset = { path = "../testset" }
+# The GPU cache's device side, as lt-remaster draws with it.
+wgpu = "24"
+pollster = "0.4"

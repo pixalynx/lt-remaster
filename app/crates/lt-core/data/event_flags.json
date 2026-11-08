@@ -1,0 +1,9759 @@
+{
+ "0x001": {
+  "set_after": [
+   [
+    "NPC01",
+    "You're lucky you / survived!\\nYou want to go to / God's Tower? Sounds / awfully dangerous."
+   ],
+   [
+    "NPC06",
+    "Well, good morning, / $A. \\nAre you ever going / to learn how to wake / up earlier?\\nYou'r"
+   ],
+   [
+    "NPC10",
+    "Well if it isn't / $A from Orgo! / Good to see you again.\\nGod's Tower? You / have to go t"
+   ],
+   [
+    "NPC15",
+    "Everybody from Den / Heldar has come home, / but poor Jadik from\\nTrisken is still out / t"
+   ],
+   [
+    "NPC15",
+    "Good to see you again, / $A. Will you be / vacationing here?\\nOh, I see... Traveling / aro"
+   ],
+   [
+    "NPC15",
+    "That's despicable! / All you adults think / about is money!"
+   ],
+   [
+    "NPC18",
+    "Thank goodness / you're finally awake, / $A.\\nI can't find $B! / We must have been / separ"
+   ],
+   [
+    "NPC19",
+    "...$A? / ......$A?? / .........$A!!\\nWake up $A, / wake up!"
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC22",
+    "Try the Istenade. / It's very refreshing."
+   ],
+   [
+    "NPC22",
+    "Well step inside! / I recommend the hot / chocolate."
+   ],
+   [
+    "NPC22",
+    "You won't regret it, / sir. We have the best / espresso in town!"
+   ],
+   [
+    "NPC28",
+    "Really? \\nAnyway, we're / finally getting close / to $B's home!\\nIsn't that great news, / "
+   ],
+   [
+    "NPC44",
+    "$A, we'll take / the red one.\\nYou get the blue one, / okay?"
+   ],
+   [
+    "NPC48",
+    "Please! I beg you... / You have to help us!\\nThey're attacking / innocent people! / Please"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC06",
+    "Hurry child, the / Mayor wants to talk / to you!\\nI think he has an / errand that he wants"
+   ],
+   [
+    "NPC09",
+    "We've seen just about / all there is to see / in the library."
+   ],
+   [
+    "NPC10",
+    "Ok, here we go... sell / sell sell. Ahem. Get / your fur fish here!"
+   ],
+   [
+    "NPC15",
+    "I suppose you are back / here looking for / monsters to fight.\\nI don't think you'll / fin"
+   ],
+   [
+    "NPC15",
+    "I'll say this about / folks from Trisken, / they pay their bills."
+   ],
+   [
+    "NPC21",
+    "This is the last of / the gargoyles! The / sorcerer is next!"
+   ],
+   [
+    "NPC21",
+    "You'll pay for your / actions now, little / boy!"
+   ],
+   [
+    "NPC22",
+    "Good to see you again / sir. I see you aren't / wasting your ^ 3000\\ninvestment. Go right "
+   ],
+   [
+    "NPC28",
+    "Okay, but you're / missing a great view!"
+   ],
+   [
+    "NPC28",
+    "What do you say? Great / view, right?"
+   ],
+   [
+    "NPC34",
+    "Do you want to play / hide and seek with me?"
+   ],
+   [
+    "NPC34",
+    "How can you people / stand this heat? It's / so hot I could melt!\\nI wish there was a / ni"
+   ],
+   [
+    "NPC35",
+    "Ark Ark Ark Ark!"
+   ],
+   [
+    "NPC35",
+    "Daddy... Where are you / daddy?"
+   ],
+   [
+    "NPC35",
+    "I wish I could go back / to Garam right now...\\nI really miss my / mommy and daddy..."
+   ],
+   [
+    "NPC35",
+    "I'm going to be like / Darkbeat when I grow / up...\\nI'm going to go around / saving peopl"
+   ],
+   [
+    "NPC35",
+    "Well, have a safe / journey, $A. / Until we meet again..."
+   ],
+   [
+    "NPC35",
+    "When I grow up, I'm / going to be like Aunt / Ibkee and help people."
+   ],
+   [
+    "NPC42",
+    "$A, I think we / better go to our cabin / before the storm gets\\nany worse. It's going / t"
+   ],
+   [
+    "NPC48",
+    "Thank you! / You saved us all!\\nReward? Ah, yes, the / reward I offered...\\nAs Governor of"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC06",
+   "NPC09",
+   "NPC10",
+   "NPC15",
+   "NPC18",
+   "NPC19",
+   "NPC21",
+   "NPC22",
+   "NPC28",
+   "NPC34",
+   "NPC35",
+   "NPC42",
+   "NPC44",
+   "NPC48"
+  ]
+ },
+ "0x002": {
+  "set_after": [
+   [
+    "NPC03",
+    "What happened to me?\\nIt was like having / a bad dream."
+   ],
+   [
+    "NPC06",
+    "The Mayor wants you / to go to San Claria? / I remember Algo tried\\nto go there all by / h"
+   ],
+   [
+    "NPC07",
+    "I guess it was just / an illusion..."
+   ],
+   [
+    "NPC09",
+    "The Prophecy Book."
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC22",
+    "Hey, mighty warrior / dude: how would you / like to go inside the\\ncoolest cafe this side "
+   ],
+   [
+    "NPC28",
+    "Welcome to the gang. / I, too, came here to / study with Aruvin.\\nI've been here forty / y"
+   ],
+   [
+    "NPC39",
+    "Khriiiiee! / Khriiiiee!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC06",
+    "Did I ever tell you / the story about Algo / and the toadstool?\\nWell, when Algo was / lit"
+   ],
+   [
+    "NPC06",
+    "He's all talk."
+   ],
+   [
+    "NPC06",
+    "I wonder what I / should make for / dinner tonight...\\nLast night I made a / mushroom pie,"
+   ],
+   [
+    "NPC06",
+    "When you finish your / errand I'll make you / a nice warm meal."
+   ],
+   [
+    "NPC09",
+    "We've seen just about / all there is to see / in the library."
+   ],
+   [
+    "NPC10",
+    "What? The Governor / said that he'd trade / you tickets for the\\nKuldo Emerald? / Good luc"
+   ],
+   [
+    "NPC11",
+    "I'm sorry, but there / are no more tickets / available."
+   ],
+   [
+    "NPC21",
+    "Thank you! I just wish / it hadn't trampled so / many of my flowers."
+   ],
+   [
+    "NPC21",
+    "This is the last of / the gargoyles! The / sorcerer is next!"
+   ],
+   [
+    "NPC21",
+    "You'll pay for your / actions now, little / boy!"
+   ],
+   [
+    "NPC22",
+    "Well, hello again!\\nHave you come back / to have one of our / amazing new sodas?"
+   ],
+   [
+    "NPC27",
+    "you doesn't make / it right. Put it back!"
+   ],
+   [
+    "NPC28",
+    "I guess my heart is / just not as pure as it / should be.\\nMaybe I should give up / and re"
+   ],
+   [
+    "NPC39",
+    "Thank you! / Thank you for saving / my life!\\nHey! I remember you... / You've grown up a l"
+   ],
+   [
+    "NPC39",
+    "This is the last of / the little ones. Then / we get their leader!"
+   ],
+   [
+    "NPC42",
+    "$A, I think we / better go to our cabin / before the storm gets\\nany worse. It's going / t"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03",
+   "NPC06",
+   "NPC07",
+   "NPC09",
+   "NPC10",
+   "NPC11",
+   "NPC21",
+   "NPC22",
+   "NPC27",
+   "NPC28",
+   "NPC39",
+   "NPC42",
+   "NPC49"
+  ]
+ },
+ "0x003": {
+  "set_after": [
+   [
+    "NPC06",
+    "You're going to / San Claria? Knock some / monsters on the head\\nfor me. What's that? / Yo"
+   ],
+   [
+    "NPC09",
+    "The Book of Seals."
+   ],
+   [
+    "NPC11",
+    "Anything I desire...\\nAh, never mind... / I'll never be able to / get it!"
+   ],
+   [
+    "NPC14",
+    "I'm afraid I've / bungled things / horribly. You see, I \\ngot too involved in / the case, "
+   ],
+   [
+    "NPC14",
+    "My grandmother left / this to me. I hope it / will be of use to you."
+   ],
+   [
+    "NPC14",
+    "This petty case was / too small for a / famous detective like\\nme to solve anyway."
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC22",
+    "May the gods protect / Lord Kalkanor!\\nThis little parade of / his has brought us / more g"
+   ],
+   [
+    "NPC28",
+    "Phew, that was a long / journey...\\nI came to see Saint / Aruvin. I need him to / cure my "
+   ],
+   [
+    "NPC34",
+    "Hi $A! / I did it! I finally / have my own shop!\\nEverything... People / calling me dirty "
+   ],
+   [
+    "NPC39",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC42",
+    "$A, I think we / better go to our cabin / before the storm gets\\nany worse. It's going / t"
+   ],
+   [
+    "NPC42",
+    "Arrrgh!!\\nHere it comes! / See it blowing the / tops off the waves?\\nHear it singing in th"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "What? / You're not tired?"
+   ],
+   [
+    "NPC09",
+    "We've seen just about / all there is to see / in the library."
+   ],
+   [
+    "NPC11",
+    "Kuldo's a long way / away... way past the / desert."
+   ],
+   [
+    "NPC14",
+    "I believe I shall take / my leave of this place / and return to Isten."
+   ],
+   [
+    "NPC14",
+    "Sir, I must ask you to / not interfere with my / detective work.\\nIt is a devilishly / dif"
+   ],
+   [
+    "NPC14",
+    "Well met, young sir. / No, please, say no / more about that case.\\nI'm afraid that I made "
+   ],
+   [
+    "NPC18",
+    "Pig. / Sacrifice.\\nNo sacrifice pig, / Evil god Yugonga / angry!\\nYugonga eat my / childre"
+   ],
+   [
+    "NPC18",
+    "Their evil god / \"Yugonga\" is somewhere / in this shrine.\\nGetting rid of it is / our only"
+   ],
+   [
+    "NPC21",
+    "There's no more left / over here. You better / go find the rest."
+   ],
+   [
+    "NPC21",
+    "This is the last of / the gargoyles! The / sorcerer is next!"
+   ],
+   [
+    "NPC21",
+    "You'll pay for your / actions now, little / boy!"
+   ],
+   [
+    "NPC22",
+    "Come one, come all! / Stay in the best inn / in all of Trisken!"
+   ],
+   [
+    "NPC27",
+    "GAAAAAAAH!"
+   ],
+   [
+    "NPC27",
+    "Please don't hurt / Ruval anymore."
+   ],
+   [
+    "NPC28",
+    "I just hope I make it / the rest of the way to / the holy sanctuary.\\nI just hope that no "
+   ],
+   [
+    "NPC39",
+    "T-t-t-that was scary!"
+   ],
+   [
+    "NPC39",
+    "This is the last of / the little ones. Then / we get their leader!"
+   ],
+   [
+    "NPC42",
+    "$A, I think we / better go to our cabin / before the storm gets\\nany worse. It's going / t"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC06",
+   "NPC09",
+   "NPC11",
+   "NPC14",
+   "NPC18",
+   "NPC21",
+   "NPC22",
+   "NPC27",
+   "NPC28",
+   "NPC34",
+   "NPC35",
+   "NPC39",
+   "NPC42"
+  ]
+ },
+ "0x004": {
+  "set_after": [
+   [
+    "NPC01",
+    "What? / You're not tired?"
+   ],
+   [
+    "NPC05",
+    "It must be his old age / catching up with him.\\nIf he had his way, he / would make everybo"
+   ],
+   [
+    "NPC07",
+    "Goodnight, $A."
+   ],
+   [
+    "NPC09",
+    "Oh ye who would seek / the Holy Armor, know / this:\\nIn the Nord Temple, / deep in the lan"
+   ],
+   [
+    "NPC14",
+    "All those years I / spent researching that / site... All my work...\\nTo think that a mere "
+   ],
+   [
+    "NPC14",
+    "I hear you saved a / bunch of the / townspeople.\\nI also heard that you / haven't found th"
+   ],
+   [
+    "NPC14",
+    "I'm going to devote my / life to solving the / mysteries of the North\\nTower. I'm going to"
+   ],
+   [
+    "NPC19",
+    "We must make sacrifice / to the evil god in / the shrine, or he will\\ncome out and kill / "
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC22",
+    "Excuse me, sir, / but would you like / to purchase a\\nred rose for ^ 300?"
+   ],
+   [
+    "NPC28",
+    "You have! Where? / Behind that house over / there? Thanks!\\nIt's nearly dinner / time, and"
+   ],
+   [
+    "NPC39",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC42",
+    "I hate the way this / ship is starting to / roll. What? A storm?\\nWell, that explains / wh"
+   ],
+   [
+    "NPC48",
+    "Tickets? I'll give / you anything you want / for the Beast Emerald."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "What? / You're not tired?"
+   ],
+   [
+    "NPC04",
+    "\"I sure could go for a / fur fish. Let's go to / San Claria for one.\"\\nI think it's a pret"
+   ],
+   [
+    "NPC04",
+    "I caught the biggest / fur fish this last / year!\\nI grabbed it by the / mane and jerked i"
+   ],
+   [
+    "NPC05",
+    "$A, / you have to cheer / your mayor up."
+   ],
+   [
+    "NPC07",
+    "I guess it was just / an illusion..."
+   ],
+   [
+    "NPC07",
+    "So, a man appeared out / of thin air, in a / beam of light and told\\nyou to take that / li"
+   ],
+   [
+    "NPC09",
+    "We've seen just about / all there is to see / in the library."
+   ],
+   [
+    "NPC10",
+    "What? The Governor / said that he'd trade / you tickets for the\\nKuldo Emerald? / Good luc"
+   ],
+   [
+    "NPC14",
+    "I'm going to devote my / life to solving the / mysteries of the North\\nTower. I'm going to"
+   ],
+   [
+    "NPC18",
+    "Their evil god / \"Yugonga\" is somewhere / in this shrine.\\nGetting rid of it is / our only"
+   ],
+   [
+    "NPC21",
+    "This is the last of / the gargoyles! The / sorcerer is next!"
+   ],
+   [
+    "NPC21",
+    "You'll pay for your / actions now, little / boy!"
+   ],
+   [
+    "NPC22",
+    "What!? You're going to / buy one?\\nThat will be ^ 300."
+   ],
+   [
+    "NPC28",
+    "Everyone complains / about zombies these / days.\\nWhat's so bad about / zombies?\\nSo what "
+   ],
+   [
+    "NPC39",
+    "They just showed up / out of nowhere and / started attacking\\npeople! We never had / any t"
+   ],
+   [
+    "NPC39",
+    "This is the last of / the little ones. Then / we get their leader!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC04",
+   "NPC05",
+   "NPC07",
+   "NPC09",
+   "NPC10",
+   "NPC14",
+   "NPC18",
+   "NPC19",
+   "NPC21",
+   "NPC22",
+   "NPC27",
+   "NPC28",
+   "NPC39",
+   "NPC42",
+   "NPC48"
+  ]
+ },
+ "0x005": {
+  "set_after": [
+   [
+    "NPC01",
+    "What a cute kitty cat! / What's your name, / kitty cat?"
+   ],
+   [
+    "NPC02",
+    "Oh, no! Thanks to you, / we've missed the best / part."
+   ],
+   [
+    "NPC04",
+    "I sure do miss / catching fur fish.\\nI remember the good / old days when all we / had to d"
+   ],
+   [
+    "NPC09",
+    "$A! Thank / goodness you came / to. \\n$B? / $B's over there, / playing."
+   ],
+   [
+    "NPC10",
+    "Quiet! Our only / concern is with / the Kuldo Emerald!!"
+   ],
+   [
+    "NPC19",
+    "Evil monster in / shrine! / North North village!\\nWe too weak! / Sacrifice kids... / Sad s"
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC22",
+    "This road leads to the / Eastern Pass. The gate / there is closed to\\ntraffic, but you / s"
+   ],
+   [
+    "NPC28",
+    "You've seen him! / Where? Behind that / house over there?\\nThanks! I've been / looking all"
+   ],
+   [
+    "NPC34",
+    "Honey! I'm home! / Oh, I've missed you so / much!\\nUh, honey? Did you put / on some weight"
+   ],
+   [
+    "NPC39",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC42",
+    "I feel awful. Somebody / tell the captain to / stop all this rolling."
+   ],
+   [
+    "NPC49",
+    "$A! We'll take / care of Karmine. / You stop Xizan!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Meow!"
+   ],
+   [
+    "NPC04",
+    "Can't you see I'm / busy? I've got to / mend these nets.\\nYou never know when / the fur fi"
+   ],
+   [
+    "NPC09",
+    "We are the Picardians, / the guardians of the / world's knowledge."
+   ],
+   [
+    "NPC10",
+    "The Beast of Kuldo?\\nOh, you mean the Kuldo / Ruins? That's a long / way away...\\nYou go w"
+   ],
+   [
+    "NPC11",
+    "Kuldo's a long way / away... way past the / desert."
+   ],
+   [
+    "NPC18",
+    "Their evil god / \"Yugonga\" is somewhere / in this shrine.\\nGetting rid of it is / our only"
+   ],
+   [
+    "NPC21",
+    "This is the last of / the gargoyles! The / sorcerer is next!"
+   ],
+   [
+    "NPC21",
+    "You'll pay for your / actions now, little / boy!"
+   ],
+   [
+    "NPC22",
+    "Well? Did the guards / at the gate let you / go through?"
+   ],
+   [
+    "NPC28",
+    "As much as that zombie / is an abomination in / the eyes of the Lord,\\nhe hasn't done / an"
+   ],
+   [
+    "NPC39",
+    "This is the last of / the little ones. Then / we get their leader!"
+   ],
+   [
+    "NPC41",
+    "Jedro, you oaf! / You're late! What / took you so long!?"
+   ],
+   [
+    "NPC49",
+    "Mu ha ha ha! / I will never die!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC02",
+   "NPC04",
+   "NPC09",
+   "NPC10",
+   "NPC11",
+   "NPC18",
+   "NPC19",
+   "NPC21",
+   "NPC22",
+   "NPC28",
+   "NPC34",
+   "NPC39",
+   "NPC41",
+   "NPC42",
+   "NPC49"
+  ]
+ },
+ "0x006": {
+  "set_after": [
+   [
+    "NPC01",
+    "You're going to / God's Tower, right? / So you'll be going \\neast, through Isten? / Maybe "
+   ],
+   [
+    "NPC02",
+    "We, uh, um, have no / objection, Your Honor."
+   ],
+   [
+    "NPC04",
+    "We haven't caught / much fur fish this / year.\\nI guess it's just a / bad year..."
+   ],
+   [
+    "NPC19",
+    "Deep shrine shrine. / Monster evil monster.\\nDeeper shrine shrine. / Treasure warrior holy"
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC28",
+    "Graaaaooooh! / Graaaaaaoooh!\\nBrains! I must have / brains! Somebody bring / me brains!\\nR"
+   ],
+   [
+    "NPC41",
+    "Jedro! Hurry up! / Galik won't wait / for you all day!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "If you ever need a / place to stay, just / let the miss's know."
+   ],
+   [
+    "NPC01",
+    "Meow!"
+   ],
+   [
+    "NPC04",
+    "You want to borrow my / rowboat? Have you ever / been out by yourself?\\nThen I'm sorry, I "
+   ],
+   [
+    "NPC11",
+    "It feels like the / world has been turned / upside down.\\nMoney doesn't mean / much right "
+   ],
+   [
+    "NPC18",
+    "Their evil god / \"Yugonga\" is somewhere / in this shrine.\\nGetting rid of it is / our only"
+   ],
+   [
+    "NPC21",
+    "This is the last of / the gargoyles! The / sorcerer is next!"
+   ],
+   [
+    "NPC21",
+    "You'll pay for your / actions now, little / boy!"
+   ],
+   [
+    "NPC28",
+    "Graaaaooooh! / Graaaaaaoooh!\\nExcuse me, would you / happen to have any / brain poupon?\\nG"
+   ],
+   [
+    "NPC28",
+    "You have! Where? / Behind that house over / there? Thanks!\\nIt's nearly dinner / time, and"
+   ],
+   [
+    "NPC28",
+    "You've seen him! / Where? Behind that / house over there?\\nThanks! I've been / looking all"
+   ],
+   [
+    "NPC41",
+    "Good job."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC02",
+   "NPC04",
+   "NPC11",
+   "NPC13",
+   "NPC18",
+   "NPC19",
+   "NPC21",
+   "NPC28",
+   "NPC37",
+   "NPC41",
+   "NPC42"
+  ]
+ },
+ "0x007": {
+  "set_after": [
+   [
+    "NPC04",
+    "Mayor Kalan lives / in the big house / down the street."
+   ],
+   [
+    "NPC09",
+    "Wow! / Look at all these / books!\\nMaybe there's some / info about the Holy / Armor here.\\"
+   ],
+   [
+    "NPC14",
+    "Ah...ah...achoo! / Excuse me. Oh, gosh. / I'm sorry about that.\\nOh, dear, it's on / your "
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC23",
+    "My... my husdband... / He went off on some / hush-hush trip to\\nDen Heldar, and he / hasn'"
+   ],
+   [
+    "NPC23",
+    "Oh, you must be the / one that saved my / husband's life!\\nI can't... WE can't / thank you"
+   ],
+   [
+    "NPC28",
+    "No matter how many / times I hear that song / it always feels like\\nthe first time! He's /"
+   ],
+   [
+    "NPC30",
+    ")"
+   ],
+   [
+    "NPC34",
+    "This is serious, / $A. We have to / do something..."
+   ],
+   [
+    "NPC44",
+    "Help me... Help me... / I can't stand up."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC04",
+    "Hey $A, / I went to go buy / glasses yesterday,\\nbut they didn't have / any for us Cyclops"
+   ],
+   [
+    "NPC12",
+    "That pompous fool / Kalkanor came through / here on his way to \\nZed Harbor. He was all / "
+   ],
+   [
+    "NPC12",
+    "They say the beast of / the ruins was killed.\\nWhat? You defeated the / beast? Ha ha ha. S"
+   ],
+   [
+    "NPC12",
+    "YOU guys went to / the Kuldo Ruins? / All by yourselves?\\nI wish I could go... / But I'm t"
+   ],
+   [
+    "NPC14",
+    "Ah...ah...achoo! / Excuse me!"
+   ],
+   [
+    "NPC19",
+    "I thank you on / behalf of my shiny / happy people."
+   ],
+   [
+    "NPC19",
+    "Mommy in dream... / She smile smile..."
+   ],
+   [
+    "NPC19",
+    "Thank thank thank! / Happy happy happy."
+   ],
+   [
+    "NPC19",
+    "Thank thank thank! / Wife and kids / smile in heaven..."
+   ],
+   [
+    "NPC19",
+    "Treasure safe safe? / Holy treasure warrior / treasure..."
+   ],
+   [
+    "NPC21",
+    "This is the last of / the gargoyles! The / sorcerer is next!"
+   ],
+   [
+    "NPC21",
+    "We'll defend the / castle if you'll / clean up the city."
+   ],
+   [
+    "NPC21",
+    "You'll pay for your / actions now, little / boy!"
+   ],
+   [
+    "NPC23",
+    "I even hired a man / with a dinosaur to / search for my husband,\\nbut I haven't heard / a "
+   ],
+   [
+    "NPC23",
+    "Thank you again for / everything. It's so / nice to have him home\\nagain, to see him / tin"
+   ],
+   [
+    "NPC28",
+    "Wow!\\nHis singing is too / good! I mean, it's / like, so good!\\nNobody else even comes / c"
+   ],
+   [
+    "NPC42",
+    "deck."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC04",
+   "NPC09",
+   "NPC12",
+   "NPC14",
+   "NPC18",
+   "NPC19",
+   "NPC21",
+   "NPC23",
+   "NPC28",
+   "NPC30",
+   "NPC34",
+   "NPC39",
+   "NPC42",
+   "NPC44"
+  ]
+ },
+ "0x008": {
+  "set_after": [
+   [
+    "NPC03",
+    "Marco would be a / perfect mayor. / The people love him.\\nRichten, on the other / hand, ju"
+   ],
+   [
+    "NPC05",
+    "Have you heard the / new slogan for our / village? It goes:\\n\"I sure could go for a / fur "
+   ],
+   [
+    "NPC13",
+    "You're getting on my / nerves... Let's leave / this guy alone..."
+   ],
+   [
+    "NPC19",
+    "What good is a flute / going to do us?"
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC28",
+    "Looking kind of sick, / you are, ya, that's / for sure.\\nIf I vere you, I'd be / going to "
+   ],
+   [
+    "NPC34",
+    "Did you see that / husband and wife just / now? It's always like\\nthat when he comes / hom"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "Richten just doesn't / have what it takes to / be a good mayor."
+   ],
+   [
+    "NPC03",
+    "You don't need to pay, / Richten has already / taken care of it.\\nThe match will start / t"
+   ],
+   [
+    "NPC04",
+    "\"I sure could go for a / fur fish. Let's go to / San Claria for one.\"\\nI think it's a pret"
+   ],
+   [
+    "NPC05",
+    "I am the best fur fish / tunic maker but I have / no fur to work with."
+   ],
+   [
+    "NPC10",
+    "Kalkanor is so / handsome!"
+   ],
+   [
+    "NPC10",
+    "The ship has arrived."
+   ],
+   [
+    "NPC10",
+    "Why am I here? / Why is anyone here?"
+   ],
+   [
+    "NPC13",
+    "Hmm... I better run / some tests on it..."
+   ],
+   [
+    "NPC21",
+    "This is the last of / the gargoyles! The / sorcerer is next!"
+   ],
+   [
+    "NPC21",
+    "You'll pay for your / actions now, little / boy!"
+   ],
+   [
+    "NPC24",
+    "Don't worry, no lousy / thief is going to get / past me!"
+   ],
+   [
+    "NPC24",
+    "Fools! All fools! / All of them!"
+   ],
+   [
+    "NPC24",
+    "I won't have thieves / running around in my / castle!"
+   ],
+   [
+    "NPC24",
+    "The ring my husband / gave me before he died / was in that purse..."
+   ],
+   [
+    "NPC24",
+    "There are more serious / things to be worrying / about!"
+   ],
+   [
+    "NPC24",
+    "This is awkward, to / say the least."
+   ],
+   [
+    "NPC28",
+    "You should go and see / Aruvin about that / sickness of yours.\\nDon't vorry about the / mo"
+   ],
+   [
+    "NPC39",
+    "$A! We have to / save the townspeople!"
+   ],
+   [
+    "NPC39",
+    "Kill all the humans! / We have no need for / them! \\nThis is what you were / all trained f"
+   ],
+   [
+    "NPC41",
+    "Good job."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03",
+   "NPC04",
+   "NPC05",
+   "NPC09",
+   "NPC10",
+   "NPC13",
+   "NPC19",
+   "NPC21",
+   "NPC24",
+   "NPC28",
+   "NPC34",
+   "NPC39",
+   "NPC41"
+  ]
+ },
+ "0x009": {
+  "set_after": [
+   [
+    "NPC03",
+    "I don't want to / marry Richten..."
+   ],
+   [
+    "NPC04",
+    "By the way, I saw a / strange animal headed / towards your village.\\nI don't know what it "
+   ],
+   [
+    "NPC04",
+    "Welcome to San Claria! / Oh, it's you $A.\\nLet me try my new / village slogan on / you. It"
+   ],
+   [
+    "NPC15",
+    "How nice to see you / again. I'm afraid I / don't have much to\\noffer you, but please / ma"
+   ],
+   [
+    "NPC15",
+    "Please feel free to / stop by again whenever / you are nearby. There\\nwill always be a pla"
+   ],
+   [
+    "NPC15",
+    "We owe you so much. / Please stop by and see / us again.\\nMy father and I would / really e"
+   ],
+   [
+    "NPC15",
+    "Welcome back to our / humble home, brave / knight."
+   ],
+   [
+    "NPC18",
+    "Thank goodness / you're finally awake, / $A.\\nI can't find $B! / We must have been / separ"
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC24",
+    "Enjoy the party, young / knight."
+   ],
+   [
+    "NPC48",
+    "But, please, / I want it. / Pretty please!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "I don't want to / marry Richten..."
+   ],
+   [
+    "NPC03",
+    "You don't need to pay, / Richten has already / taken care of it.\\nThe match will start / t"
+   ],
+   [
+    "NPC04",
+    "Welcome to San Claria! / The fur fish capitol / of the world!\\nOh, it's you again..."
+   ],
+   [
+    "NPC09",
+    "That's funny, Darkbeat / told me this was an / exit.\\nHe's probably still / around. Let's "
+   ],
+   [
+    "NPC15",
+    "Please feel free to / stop by again whenever / you are nearby. There\\nwill always be a pla"
+   ],
+   [
+    "NPC15",
+    "We owe you so much. / Please stop by and see / us again.\\nMy father and I would / really e"
+   ],
+   [
+    "NPC18",
+    "This must be an / island..."
+   ],
+   [
+    "NPC24",
+    "Enjoy the party, young / knight."
+   ],
+   [
+    "NPC48",
+    "Didn't I tell you to / get out of my house / before?"
+   ],
+   [
+    "NPC48",
+    "Gwinladin, what is / next in the plan for / peace?"
+   ],
+   [
+    "NPC48",
+    "Sh-sh-she's very / c-cute."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03",
+   "NPC04",
+   "NPC09",
+   "NPC10",
+   "NPC15",
+   "NPC18",
+   "NPC21",
+   "NPC24",
+   "NPC39",
+   "NPC48"
+  ]
+ },
+ "0x00A": {
+  "set_after": [
+   [
+    "NPC02",
+    "I want to thank you / all for coming to this / joyous occasion..."
+   ],
+   [
+    "NPC02",
+    "Oh, no, no, no... / We're just passing by."
+   ],
+   [
+    "NPC04",
+    "Really? You didn't / hear my poem? Thank / goodness!"
+   ],
+   [
+    "NPC09",
+    "Wow! / Look at all these / books!\\nMaybe there's some / info about the Holy / Armor here.\\"
+   ],
+   [
+    "NPC18",
+    "Their evil god / \"Yugonga\" is somewhere / in this shrine.\\nGetting rid of it is / our only"
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC24",
+    "What? / You rescued Jadik? / Meddling fool!"
+   ],
+   [
+    "NPC29",
+    "Well, hello there.\\nIt's not often that / outsiders come to / visit our little\\nvillage. W"
+   ],
+   [
+    "NPC34",
+    "What a nice, happy / couple."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "Welcome to the / temple of Artema.\\nDo you want to / learn more about the / teachings of A"
+   ],
+   [
+    "NPC04",
+    "You heard it all / didn't you? Now / everyone's going to\\nknow... Julia will / know too. I"
+   ],
+   [
+    "NPC10",
+    "Hey, $A from / Orgo! How are you / doing? It's my first\\ntime here. I wonder / if I can se"
+   ],
+   [
+    "NPC29",
+    "Are you friends of / those three people / from Trisken that\\ncame by here?\\nHa ha! I didn'"
+   ],
+   [
+    "NPC30",
+    "Ark ark ark!"
+   ],
+   [
+    "NPC30",
+    "Run! Run for your / lives!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC04",
+   "NPC09",
+   "NPC10",
+   "NPC11",
+   "NPC18",
+   "NPC21",
+   "NPC24",
+   "NPC29",
+   "NPC30",
+   "NPC34"
+  ]
+ },
+ "0x00B": {
+  "set_after": [
+   [
+    "NPC02",
+    "I love doing / detective work! / It's so exciting."
+   ],
+   [
+    "NPC05",
+    "Where have all / the fur fish gone?\\nWe used to be the fur / fish capitol of the / world.."
+   ],
+   [
+    "NPC24",
+    "We must stop Karmine / before it's too / late...\\nBefore he unseals / the..."
+   ],
+   [
+    "NPC35",
+    "Oh, yes! I'd like to / thank you somehow... / Ah, how about this?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "I love doing / detective work! / It's so exciting."
+   ],
+   [
+    "NPC05",
+    "My mouth just waters / at the thought of a / big, furry, juicy one."
+   ],
+   [
+    "NPC35",
+    "I can't wait for / $E to be born!"
+   ],
+   [
+    "NPC42",
+    "Arrrgh! / Jungo! Jungo!\\nTell me laddie, / have you ever / seen a coconut?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC05",
+   "NPC24",
+   "NPC35",
+   "NPC42"
+  ]
+ },
+ "0x00C": {
+  "set_after": [
+   [
+    "NPC03",
+    "Come again."
+   ],
+   [
+    "NPC14",
+    "Did you find the / treasure?\\nWhat? There was no / treasure? None at all?\\nThat's too bad."
+   ],
+   [
+    "NPC14",
+    "Yellow dinosaur? That / sounds like Darkbeat / and Ibkee!"
+   ],
+   [
+    "NPC24",
+    "There's something / about that Gwinladin / fellow I don't like..."
+   ],
+   [
+    "NPC40",
+    "Please kill that nasty / Mushmare monster, / it deserves to die!"
+   ],
+   [
+    "NPC42",
+    "Hello again $A! / Finally, my dream of / owning my own store\\nis about to come true! / I a"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "So... you're the one / that Richten hired.\\nIf you win, Richten / gets to be mayor... / Hm"
+   ],
+   [
+    "NPC14",
+    "Hey, it's not like the / treasure has been / taken or anything.\\nI bet if you go deeper / "
+   ],
+   [
+    "NPC14",
+    "You know him? Well, / I'm sorry to pass on / the bad news.\\nEverybody gets there, / but no"
+   ],
+   [
+    "NPC34",
+    "Come play, come play!"
+   ],
+   [
+    "NPC34",
+    "How can you people / stand this heat? It's / so hot I could melt!\\nI wish there was a / ni"
+   ],
+   [
+    "NPC34",
+    "So, you're off, are / you? Well, take care / my young friends.\\nAnd don't worry about / th"
+   ],
+   [
+    "NPC34",
+    "We will be boarding / shortly. Do you have / everything you need?"
+   ],
+   [
+    "NPC42",
+    "Well, good luck to / you!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03",
+   "NPC14",
+   "NPC18",
+   "NPC24",
+   "NPC27",
+   "NPC34",
+   "NPC35",
+   "NPC40",
+   "NPC42"
+  ]
+ },
+ "0x00D": {
+  "set_after": [
+   [
+    "NPC02",
+    "I usually don't let / fighters bet on their / own matches, \\nbut I'll let you do / it this"
+   ],
+   [
+    "NPC06",
+    "Look! / It's following us.\\nLet's go ask the / Mayor what to do / with it!"
+   ],
+   [
+    "NPC14",
+    "Do you have a boat / stashed away / somewhere?\\nI mean, you can only / get to this town vi"
+   ],
+   [
+    "NPC14",
+    "How you young folk / can stand to run / around on a nice sunny\\nday like this, I'll / neve"
+   ],
+   [
+    "NPC21",
+    "We have to help! / Hurry!"
+   ],
+   [
+    "NPC34",
+    "Go ahead and board now / then."
+   ],
+   [
+    "NPC40",
+    "Karoooogh!"
+   ],
+   [
+    "NPC42",
+    "Is this guy for real?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "Sorry, only one bet / per customer."
+   ],
+   [
+    "NPC14",
+    "I'd like to meet this / water bug of yours.\\nI may be an old man, / but that doesn't mean "
+   ],
+   [
+    "NPC14",
+    "Zzzzzzz..."
+   ],
+   [
+    "NPC21",
+    "$A! Where are you / going? We have to help / the Triskenians!"
+   ],
+   [
+    "NPC40",
+    "It should be back / there."
+   ],
+   [
+    "NPC40",
+    "Thank you! / Our village can now / return to peace."
+   ],
+   [
+    "NPC42",
+    "Arrrgh! / Jungo! Jungo!\\nTell me laddie, / have you ever / seen a coconut?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC06",
+   "NPC14",
+   "NPC21",
+   "NPC24",
+   "NPC34",
+   "NPC40",
+   "NPC42"
+  ]
+ },
+ "0x00E": {
+  "set_after": [
+   [
+    "NPC03",
+    "So, you're the young / man that's going to / stand-in for Richten.\\nI'm glad to see that /"
+   ],
+   [
+    "NPC07",
+    "I've never seen / anyone get up / so slowly!\\nThe Mayor was looking / for you. Get up, / l"
+   ],
+   [
+    "NPC22",
+    "What happened, / $B? Why did you / run off like that?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "My only wish for now / is that it becomes / a fair fight.\\nPlease be careful / out there.\\"
+   ],
+   [
+    "NPC03",
+    "You don't need to pay, / Richten has already / taken care of it.\\nThe match will start / t"
+   ],
+   [
+    "NPC42",
+    "Arrrgh! / Jungo! Jungo!\\nTell me laddie, / have you ever / seen a coconut?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03",
+   "NPC07",
+   "NPC21",
+   "NPC22",
+   "NPC42"
+  ]
+ },
+ "0x00F": {
+  "set_after": [
+   [
+    "NPC03",
+    "Don't worry, I'll go / easy on you so I don't / hurt you too badly."
+   ],
+   [
+    "NPC22",
+    "$B..."
+   ],
+   [
+    "NPC34",
+    "Those children are so / amazing... I mean, / being separated from\\ntheir parents and / all"
+   ],
+   [
+    "NPC40",
+    "You can speak with the / Elder if you want. / Come this way."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "Don't worry, I'll go / easy on you so I don't / hurt you too badly."
+   ],
+   [
+    "NPC03",
+    "You don't need to pay, / Richten has already / taken care of it.\\nThe match will start / t"
+   ],
+   [
+    "NPC34",
+    "Enjoy your sea cruise / and stay out of harm's / way."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03",
+   "NPC22",
+   "NPC34",
+   "NPC40"
+  ]
+ },
+ "0x010": {
+  "set_after": [
+   [
+    "NPC02",
+    "Wait here."
+   ],
+   [
+    "NPC40",
+    "Oh, thank you! / Thank you!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "We are a peaceful / tribe..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC30",
+   "NPC40",
+   "NPC45"
+  ]
+ },
+ "0x011": {
+  "set_after": [
+   [
+    "NPC41",
+    "Good job."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "I haven't seen any / pink monsters."
+   ],
+   [
+    "NPC41",
+    "Good job."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC30",
+   "NPC40",
+   "NPC41"
+  ]
+ },
+ "0x012": {
+  "set_after": [
+   [
+    "NPC03",
+    "You must do what you / believe is right."
+   ],
+   [
+    "NPC10",
+    "Quiet! Our only / concern is with / the Kuldo Emerald!!"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC03",
+   "NPC10",
+   "NPC40"
+  ]
+ },
+ "0x013": {
+  "set_after": [
+   [
+    "NPC22",
+    "Spleek."
+   ],
+   [
+    "NPC40",
+    "We're looking for a / pink monster, have / you seen it?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "Darnit! / I lost again!\\nBut then again, who / cares? The bookie / skipped town with \\neve"
+   ],
+   [
+    "NPC02",
+    "It's gotten so quiet / around here lately."
+   ],
+   [
+    "NPC02",
+    "Richten has vanished. / I don't think we'll / be seeing him again."
+   ],
+   [
+    "NPC02",
+    "What is that thing, / anyway?"
+   ],
+   [
+    "NPC02",
+    "Wow! How often do you / feed that pink thing / snacks and stuff?"
+   ],
+   [
+    "NPC03",
+    "I'm glad I caught you / before you left town. / I just wanted to\\napologize about how / Ri"
+   ],
+   [
+    "NPC03",
+    "I'm sorry for all the / trouble that Richten / caused you. I know you\\nwere just doing wha"
+   ],
+   [
+    "NPC03",
+    "It looks like Richten / ran away... There's no / sign of him."
+   ],
+   [
+    "NPC03",
+    "It will do Richten / some good to lose / like that."
+   ],
+   [
+    "NPC03",
+    "Maybe now he can / start over and become / a decent person."
+   ],
+   [
+    "NPC03",
+    "Now that you mention / it, I haven't seen / Richten today."
+   ],
+   [
+    "NPC03",
+    "Thank you for doing / the right thing."
+   ],
+   [
+    "NPC03",
+    "Thank you! Oh, thank / you so much!\\nMarco will make a good / mayor, I'm sure of it."
+   ],
+   [
+    "NPC03",
+    "What a day! / It's been busy / for hours."
+   ],
+   [
+    "NPC03",
+    "Will you be staying? / For you? I'll let you / stay for free."
+   ],
+   [
+    "NPC41",
+    "Did you deliver it to / Galik yet?\\nI don't want to hear / your excuses! Go / deliver it r"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC03",
+   "NPC22",
+   "NPC40",
+   "NPC41"
+  ]
+ },
+ "0x014": {
+  "set_after": [
+   [
+    "NPC22",
+    "Beat it, you little / punks!"
+   ],
+   [
+    "NPC22",
+    "He stole all the money / you had."
+   ],
+   [
+    "NPC40",
+    "Okay, I'll take them / to the Elder. You guys / stay and keep watch."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "Hey, wait a minute!"
+   ],
+   [
+    "NPC22",
+    "I'm getting awfully / sick of those two / lovebirds!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC22",
+   "NPC40"
+  ]
+ },
+ "0x015": {
+  "set_after": [
+   [
+    "NPC40",
+    "Ah, yes, the pink / monster. / Hold on..."
+   ],
+   [
+    "NPC40",
+    "I've often wondered / about that shrine."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "Hey, wait a minute!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC40"
+  ]
+ },
+ "0x016": {
+  "set_after": [
+   [
+    "NPC10",
+    "You hand him the / tickets."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC10",
+   "NPC40"
+  ]
+ },
+ "0x017": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC01"
+  ]
+ },
+ "0x018": {
+  "set_after": [
+   [
+    "NPC22",
+    "Everything leads back / to the Artema cult. / People inducted into\\nthe cult began / disap"
+   ],
+   [
+    "NPC31",
+    "PROGRAM ERROR! / PROGRAM ABORTED! / SYSTEM REBOOT!\\nLOG IN : KARMINE / Karmine is my maste"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Karmine pretends to / offer solace to the / poor and unhappy, but\\nin fact, he founded / t"
+   ]
+  ],
+  "chest": [
+   [
+    "NPC21",
+    256
+   ]
+  ],
+  "files": [
+   "NPC01",
+   "NPC21",
+   "NPC22",
+   "NPC31"
+  ]
+ },
+ "0x019": {
+  "set_after": [
+   [
+    "NPC07",
+    "Tell Mayor Kalan / that I'm doing just / fine.\\nDon't let him think / that I'm worried."
+   ],
+   [
+    "NPC22",
+    "Karmine is an evil / being, a master of / Dark Powers, with \\nwhich he can control / beast"
+   ],
+   [
+    "NPC31",
+    "LOG IN : KARMINE / My master is Karmine. / You shall not pass!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Everything leads back / to the Artema cult. / People inducted into\\nthe cult began / disap"
+   ],
+   [
+    "NPC22",
+    "Karmine pretends to / offer solace to the / poor and unhappy, but\\nin fact, he founded / t"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC07",
+   "NPC22",
+   "NPC31"
+  ]
+ },
+ "0x01A": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC01",
+    "Nope, sorry, this one / I have to hold / for another customer."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01"
+  ]
+ },
+ "0x01B": {
+  "set_after": [
+   [
+    "NPC42",
+    "Is this guy for real?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Ah, the AFM 324. / Ha ha ha ha ha!"
+   ],
+   [
+    "NPC01",
+    "Nope, sorry, this one / I have to hold / for another customer."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC42"
+  ]
+ },
+ "0x01C": {
+  "set_after": [
+   [
+    "NPC42",
+    "Hello again $A! / Finally, my dream of / owning my own store\\nis about to come true! / I a"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Okay, well then, / good night!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC42"
+  ]
+ },
+ "0x01D": {
+  "set_after": [
+   [
+    "NPC01",
+    "Nope, sorry, this one / I have to hold / for another customer."
+   ],
+   [
+    "NPC42",
+    "Welcome aboard the / Zephyr."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "I'm sorry, this one / is already promised / to another customer."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC42"
+  ]
+ },
+ "0x01E": {
+  "set_after": [
+   [
+    "NPC06",
+    "Did you see that? / What was it?"
+   ],
+   [
+    "NPC18",
+    "Thank goodness / you're finally awake, / $A.\\nI can't find $B! / We must have been / separ"
+   ],
+   [
+    "NPC40",
+    "We living toys were / created to make the / world a safer place\\nby the brilliant / Profes"
+   ],
+   [
+    "NPC42",
+    "There's not a storm in / the world that scares / our captain!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Ah, the AFM 324. / Ha ha ha ha ha!"
+   ],
+   [
+    "NPC06",
+    "Look! / It's following us.\\nLet's go ask the / Mayor what to do / with it!"
+   ],
+   [
+    "NPC40",
+    "Those... other... / ... toys... you / have..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC06",
+   "NPC18",
+   "NPC40",
+   "NPC42"
+  ]
+ },
+ "0x01F": {
+  "set_after": [
+   [
+    "NPC06",
+    "I pray for your / success..."
+   ],
+   [
+    "NPC42",
+    "I'm going home for the / first time in months."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Ah, the AFM 324. / Ha ha ha ha ha!"
+   ],
+   [
+    "NPC06",
+    "W-W-What was that?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC06",
+   "NPC42"
+  ]
+ },
+ "0x020": {
+  "set_after": [
+   [
+    "NPC42",
+    "Never mind... / Ibkee is right...\\nYou're better off not / knowing. It's for your / own go"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Ah, the AFM 324. / Ha ha ha ha ha!"
+   ],
+   [
+    "NPC05",
+    "You hand the letter / to the Mayor."
+   ],
+   [
+    "NPC06",
+    "Have you seen my / little kitty?\\nBebeo, here Bebeo! / Bebeo, come to Papa! / It's time to"
+   ],
+   [
+    "NPC06",
+    "Mommy got mad at me. / She said I always get / dirty when I play."
+   ],
+   [
+    "NPC06",
+    "This is the worst / harvest we've ever / had.\\nWe've been trying / and trying, but / nothi"
+   ],
+   [
+    "NPC06",
+    "When you finish your / errand I'll make you / a nice warm meal."
+   ],
+   [
+    "NPC07",
+    "Are you tired, / $A? Do you want / to get some rest?"
+   ],
+   [
+    "NPC07",
+    "Tell Mayor Kalan / that I'm doing just / fine.\\nDon't let him think / that I'm worried."
+   ],
+   [
+    "NPC42",
+    "You're better off not / knowing..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC05",
+   "NPC06",
+   "NPC07",
+   "NPC24",
+   "NPC42"
+  ]
+ },
+ "0x021": {
+  "set_after": [
+   [
+    "NPC07",
+    "Goodnight, $A."
+   ],
+   [
+    "NPC42",
+    "Water bugs can run on / water. Haven't you / ever seen one?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Ah, the AFM 324. / Ha ha ha ha ha!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC06",
+   "NPC07",
+   "NPC42"
+  ]
+ },
+ "0x022": {
+  "set_after": [
+   [
+    "NPC01",
+    "What? / You're not tired?"
+   ],
+   [
+    "NPC42",
+    "God's Tower? Sure, / I know where it is. / It's that really tall\\ntower over on the / East"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC42"
+  ]
+ },
+ "0x023": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC42"
+  ]
+ },
+ "0x024": {
+  "set_after": [
+   [
+    "NPC01",
+    "Nonsense! / I want you to have it. / Go ahead, take it."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "If you ever need a / place to stay, just / let the miss's know."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01"
+  ]
+ },
+ "0x025": {
+  "set_after": [
+   [
+    "NPC01",
+    "Definitely, a / wonderful name."
+   ],
+   [
+    "NPC11",
+    "Anything I desire...\\nAh, never mind... / I'll never be able to / get it!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Do you want to stay / and rest here tonight?"
+   ],
+   [
+    "NPC24",
+    "On behalf of everybody / here, thank you, young / man."
+   ],
+   [
+    "NPC48",
+    "Tickets? I'll give / you anything you want / for the Beast Emerald."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC11",
+   "NPC24",
+   "NPC48"
+  ]
+ },
+ "0x026": {
+  "set_after": [
+   [
+    "NPC01",
+    "Definitely, a / wonderful name."
+   ],
+   [
+    "NPC01",
+    "Nonsense! / I want you to have it. / Go ahead, take it."
+   ],
+   [
+    "NPC22",
+    "Good! Let's go ahead / and start the test.\\nYou've got nothing to / worry about. Just do /"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Hmm. Let's talk again / when you've done a bit / more training, okay?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC22"
+  ]
+ },
+ "0x027": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC22",
+    "Oops... It looks like / we ran out of film. / Oh, well."
+   ],
+   [
+    "NPC42",
+    "$A, I think we / better go to our cabin / before the storm gets\\nany worse. It's going / t"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22",
+   "NPC42"
+  ]
+ },
+ "0x028": {
+  "set_after": [
+   [
+    "NPC01",
+    "Let's go upstairs / and take a look, Amos."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Oops... It looks like / we ran out of film. / Oh, well."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC22",
+   "NPC45"
+  ]
+ },
+ "0x029": {
+  "set_after": [
+   [
+    "NPC42",
+    "You found this next to / the pile of records."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Oops... It looks like / we ran out of film. / Oh, well."
+   ],
+   [
+    "NPC42",
+    "You're welcome to / have it, matey!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22",
+   "NPC42"
+  ]
+ },
+ "0x02A": {
+  "set_after": [
+   [
+    "NPC22",
+    "Oops... It looks like / we ran out of film. / Oh, well."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC11",
+    "I don't think we're / supposed to look in / there.\\nSee... the owner is / giving us a dirt"
+   ],
+   [
+    "NPC22",
+    "Oops... It looks like / we ran out of film. / Oh, well."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC11",
+   "NPC22"
+  ]
+ },
+ "0x02B": {
+  "set_after": [
+   [
+    "NPC22",
+    "Oops... It looks like / we ran out of film. / Oh, well."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Oops... It looks like / we ran out of film. / Oh, well."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x02C": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC41",
+    "Boy am I glad to be / back here! It's rough / out there!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC41",
+   "NPC45"
+  ]
+ },
+ "0x031": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x032": {
+  "set_after": [
+   [
+    "NPC02",
+    "Hey, wait a minute!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "Wake up! / Let's go!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC03"
+  ]
+ },
+ "0x033": {
+  "set_after": [
+   [
+    "NPC02",
+    "Let's see... / God's Tower...\\nGo out the opposite / gate, then east to the / city of Zed "
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x035": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC03",
+    "$A, Carmen is / here to see you.\\nNo, it's okay, stay / in bed... You need / some more res"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x036": {
+  "set_after": [
+   [
+    "NPC03",
+    "Don't you worry about / him. He's tough. He'll / be just fine in a bit."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "Thank goodness! Your / wounds have healed! / I was so worried...\\nOh, you'll be happy to /"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x037": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x041": {
+  "set_after": [
+   [
+    "NPC26",
+    "$A, why didn't / you tell her the / truth? \\nWe read about it at / Picard, don't you / rem"
+   ],
+   [
+    "NPC26",
+    "Have you heard any / interesting stories / lately?\\nWhat!? Kalkanor the / Brave was defeat"
+   ],
+   [
+    "NPC26",
+    "This is what / happened...\\nAs soon as valiant / Kalkanor entered the / cave, a hundred\\nm"
+   ],
+   [
+    "NPC26",
+    "Well, it goes like / this...\\nA long time ago, a / god and five of his / most loyal servan"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "But how on earth did / you hear about our / Giant?\\nI told you about him? / I did?\\nI must"
+   ],
+   [
+    "NPC26",
+    "No, don't you worry / about it. You've told / me all that you know.\\nI've got my own ways "
+   ],
+   [
+    "NPC26",
+    "Who did you hear about / it from?\\nFrom me? I told you? / I did?\\nAs I get older I tend / "
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x042": {
+  "set_after": [
+   [
+    "NPC26",
+    "We... we were playing / in the cave over by / the point, and and and\\nall of a sudden this"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "Ha ha ha. / That's a good one, / Billy.\\nThese kids... always / trying to pull your / leg "
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x043": {
+  "set_after": [
+   [
+    "NPC26",
+    "That last earthquake / caused a rockslide / that completely blocks\\nthe road to Denvrado. "
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x044": {
+  "set_after": [
+   [
+    "NPC26",
+    "Do you have any Living / Toys with you that you / could show me?\\nWow. This is a Living / "
+   ],
+   [
+    "NPC26",
+    "These Living Toys are / very hard to find!\\nSome people say you / can find them in / treas"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "I looked all over, but / I couldn't find any.\\nCollecting Living Toys / is a lot harder th"
+   ],
+   [
+    "NPC26",
+    "So the only sure way / of finding one is to / search everywhere?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x045": {
+  "set_after": [
+   [
+    "NPC26",
+    "Is it true? Is it / really true?\\nI heard that the brave / knight from Trisken / killed th"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "Small wonder that Lord / Kalkanor is famous / throughout Trisken.\\nHe saved Ann in no / ti"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x046": {
+  "set_after": [
+   [
+    "NPC26",
+    "I heard that the / Trisken Castle knight / killed the Giant.\\nNow we can live in / peace a"
+   ],
+   [
+    "NPC26",
+    "We haven't had an / earthquake that strong / in a long time.\\nIt even caused a / landslide"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "I forgot how nice it / was to live without / fear."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ],
+  "known": "set by GameMode_RootTask case 13 when starting the Baby storyline"
+ },
+ "0x047": {
+  "set_after": [
+   [
+    "NPC26",
+    "Small wonder that Lord / Kalkanor is famous / throughout Trisken.\\nHe saved Ann in no / ti"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "Small wonder that Lord / Kalkanor is famous / throughout Trisken.\\nHe saved Ann in no / ti"
+   ],
+   [
+    "NPC27",
+    "I'm just so happy. I / can't thank Lord / Kalkanor enough.\\nIt's wonderful to be / cooking"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26",
+   "NPC27"
+  ]
+ },
+ "0x048": {
+  "set_after": [
+   [
+    "NPC27",
+    "A little while ago all / the Knoygns started / bleating and crying.\\nI thought maybe / som"
+   ],
+   [
+    "NPC27",
+    "So you want to raise / your own Knoygn, eh? / Hmm...\\nBut what about that / fine pink pig "
+   ],
+   [
+    "NPC27",
+    "What? You'll chase / these Knoygns away / from my house for me?\\nHa ha ha! Thanks, but / n"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC27",
+    "I don't know what's / wrong with them. The / past few days, they\\nhave been acting like / "
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC27"
+  ]
+ },
+ "0x049": {
+  "set_after": [
+   [
+    "NPC26",
+    "I didn't see the old / man at all. They / probably left him for\\ndead somewhere back / the"
+   ],
+   [
+    "NPC26",
+    "The only one in a good / mood was that weird / old man.\\nHe kept talking about / what a gl"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "The only one in a good / mood was that weird / old man.\\nHe kept talking about / what a gl"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x04A": {
+  "set_after": [
+   [
+    "NPC07",
+    "I hope you come back / sometime soon, / $A.\\nDon't forget, you were / born here, this is /"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC07",
+    "I hope you come back / sometime soon, / $A.\\nDon't forget, you were / born here, this is /"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC07"
+  ]
+ },
+ "0x04E": {
+  "set_after": [
+   [
+    "NPC14",
+    "You can't find the / secret door unless you / explore the entire\\ntower first. Once you / "
+   ]
+  ],
+  "gates": [
+   [
+    "NPC14",
+    "I've told you / everything I know.\\nOf course, I'm a lot / richer than I was a / few minut"
+   ],
+   [
+    "NPC14",
+    "Well? Did you find it? / Was it where I said it / would be?\\nHa! I knew it! I knew / it wo"
+   ],
+   [
+    "NPC14",
+    "Well? Did you find the / treasure? Was it where / I said it was?\\nWhat? You didn't find / "
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC14"
+  ]
+ },
+ "0x04F": {
+  "set_after": [
+   [
+    "NPC15",
+    "You seem to be a brave / knight... My Dad, I / mean the mayor, has\\nbeen missing for days."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC14",
+    "If you rescued the / mayor, you would not / only be helping that\\nyoung woman, you'd / be "
+   ],
+   [
+    "NPC15",
+    "My Dad went to the / Tower to find the / people that hadn't\\ncome back, and now / he's mis"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC14",
+   "NPC15"
+  ]
+ },
+ "0x050": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC14",
+    "Ha ha ha! Before that / nincompoop detective / even realized who was\\nmissing, you brought"
+   ],
+   [
+    "NPC14",
+    "Hmm. My neighbors are / being awfully quiet. / I wonder what's up."
+   ],
+   [
+    "NPC14",
+    "I never realized how / great it is to live in / a nice, normal town.\\nI can look around no"
+   ],
+   [
+    "NPC14",
+    "So you're still here, / young man? I thought / you had left already.\\nWhat's that? Speak /"
+   ],
+   [
+    "NPC14",
+    "So, the layout of the / ruins under the tower / was just as I said?\\nAmazing... And you've"
+   ],
+   [
+    "NPC14",
+    "Well, if it isn't our / young hero! What / brings you back here?\\nI thought you had gone /"
+   ],
+   [
+    "NPC14",
+    "You found the secret / treasure! What was it? / Gems? Diamonds? Gold?\\nHuh? One lousy ring"
+   ],
+   [
+    "NPC15",
+    "I'll say this about / folks from Trisken, / they pay their bills."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC14",
+   "NPC15"
+  ]
+ },
+ "0x052": {
+  "set_after": [
+   [
+    "NPC14",
+    "Every once in a while, / something or somebody / comes along bringing\\nchange and renewal "
+   ]
+  ],
+  "gates": [
+   [
+    "NPC14",
+    "Ah...ah...achoo! / Excuse me!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC14"
+  ]
+ },
+ "0x053": {
+  "set_after": [
+   [
+    "NPC22",
+    "Excuse me, sir, / but would you like / to purchase a\\nred rose for ^ 300?"
+   ],
+   [
+    "NPC22",
+    "Uh-oh. It looks like / you don't have enough / money. Oh, well..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Hello, $A. / It's nice to see you / again.\\nCan I interest you in / a rose or a lily?"
+   ],
+   [
+    "NPC22",
+    "I think it's so / romantic, you buying / flowers like this.\\nYour girlfriend is / very luc"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x054": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC22",
+    "Hey, you found your / pig. I bet you're / happy."
+   ],
+   [
+    "NPC22",
+    "I see you found your / pig. Be sure not to / let him escape again."
+   ],
+   [
+    "NPC22",
+    "You found him! I was / worried about you Mr. / Piggy!"
+   ],
+   [
+    "NPC22",
+    "You found your pig. / That's good. I guess / he didn't go far."
+   ],
+   [
+    "NPC22",
+    "You got your pig back / safely! Now don't go / wandering off, Piggy!"
+   ],
+   [
+    "NPC23",
+    "So, you found your / pig. That's great!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22",
+   "NPC23"
+  ]
+ },
+ "0x055": {
+  "set_after": [
+   [
+    "NPC22",
+    "You won't regret it, / sir. We have the best / espresso in town!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "I'm sorry about what / happened last time. / Well, we got a new \\nowner now, and we're / a"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x056": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC22",
+    "I knew you'd come / back. Just step / inside."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x057": {
+  "set_after": [
+   [
+    "NPC22",
+    "Hey, is this your / wallet? I found it on / the street over there."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Always keep your / helmet strapped on / tight. You never know\\nwhat can happen, and / it p"
+   ],
+   [
+    "NPC22",
+    "Have you seen a wallet / anywhere? I seem to / have lost mine!"
+   ],
+   [
+    "NPC22",
+    "Lord Kalkanor still / hasn't returned. / I'm not saying that\\nsomething went wrong, / but "
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x059": {
+  "set_after": [
+   [
+    "NPC24",
+    "Kalkanor! Ramal! / Gwinladin! / Welcome home!\\nI look forward to / hearing all about your "
+   ]
+  ],
+  "gates": [
+   [
+    "NPC24",
+    "Kalkanor's return has / made this a joyous day / for the Realm."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC24"
+  ]
+ },
+ "0x05A": {
+  "set_after": [
+   [
+    "NPC22",
+    "What's wrong, $B? / What's out there?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Beyond that gate, / monsters roam about / by the dozens..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x05B": {
+  "set_after": [
+   [
+    "NPC22",
+    "You! Boy!\\nHere. Take this and go / get lost, okay?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "What's so funny?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x05C": {
+  "set_after": [
+   [
+    "NPC22",
+    "You! Boy!\\nHere. Take this and go / get lost, okay?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Honey, he's still / watching us."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x05D": {
+  "set_after": [
+   [
+    "NPC22",
+    "Have you seen a wallet / anywhere? I seem to / have lost mine!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Thank you again for / finding my wallet. I / really appreciate it."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x05F": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC28",
+    "You sure look better / than you did earlier. / He must have done a\\ngood job on you. You /"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC28"
+  ]
+ },
+ "0x060": {
+  "set_after": [
+   [
+    "NPC22",
+    "You little twerp! I / thought I told you to / get lost! We're trying\\nto have some quality"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC22",
+    "Honey, he's still / watching us."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0x062": {
+  "set_after": [
+   [
+    "NPC44",
+    "$A, did you see / that!?"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC44"
+  ]
+ },
+ "0x063": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC14",
+    "You're not here for / the treasure too, / are you?\\nI mean I came here / as soon as I hear"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC14"
+  ]
+ },
+ "0x065": {
+  "set_after": [
+   [
+    "NPC03",
+    "I don't know what to / do... Can you find / Marco for me?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "I don't know what to / do... Can you find / Marco for me?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x066": {
+  "set_after": [
+   [
+    "NPC03",
+    "They asked me to join / their cult but I said / \"No!\".\\nThen they went on and / on about h"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "Everybody stays inside / now to escape all the / chanting."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x067": {
+  "set_after": [
+   [
+    "NPC02",
+    "I saw a fur fish tunic / for sale last week in / Zed Harbor!\\nIt was made with / real Clar"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "Everybody knows that / Clarian pelts are the / best in the world."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x068": {
+  "set_after": [
+   [
+    "NPC03",
+    "I w-was w-w-watching / the church...\\nAnd then... then / Marco was... Oh, it / was terribl"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "What are you doing!?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC03"
+  ]
+ },
+ "0x069": {
+  "set_after": [
+   [
+    "NPC34",
+    "I recommend the Isten / Pomegranate Juice..."
+   ],
+   [
+    "NPC34",
+    "Oh, don't worry about / that. There are no / other customers to\\ncomplain, so it won't / b"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC34"
+  ]
+ },
+ "0x06A": {
+  "set_after": [
+   [
+    "NPC02",
+    "Everyone! / Let's celebrate!"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x06B": {
+  "set_after": [
+   [
+    "NPC32",
+    "Hi Santa! Is it time / for presents yet?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC32",
+    "He thought you were / Santa Claus, eh?\\nI hope I'm not that / bad when I get old..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC32"
+  ]
+ },
+ "0x06C": {
+  "set_after": [
+   [
+    "NPC05",
+    "They didn't need me / anymore after I lost / the election."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC05",
+    "Working here has / helped me realize how / badly I behaved."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC05"
+  ]
+ },
+ "0x06F": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC09",
+    "They're... gone!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC09"
+  ]
+ },
+ "0x070": {
+  "set_after": [
+   [
+    "NPC05",
+    "By the way, will you / be staying here / tonight?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC05",
+    "Are you going to stay? / If so, you don't have / to worry about paying."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC05"
+  ]
+ },
+ "0x071": {
+  "set_after": [
+   [
+    "NPC08",
+    "So this is the Warp / Gate... I bet we have / to use the Warp Gate\\nKey once the door / cl"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC08"
+  ]
+ },
+ "0x072": {
+  "set_after": [
+   [
+    "NPC35",
+    "Hello, $A! / Help me out and buy / something, okay?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC35",
+    "Welcome to Bonique! / Get it? It's oh, it's / you $A. I still \\ndon't have any / customers"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC35"
+  ]
+ },
+ "0x073": {
+  "set_after": [
+   [
+    "NPC26",
+    "Young man, / excuse me, / Sir Knight...\\nPlease.... / Save my daughter!\\nMy poor girl has "
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "Please, save little / Ann..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x074": {
+  "set_after": [
+   [
+    "NPC01",
+    "A stray blue cat / has been coming in / and out of here for\\na while now. / I wonder where"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Come back and see us / again sometime. We / need all the help we\\ncan get, what / with all"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01"
+  ]
+ },
+ "0x076": {
+  "set_after": [
+   [
+    "NPC33",
+    "You suffer an attack / of guilt."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC33",
+    "Nothing interesting / catches your eye."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC33"
+  ]
+ },
+ "0x077": {
+  "set_after": [
+   [
+    "NPC03",
+    "I wonder if it flew / in..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "You didn't find / anything unusual."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x078": {
+  "set_after": [
+   [
+    "NPC18",
+    "You get your hands a / little dirty..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC18",
+    "You get your hands a / little dirty..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC18"
+  ]
+ },
+ "0x079": {
+  "set_after": [
+   [
+    "NPC42",
+    "I don't think anybody / would mind if we took / one little apple..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC42",
+    "It's too heavy to / lift."
+   ],
+   [
+    "NPC42",
+    "Searching the wooden / crate..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC42"
+  ]
+ },
+ "0x07A": {
+  "set_after": [
+   [
+    "NPC30",
+    "It's been a long / journey, but we / finally made it."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x07B": {
+  "set_after": [
+   [
+    "NPC02",
+    "Hey!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "What are you doing!?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x07C": {
+  "set_after": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC43"
+  ]
+ },
+ "0x07E": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [
+   [
+    "NPC16",
+    4
+   ]
+  ],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x081": {
+  "set_after": [
+   [
+    "NPC06",
+    "I pray for your / success..."
+   ],
+   [
+    "NPC07",
+    "I guess it was just / an illusion..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC04",
+    "$A, / Let's play a game!\\nAh, you don't look / like you're in the / mood for a game."
+   ],
+   [
+    "NPC04",
+    "Did you see that?\\nI must be going crazy. / I thought I saw a huge / water bug go by here."
+   ],
+   [
+    "NPC04",
+    "I don't have time / to take you out / right now, son."
+   ],
+   [
+    "NPC04",
+    "It's lonely being by / yourself in the world."
+   ],
+   [
+    "NPC04",
+    "That poet is the most / handsome man I've laid / my eye on."
+   ],
+   [
+    "NPC04",
+    "We can't get through / to Isten because the / north bridge is out."
+   ],
+   [
+    "NPC04",
+    "Yeah, it's pretty / boring around here.\\nCourse, boring isn't / bad. I like boring.\\nAdven"
+   ],
+   [
+    "NPC05",
+    "Another beautiful day / with nothing to do."
+   ],
+   [
+    "NPC05",
+    "Everybody in this / village needs fur fish / to survive."
+   ],
+   [
+    "NPC05",
+    "Get that weird animal / out of my house!"
+   ],
+   [
+    "NPC05",
+    "Oh, my... / What a nice, plump, / delicious-looking...\\nUh, what do you call / that thing,"
+   ],
+   [
+    "NPC05",
+    "That's an interesting / animal you have there. / What is it?"
+   ],
+   [
+    "NPC05",
+    "Well, what a cute / little companion you / have there.\\nI could feed my family / for a wee"
+   ],
+   [
+    "NPC06",
+    "Bored? Of course you / are my dear. Little / boys like adventure.\\nOld people like me / li"
+   ],
+   [
+    "NPC06",
+    "Have you seen my / little Bebeo? He's / lost.\\nHere, Bebeo! Here, / Bebeo! / Come to Daddy"
+   ],
+   [
+    "NPC06",
+    "Hey hey! Get that / monster out of my / field!"
+   ],
+   [
+    "NPC06",
+    "Keep your chin up, / $A. Remember, / men never cry."
+   ],
+   [
+    "NPC06",
+    "What kind of animal / is that?"
+   ],
+   [
+    "NPC06",
+    "What's wrong, $A? / You look sad.\\nIs it because of the / baby monster?"
+   ],
+   [
+    "NPC07",
+    "Are you tired, / $A? Do you want / to get some rest?"
+   ],
+   [
+    "NPC07",
+    "I want you to leave / that monster in the / caves north of town."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC04",
+   "NPC05",
+   "NPC06",
+   "NPC07"
+  ]
+ },
+ "0x082": {
+  "set_after": [
+   [
+    "NPC40",
+    "Ah, yes, the pink / monster. / Hold on..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC07",
+    "You found a living / toy: ~13"
+   ],
+   [
+    "NPC07",
+    "You found a living / toy: ~15"
+   ],
+   [
+    "NPC40",
+    "Can I help you?"
+   ],
+   [
+    "NPC40",
+    "Finally! / I can get a good / night's sleep."
+   ],
+   [
+    "NPC40",
+    "I've often wondered / about that shrine."
+   ],
+   [
+    "NPC40",
+    "Searching the jar..."
+   ],
+   [
+    "NPC40",
+    "Thank you for saving / us. You can stay for / free if you like."
+   ],
+   [
+    "NPC40",
+    "We are a peaceful / tribe..."
+   ],
+   [
+    "NPC40",
+    "We were just playing, / having fun chasing the / pink monster around.\\nThen he ran away in"
+   ],
+   [
+    "NPC40",
+    "Well, now there is / one less thing to be / afraid of."
+   ],
+   [
+    "NPC40",
+    "What do you think the / ruins in the inner / caves used to be?"
+   ],
+   [
+    "NPC40",
+    "You're very strong!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC05",
+   "NPC07",
+   "NPC40"
+  ]
+ },
+ "0x083": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC01"
+  ]
+ },
+ "0x084": {
+  "set_after": [
+   [
+    "NPC01",
+    "Well, if you really / want to... Thank you, / $C.\\nAmos, don't you just / love these kids?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Mrs. Weatherby, here."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01"
+  ]
+ },
+ "0x085": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC08",
+    "I wonder who / built this?"
+   ],
+   [
+    "NPC09",
+    "$A, let's go to / the library and see / what we can find out."
+   ],
+   [
+    "NPC09",
+    "Wow! / Look at all these / books!\\nMaybe there's some / info about the Holy / Armor here.\\"
+   ],
+   [
+    "NPC13",
+    "Who do you think / built this thing?"
+   ],
+   [
+    "NPC16",
+    "Who do you think / built this?"
+   ],
+   [
+    "NPC21",
+    "Who do you think / built this?"
+   ],
+   [
+    "NPC22",
+    "Who do you think / built this?"
+   ],
+   [
+    "NPC30",
+    "Who do you think / built this?"
+   ],
+   [
+    "NPC34",
+    "Who do you think / built this?"
+   ],
+   [
+    "NPC40",
+    "I wonder who / made this?"
+   ],
+   [
+    "NPC40",
+    "Nobody knows what the / shrine in the inner / caves was built for."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC08",
+   "NPC09",
+   "NPC13",
+   "NPC16",
+   "NPC19",
+   "NPC21",
+   "NPC22",
+   "NPC30",
+   "NPC34",
+   "NPC40",
+   "NPC43",
+   "NPC46"
+  ]
+ },
+ "0x086": {
+  "set_after": [
+   [
+    "NPC19",
+    "What good is a flute / going to do us?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Come back and see us / again sometime. We / need all the help we\\ncan get, what / with all"
+   ],
+   [
+    "NPC02",
+    "Artema followers are / so spooky. They scare / my children you know."
+   ],
+   [
+    "NPC02",
+    "Let me tell you about / the teachings of / Artema the Wise..."
+   ],
+   [
+    "NPC02",
+    "Searching the / barrel..."
+   ],
+   [
+    "NPC02",
+    "What are you doing!?"
+   ],
+   [
+    "NPC03",
+    "I'm afraid to even / answer the door / nowadays.\\nI think, \"What if it's / one of them?\""
+   ],
+   [
+    "NPC03",
+    "Marco has disappeared! / Carmen is over at his / house right now..."
+   ],
+   [
+    "NPC03",
+    "Marco is the third / person to disappear / in the last few days."
+   ],
+   [
+    "NPC03",
+    "My husband said that / he was going to join / the Artema cult.\\nHe went to the cult / but "
+   ],
+   [
+    "NPC03",
+    "They don't like my / cafe, you know...\\nThey say it's a / \"Den of decadence.\""
+   ],
+   [
+    "NPC03",
+    "Those people give me / the creeps!\\nYesterday, they tried / to get me to join / their cult"
+   ],
+   [
+    "NPC04",
+    "Howdy $A! How are / you doing? Did you / see that huge bird \\nthat flew by here a / little"
+   ],
+   [
+    "NPC04",
+    "I wish that poet would / ask me out on a date."
+   ],
+   [
+    "NPC04",
+    "My friend used to / have a really weird / birthmark on his face,\\nbut it's gone now. / I w"
+   ],
+   [
+    "NPC04",
+    "Nobody wants to visit / San Claria now that / the fur fish are gone."
+   ],
+   [
+    "NPC04",
+    "Sa-n Cla-ria! / San Cla-ria, / San Cla-ria,\\nSan, San, San, / Claria, Claria, / San Claria"
+   ],
+   [
+    "NPC04",
+    "What's the point if / there's no fur fish / out there to catch?"
+   ],
+   [
+    "NPC04",
+    "Where did you find / that water bug? I wish / I had one."
+   ],
+   [
+    "NPC05",
+    "Are you going to stay? / If so, you don't have / to worry about paying."
+   ],
+   [
+    "NPC05",
+    "I've always wanted to / know what was on the / other side of the sea."
+   ],
+   [
+    "NPC05",
+    "It's another beautiful / day in the peaceful / village of San Claria."
+   ],
+   [
+    "NPC05",
+    "My husband is still / wandering around down / at the beach."
+   ],
+   [
+    "NPC05",
+    "No, they still aren't / catching very many / fur fish."
+   ],
+   [
+    "NPC05",
+    "That loud little / merchant must be doing / very well...\\nHe bought every single / fur pro"
+   ],
+   [
+    "NPC05",
+    "That salesman sure has / had a loud voice!"
+   ],
+   [
+    "NPC06",
+    "$A! / You're back!\\nI saw a gigantic bird / flying around a moment / ago, and I was afraid"
+   ],
+   [
+    "NPC06",
+    "$A, it's nice / to see you again."
+   ],
+   [
+    "NPC06",
+    "Hey $A! Good / to see you again."
+   ],
+   [
+    "NPC06",
+    "My vegetables still / won't grow..."
+   ],
+   [
+    "NPC06",
+    "Oh, just doing the / laundry, as usual."
+   ],
+   [
+    "NPC06",
+    "That darn cat is / always whining about / something!"
+   ],
+   [
+    "NPC06",
+    "Welcome back, $A. / You're going on / a journey again...\\nI know... / I know..."
+   ],
+   [
+    "NPC06",
+    "When you disappeared, / Grandma got really / worried. You know how\\nshe is. She thought / "
+   ],
+   [
+    "NPC07",
+    "I hope you come back / sometime soon, / $A.\\nDon't forget, you were / born here, this is /"
+   ],
+   [
+    "NPC10",
+    "I haven't sold any fur / fish yet. I just can't / figure it out."
+   ],
+   [
+    "NPC10",
+    "I told everybody there / was a storm coming. / Did they listen? No.\\nAnd did a storm come?"
+   ],
+   [
+    "NPC10",
+    "I was born here, and I / grew up here. I love / Zed Harbor."
+   ],
+   [
+    "NPC10",
+    "I'm afraid to go back. / Old Man Rogo will / beat me for sure!"
+   ],
+   [
+    "NPC10",
+    "Is my being alive / inevitable, or is it / accidental? Hmm..."
+   ],
+   [
+    "NPC10",
+    "Kalkanor is so / handsome!"
+   ],
+   [
+    "NPC10",
+    "The ship isn't due for / a while yet."
+   ],
+   [
+    "NPC10",
+    "Welcome to Zed Harbor, / the City of Hope and / Trade."
+   ],
+   [
+    "NPC10",
+    "What? / That huge ship sank?"
+   ],
+   [
+    "NPC11",
+    "God's Tower? / Never heard of it."
+   ],
+   [
+    "NPC11",
+    "I can't believe how / many ships sunk during / that horrible storm."
+   ],
+   [
+    "NPC11",
+    "Mu ha ha ha ha! / Just practicing my / evil laugh.\\nAll of us evil-doers / have to have an"
+   ],
+   [
+    "NPC11",
+    "There's a lot of water / in there."
+   ],
+   [
+    "NPC12",
+    "Galik? Yeah, he's a / friend of mine.\\nHe tells me all sorts / of interesting / stories."
+   ],
+   [
+    "NPC12",
+    "I haven't seen Galik / around much lately...\\nI bet he's locked up / in his laboratory / a"
+   ],
+   [
+    "NPC12",
+    "Wow! How did you get / your pink doggy to / grow wings?"
+   ],
+   [
+    "NPC13",
+    "Hmm..."
+   ],
+   [
+    "NPC13",
+    "I believe that there / are paths connecting / the world together \\ncalled warp gates. The "
+   ],
+   [
+    "NPC13",
+    "I hope this coal vein / lasts longer than the / other one."
+   ],
+   [
+    "NPC13",
+    "I'm a miner and it's / okay, I dig all night / and I sleep all day."
+   ],
+   [
+    "NPC18",
+    "Again come visit. / Evil Defeater."
+   ],
+   [
+    "NPC18",
+    "Chester friend. / No harm."
+   ],
+   [
+    "NPC18",
+    "Go storehouse. / Go now. / You want yours."
+   ],
+   [
+    "NPC18",
+    "I write song. / You brave warrior."
+   ],
+   [
+    "NPC18",
+    "Thank thank thank. / No sacrifice no more."
+   ],
+   [
+    "NPC18",
+    "You live long. / We sing dance."
+   ],
+   [
+    "NPC18",
+    "You saviour. / You take thing want. / Warrior-child."
+   ],
+   [
+    "NPC18",
+    "You very brave. / Young so young."
+   ],
+   [
+    "NPC19",
+    "Mommy in dream... / She smile smile..."
+   ],
+   [
+    "NPC19",
+    "Sacred Holy treasure? / Find find find?"
+   ],
+   [
+    "NPC19",
+    "Thank thank thank! / Happy happy happy."
+   ],
+   [
+    "NPC19",
+    "Thank thank thank! / Wife and kids / smile in heaven..."
+   ],
+   [
+    "NPC19",
+    "You are a Kerplean / now. You will always / be welcome here."
+   ],
+   [
+    "NPC34",
+    "Auntie Ibkee isn't / here...\\nShe went to some place / called Den Heldar to / find my dadd"
+   ],
+   [
+    "NPC34",
+    "Darkbeat and Ibkee / aren't here.\\nThey won't be back / for a while."
+   ],
+   [
+    "NPC34",
+    "Hello again! What / brings you back to our / little island?"
+   ],
+   [
+    "NPC34",
+    "I've got all the time / in the world and / nothing to do but nap."
+   ],
+   [
+    "NPC34",
+    "Then please come again / when you've left your / pet at home. Goodbye."
+   ],
+   [
+    "NPC35",
+    "He's not coming. I / can't believe he would / stand me up like that."
+   ],
+   [
+    "NPC35",
+    "I can't wait for / $E to be born!"
+   ],
+   [
+    "NPC35",
+    "I want to go home to / Trisken! I want my / daddy back!"
+   ],
+   [
+    "NPC35",
+    "I wish I could go back / to Garam right now...\\nI really miss my / mommy and daddy..."
+   ],
+   [
+    "NPC35",
+    "I'm going to be like / Darkbeat when I grow / up...\\nI'm going to go around / saving peopl"
+   ],
+   [
+    "NPC35",
+    "When I grow up, I'm / going to be like Aunt / Ibkee and help people."
+   ],
+   [
+    "NPC40",
+    "Are you going to stay / here again today?"
+   ],
+   [
+    "NPC40",
+    "I can go about my / business in peace / again, thanks to you."
+   ],
+   [
+    "NPC40",
+    "I've often wondered / about that shrine."
+   ],
+   [
+    "NPC40",
+    "Nobody knows what the / shrine in the inner / caves was built for."
+   ],
+   [
+    "NPC40",
+    "Now that Mushmare / is gone, life is much / better."
+   ],
+   [
+    "NPC40",
+    "Thank you for your / help, brave knight."
+   ],
+   [
+    "NPC40",
+    "The stronger I get, / the stronger the / monsters become..."
+   ],
+   [
+    "NPC40",
+    "There hasn't been much / excitement around here / lately."
+   ],
+   [
+    "NPC40",
+    "Welcome back, brave / knight. How are you?"
+   ],
+   [
+    "NPC40",
+    "You look different / somehow. Older and / stronger, perhaps."
+   ],
+   [
+    "NPC41",
+    "This tunnel is a nice / place to set up my / store."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC02",
+   "NPC03",
+   "NPC04",
+   "NPC05",
+   "NPC06",
+   "NPC07",
+   "NPC10",
+   "NPC11",
+   "NPC12",
+   "NPC13",
+   "NPC18",
+   "NPC19",
+   "NPC34",
+   "NPC35",
+   "NPC40",
+   "NPC41"
+  ],
+  "known": "story chapter 2 -- \"Wider Worlds\" (Save_GetLocationName)"
+ },
+ "0x087": {
+  "set_after": [
+   [
+    "NPC03",
+    "Let's see... / God's Tower...\\nYou need to go east / from here, to the / city of Zed Harbo"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Do you want to stay / and rest here tonight?"
+   ],
+   [
+    "NPC01",
+    "If you ever need a / place to stay, just / let the miss's know."
+   ],
+   [
+    "NPC01",
+    "Meow!"
+   ],
+   [
+    "NPC02",
+    "Darnit! / I lost again!\\nBut then again, who / cares? The bookie / skipped town with \\neve"
+   ],
+   [
+    "NPC02",
+    "It's gotten so quiet / around here lately."
+   ],
+   [
+    "NPC02",
+    "Richten has vanished. / I don't think we'll / be seeing him again."
+   ],
+   [
+    "NPC02",
+    "Welcome to the / temple of Artema.\\nDo you want to / learn more about the / teachings of A"
+   ],
+   [
+    "NPC02",
+    "What is that thing, / anyway?"
+   ],
+   [
+    "NPC02",
+    "Wow! How often do you / feed that pink thing / snacks and stuff?"
+   ],
+   [
+    "NPC03",
+    "Go east to Zed / Harbor. You should / be able to find a ship\\nthere that will take / you t"
+   ],
+   [
+    "NPC03",
+    "I'm sorry for all the / trouble that Richten / caused you. I know you\\nwere just doing wha"
+   ],
+   [
+    "NPC03",
+    "It looks like Richten / ran away... There's no / sign of him."
+   ],
+   [
+    "NPC03",
+    "It will do Richten / some good to lose / like that."
+   ],
+   [
+    "NPC03",
+    "Maybe now he can / start over and become / a decent person."
+   ],
+   [
+    "NPC03",
+    "Now that you mention / it, I haven't seen / Richten today."
+   ],
+   [
+    "NPC03",
+    "Thank you for doing / the right thing."
+   ],
+   [
+    "NPC03",
+    "Thank you! Oh, thank / you so much!\\nMarco will make a good / mayor, I'm sure of it."
+   ],
+   [
+    "NPC03",
+    "What a day! / It's been busy / for hours."
+   ],
+   [
+    "NPC03",
+    "Will you be staying? / For you? I'll let you / stay for free."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC02",
+   "NPC03"
+  ]
+ },
+ "0x088": {
+  "set_after": [
+   [
+    "NPC05",
+    "$A, are you okay? / You were talking in / your sleep.\\nAre you worried / about that little"
+   ],
+   [
+    "NPC07",
+    "$A, are you okay? / Were you having a / nightmare?\\nWas it about that / little monster?\\nG"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "Okay, this is goodbye, / little pink one. Be / careful now."
+   ],
+   [
+    "NPC07",
+    "Goodnight, $A."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC05",
+   "NPC07"
+  ]
+ },
+ "0x089": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC01",
+    "What? / You're not tired?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01"
+  ]
+ },
+ "0x08A": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC26",
+    "After all that work I / put into clearing the / north road, now I have\\nto worry about tha"
+   ],
+   [
+    "NPC26",
+    "First a Giant, now / that horrible worm / thing!\\nI know one thing, / though, nobody's goi"
+   ],
+   [
+    "NPC26",
+    "God's Tower blew up? / Flying worms?\\nWhat's going on around / here?"
+   ],
+   [
+    "NPC26",
+    "I don't know how / anyone can expect me / to dry my laundry\\nwith that big old / worm up t"
+   ],
+   [
+    "NPC26",
+    "It's just not fair! / I haven't even had a / chance to meet Prince\\nCharming yet, and now "
+   ],
+   [
+    "NPC26",
+    "Look at that big / wormy thing!\\nHey... What's that / smell?\\nI think... / It's the worm! "
+   ],
+   [
+    "NPC26",
+    "No, don't you worry / about it. You've told / me all that you know.\\nI've got my own ways "
+   ],
+   [
+    "NPC26",
+    "See this picture? This / is the most powerful / living toy. He can\\ntake monsters out with"
+   ],
+   [
+    "NPC26",
+    "That worm might be / responsible for the / lack of fur fish."
+   ],
+   [
+    "NPC26",
+    "Why are children / so fascinated with / disgusting things like\\nthat worm? / I mean, it's "
+   ],
+   [
+    "NPC27",
+    "A good friend of mine / runs the cafe in / Isten."
+   ],
+   [
+    "NPC27",
+    "Ann told me how / the Giant helped her. / I was wrong about that\\nGiant, I admit it. / The"
+   ],
+   [
+    "NPC27",
+    "GAAAAAAAH!"
+   ],
+   [
+    "NPC27",
+    "I don't like the / mayor's plan to expand / the boundaries of the\\nvillage. It will be / n"
+   ],
+   [
+    "NPC27",
+    "I like the Mayor's / plan to expand the / village.\\nIt will be great to / have access to m"
+   ],
+   [
+    "NPC27",
+    "Poor old Ruval... / Why did they have to / do that?"
+   ],
+   [
+    "NPC27",
+    "The Knoygns are very / upset! They're scared / out of their wits!\\nThat worm thing must / "
+   ],
+   [
+    "NPC27",
+    "You can stay for free / tonight because we're / celebrating Kalkanor's\\nvictory over the /"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26",
+   "NPC27"
+  ]
+ },
+ "0x08C": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC20",
+    "I get so bored being / here that I start to / think it would be nice\\nif a monster attacke"
+   ],
+   [
+    "NPC22",
+    "Have a safe journey!"
+   ],
+   [
+    "NPC22",
+    "Hello there traveler! / Thirsty? Looking for a / nice quiet cafe?"
+   ],
+   [
+    "NPC22",
+    "Hello, $A. / It's nice to see you / again.\\nCan I interest you in / a rose or a lily?"
+   ],
+   [
+    "NPC22",
+    "I forgot my fishing / rod...\\nI knew I forgot / something!\\nBy the way, have you / seen my"
+   ],
+   [
+    "NPC22",
+    "I knew you'd come / back. Just step / inside."
+   ],
+   [
+    "NPC22",
+    "I've never seen anyone / as noble and brave as / Lord Kalkanor.\\nHe looks even taller, / e"
+   ],
+   [
+    "NPC22",
+    "If Lord Kalkanor / defeats Karmine we / won't have any more\\nparents getting / kidnapped b"
+   ],
+   [
+    "NPC22",
+    "Kissing like that in / the Royal Park... Have / they no decency?"
+   ],
+   [
+    "NPC22",
+    "Lord Kalkanor just set / out in pursuit of / Karmine. This time\\nhe's going to put an / en"
+   ],
+   [
+    "NPC22",
+    "There's nothing better / than sitting down for / a rest in a nice park."
+   ],
+   [
+    "NPC22",
+    "What's so funny?"
+   ],
+   [
+    "NPC22",
+    "You are free to come / and go as you please."
+   ],
+   [
+    "NPC22",
+    "You want to know why / Lord Kalkanor travels / around the world?\\nWell, I'll tell you..."
+   ],
+   [
+    "NPC22",
+    "You went through the / forbidden gate to the / east?\\nWhat did you find? / What was it lik"
+   ],
+   [
+    "NPC22",
+    "You've been through / the Eastern Pass?? / I didn't think anybody\\nbut Lord Kalkanor was /"
+   ],
+   [
+    "NPC22",
+    "You've traveled all / over the world, you / must agree that this\\nis the finest inn of / t"
+   ],
+   [
+    "NPC23",
+    "At this rate, I'll / never get big and / tall like Kalkanor.\\nI only grew half an / inch l"
+   ],
+   [
+    "NPC23",
+    "If you absolutely have / to go through the / Eastern Pass, please, \\nbe careful! We don't "
+   ],
+   [
+    "NPC23",
+    "Make yourself at / home."
+   ],
+   [
+    "NPC23",
+    "My store is finally / starting to show some / profit.\\nI just hope everything / is going w"
+   ],
+   [
+    "NPC23",
+    "Welcome to MTC. / The Monster Training / Center.\\nSo, do you want to / train your monster?"
+   ],
+   [
+    "NPC24",
+    "You're too late. Lord / Kalkanor has already / departed."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC20",
+   "NPC22",
+   "NPC23",
+   "NPC24"
+  ]
+ },
+ "0x08D": {
+  "set_after": [
+   [
+    "NPC03",
+    "It looks like Richten / ran away... There's no / sign of him."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x08E": {
+  "set_after": [
+   [
+    "NPC02",
+    "Want some advice? / Don't gamble, / you'll regret it."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "Want some advice? / Don't gamble, / you'll regret it."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x08F": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC11",
+    "Man, I love that / root beer!\\nManuel? Manuel? / Hey, have you seen my / buddy Manuel?\\nI "
+   ],
+   [
+    "NPC34",
+    "We will be boarding / shortly. Do you have / everything you need?"
+   ],
+   [
+    "NPC41",
+    "Things out there seem / to be worse than ever. / I hope Jedro is safe."
+   ],
+   [
+    "NPC42",
+    "Arrrgh!!\\nHere it comes! / See it blowing the / tops off the waves?\\nHear it singing in th"
+   ],
+   [
+    "NPC42",
+    "I feel awful. Somebody / tell the captain to / stop all this rolling."
+   ],
+   [
+    "NPC42",
+    "I hate the way this / ship is starting to / roll. What? A storm?\\nWell, that explains / wh"
+   ],
+   [
+    "NPC42",
+    "It's too heavy to / lift."
+   ],
+   [
+    "NPC42",
+    "Searching the wooden / crate..."
+   ],
+   [
+    "NPC42",
+    "deck."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC11",
+   "NPC34",
+   "NPC41",
+   "NPC42"
+  ]
+ },
+ "0x090": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC14",
+    "Ha ha ha! Before that / nincompoop detective / even realized who was\\nmissing, you brought"
+   ],
+   [
+    "NPC14",
+    "Hmm. My neighbors are / being awfully quiet. / I wonder what's up."
+   ],
+   [
+    "NPC14",
+    "I never realized how / great it is to live in / a nice, normal town.\\nI can look around no"
+   ],
+   [
+    "NPC14",
+    "So you're still here, / young man? I thought / you had left already.\\nWhat's that? Speak /"
+   ],
+   [
+    "NPC14",
+    "So, the layout of the / ruins under the tower / was just as I said?\\nAmazing... And you've"
+   ],
+   [
+    "NPC14",
+    "Well met, young sir. / No, please, say no / more about that case.\\nI'm afraid that I made "
+   ],
+   [
+    "NPC14",
+    "Well, if it isn't our / young hero! What / brings you back here?\\nI thought you had gone /"
+   ],
+   [
+    "NPC14",
+    "You found the secret / treasure! What was it? / Gems? Diamonds? Gold?\\nHuh? One lousy ring"
+   ],
+   [
+    "NPC15",
+    "We owe you so much. / Please stop by and see / us again.\\nMy father and I would / really e"
+   ],
+   [
+    "NPC20",
+    "Hey, have you guys got / any news you can tell / me? I've been out here\\na long time by my"
+   ],
+   [
+    "NPC22",
+    "Hello, $A. / It's nice to see you / again.\\nCan I interest you in / a rose or a lily?"
+   ],
+   [
+    "NPC22",
+    "I forgot my fishing / rod...\\nI knew I forgot / something!\\nBy the way, have you / seen my"
+   ],
+   [
+    "NPC22",
+    "I knew you'd come / back. Just step / inside."
+   ],
+   [
+    "NPC22",
+    "I wonder what's / keeping Lord Kalkanor?\\nHe must have run into / some trouble. I hope / e"
+   ],
+   [
+    "NPC22",
+    "I'm sorry about what / happened last time. / Well, we got a new \\nowner now, and we're / a"
+   ],
+   [
+    "NPC22",
+    "I'm sorry to say that / Lord Kalkanor hasn't / come back yet.\\nHis monster-crushing / expe"
+   ],
+   [
+    "NPC22",
+    "Lord Kalkanor still / hasn't returned. / I'm not saying that\\nsomething went wrong, / but "
+   ],
+   [
+    "NPC22",
+    "The man who lives here / finally came home from / Den Heldar, but his\\ndaughter Aki hasn't"
+   ],
+   [
+    "NPC22",
+    "There's been a lot / of reports of things / getting stolen...\\nThere's a thief in / town. "
+   ],
+   [
+    "NPC22",
+    "When Lord Kalkanor / returns, the parade / will pass right by\\nhere. I'm going to / stake "
+   ],
+   [
+    "NPC22",
+    "You have chosen wisely / young man. This is the / finest inn in all the\\nland! We offer / "
+   ],
+   [
+    "NPC23",
+    "I want to get big and / tall as fast as I can!"
+   ],
+   [
+    "NPC23",
+    "Our store is a direct / descendent of the / first blacksmith in\\nTrisken. That copycat / a"
+   ],
+   [
+    "NPC23",
+    "We are the oldest / armorer in Trisken!\\nYou can't compare an / honest store like ours / t"
+   ],
+   [
+    "NPC32",
+    "By the way, do you / like fishing?"
+   ],
+   [
+    "NPC32",
+    "Eek! A human and a / dinosaur! \\nIt's not the same / dinosaur this time. / This one isn't "
+   ],
+   [
+    "NPC32",
+    "I guess Santa isn't / going to come this / year. \\nThe children will be / disappointed. \\n"
+   ],
+   [
+    "NPC32",
+    "I wish I could fly / like that dragonfly / girl!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC14",
+   "NPC15",
+   "NPC20",
+   "NPC22",
+   "NPC23",
+   "NPC32"
+  ]
+ },
+ "0x091": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC14",
+    "Ha ha ha! Before that / nincompoop detective / even realized who was\\nmissing, you brought"
+   ],
+   [
+    "NPC14",
+    "Hmm. My neighbors are / being awfully quiet. / I wonder what's up."
+   ],
+   [
+    "NPC14",
+    "I never realized how / great it is to live in / a nice, normal town.\\nI can look around no"
+   ],
+   [
+    "NPC14",
+    "So you're still here, / young man? I thought / you had left already.\\nWhat's that? Speak /"
+   ],
+   [
+    "NPC14",
+    "So, the layout of the / ruins under the tower / was just as I said?\\nAmazing... And you've"
+   ],
+   [
+    "NPC14",
+    "Well met, young sir. / No, please, say no / more about that case.\\nI'm afraid that I made "
+   ],
+   [
+    "NPC14",
+    "Well, if it isn't our / young hero! What / brings you back here?\\nI thought you had gone /"
+   ],
+   [
+    "NPC14",
+    "You found the secret / treasure! What was it? / Gems? Diamonds? Gold?\\nHuh? One lousy ring"
+   ],
+   [
+    "NPC15",
+    "Please feel free to / stop by again whenever / you are nearby. There\\nwill always be a pla"
+   ],
+   [
+    "NPC20",
+    "I can't believe they / left me out here all / by myself! \\nThere's nothing to / do but sta"
+   ],
+   [
+    "NPC22",
+    "After the party at the / castle, Lord Kalkanor / is going east for the\\nfinal confrontatio"
+   ],
+   [
+    "NPC22",
+    "Always keep your / helmet strapped on / tight. You never know\\nwhat can happen, and / it p"
+   ],
+   [
+    "NPC22",
+    "Anyone who wishes can / enter the castle."
+   ],
+   [
+    "NPC22",
+    "Aren't there any / public toilets in / this city?"
+   ],
+   [
+    "NPC22",
+    "Come one, come all! / Stay in the best inn / in all of Trisken!"
+   ],
+   [
+    "NPC22",
+    "Darnit! I look away / for one second, and I / miss the parade!\\nI came all the way to / Tr"
+   ],
+   [
+    "NPC22",
+    "Everywhere you go, / robbers! Thieves! / Pickpockets!\\nThey'll steal from / you in broad d"
+   ],
+   [
+    "NPC22",
+    "Hello, $A. / It's nice to see you / again.\\nCan I interest you in / a rose or a lily?"
+   ],
+   [
+    "NPC22",
+    "I forgot my fishing / rod...\\nI knew I forgot / something!\\nBy the way, have you / seen my"
+   ],
+   [
+    "NPC22",
+    "I heard that once you / join the Artema Cult, / they take you away\\nfrom your family and /"
+   ],
+   [
+    "NPC22",
+    "I knew you'd come / back. Just step / inside."
+   ],
+   [
+    "NPC22",
+    "I wouldn't go in there / if I were you!"
+   ],
+   [
+    "NPC22",
+    "I'd love to live in a / big city like this. / Maybe I'll move..."
+   ],
+   [
+    "NPC22",
+    "I'm going to complain! / This tour is not going / according to schedule!"
+   ],
+   [
+    "NPC22",
+    "I'm sorry, honey, I / didn't mean to get / angry."
+   ],
+   [
+    "NPC22",
+    "Kalkanor is the / greatest knight ever!\\nI almost fainted when / he said hello to me / dur"
+   ],
+   [
+    "NPC22",
+    "So, those three are / going to save the / world? I wonder..."
+   ],
+   [
+    "NPC22",
+    "Somebody is up there / working on the bell: / Listen..."
+   ],
+   [
+    "NPC22",
+    "That was a great / parade. It's too / bad you missed it."
+   ],
+   [
+    "NPC22",
+    "That was the best / parade I've ever seen!"
+   ],
+   [
+    "NPC22",
+    "The man who lives here / finally came home from / Den Heldar, but his\\ndaughter Aki hasn't"
+   ],
+   [
+    "NPC22",
+    "They've gone off and / left me again. Where's / that daughter of mine?"
+   ],
+   [
+    "NPC22",
+    "This is the best inn / I've ever stayed in."
+   ],
+   [
+    "NPC22",
+    "This is the way to the / famous Trisken Eastern / Pass Gate.\\nI'm going to go take / a pic"
+   ],
+   [
+    "NPC22",
+    "Three cheers for Lord / Kalkanor!\\nThis is great! Can't / you just feel the / excitement i"
+   ],
+   [
+    "NPC22",
+    "Today is a special / day. Lord Kalkanor / has returned!"
+   ],
+   [
+    "NPC22",
+    "Well, I'm here. / Where's Mr. Right?"
+   ],
+   [
+    "NPC22",
+    "Well, everybody got to / see the parade. Looks / like they all enjoyed\\nit, so that's good"
+   ],
+   [
+    "NPC22",
+    "What a great parade. / I never knew Ramal was / that beautiful!"
+   ],
+   [
+    "NPC22",
+    "You just missed a / great parade! Lord / Kalkanor and Ramal,\\neven old Gwinladin / partici"
+   ],
+   [
+    "NPC22",
+    "You picked a good time / to visit Trisken. Lord / Kalkanor has just\\nreturned. You can go "
+   ],
+   [
+    "NPC23",
+    "All I have left to buy / now is a Kalkanor / action figure..."
+   ],
+   [
+    "NPC23",
+    "I heard about you! A / friend of mine told me / that you rescued a\\nbunch of people being "
+   ],
+   [
+    "NPC23",
+    "Thank you again for / everything. It's so / nice to have him home\\nagain, to see him / tin"
+   ],
+   [
+    "NPC23",
+    "They're having a party / for Lord Kalkanor at / the castle.\\nI wish I had the time / to go"
+   ],
+   [
+    "NPC23",
+    "We escaped from the / cult, but our daughter / has disappeared!"
+   ],
+   [
+    "NPC23",
+    "We're the happiest of / all the couples in / town! Right, Honey?"
+   ],
+   [
+    "NPC23",
+    "You know what I'm / going to do when I / grow up?\\nI'm going to marry / Ramal!!"
+   ],
+   [
+    "NPC44",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [
+   [
+    "NPC44",
+    505
+   ]
+  ],
+  "files": [
+   "NPC14",
+   "NPC15",
+   "NPC20",
+   "NPC22",
+   "NPC23",
+   "NPC44"
+  ]
+ },
+ "0x092": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC14",
+    "Ah...ah...achoo! / Excuse me!"
+   ],
+   [
+    "NPC14",
+    "Ha ha ha. You must / really like our little / town.\\nI mean, why else would / you come bac"
+   ],
+   [
+    "NPC14",
+    "I can't figure out why / that detective is / still in town.\\nI mean, what's there / for hi"
+   ],
+   [
+    "NPC14",
+    "I'm going to devote my / life to solving the / mysteries of the North\\nTower. I'm going to"
+   ],
+   [
+    "NPC14",
+    "The kid next door is / always screeching / away on his violin.\\nHow am I supposed to / get"
+   ],
+   [
+    "NPC14",
+    "The kid next door is / up playing his piano / at dawn.\\nHow am I supposed to / get any sle"
+   ],
+   [
+    "NPC14",
+    "Uh, nobody's home / here, nobody at all. / <Shhhh!>"
+   ],
+   [
+    "NPC14",
+    "Well met, young sir. / No, please, say no / more about that case.\\nI'm afraid that I made "
+   ],
+   [
+    "NPC14",
+    "What brings you here / again? Did you come / back to see Gamella?\\nThe mayor's daughter / "
+   ],
+   [
+    "NPC14",
+    "Zzzzzzz..."
+   ],
+   [
+    "NPC15",
+    "I never realized what / a wonderful daughter I / had until now."
+   ],
+   [
+    "NPC15",
+    "I suppose you are back / here looking for / monsters to fight.\\nI don't think you'll / fin"
+   ],
+   [
+    "NPC15",
+    "Please feel free to / stop by again whenever / you are nearby. There\\nwill always be a pla"
+   ],
+   [
+    "NPC20",
+    "It's all over. We're / all going to die. Not / even Lord Kalkanor\\ncould beat Carmine. / W"
+   ],
+   [
+    "NPC22",
+    "I knew you'd come / back. Just step / inside."
+   ],
+   [
+    "NPC22",
+    "Lord Kalkanor, felled / in battle? It can't / be!"
+   ],
+   [
+    "NPC23",
+    "$A, we decided / to stay here and / protect our home.\\nWe'll be okay, don't / worry about "
+   ],
+   [
+    "NPC23",
+    "Am I going to be / killed before I even / grow up?\\nHow am I going to get / to see my drea"
+   ],
+   [
+    "NPC23",
+    "Business has been / terrible lately.\\nIf it keeps on going / like this, I'll have / to clo"
+   ],
+   [
+    "NPC23",
+    "I'm glad to see that / you're safe, $A! / It's too bad about\\nKalkanor, though. I / hope y"
+   ],
+   [
+    "NPC29",
+    "What!? The three / Triskenians were / wiped out?\\nDarn! I wanted to hunt / them down mysel"
+   ],
+   [
+    "NPC31",
+    "Ah-h! I feel a great / pain! Horrible things / are happening...\\nYou probably felt it / to"
+   ],
+   [
+    "NPC31",
+    "Master Aruvin is / available now."
+   ],
+   [
+    "NPC31",
+    "We all sense danger.\\nYet our blind teacher / does not fear danger. / We will not run..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC14",
+   "NPC15",
+   "NPC20",
+   "NPC22",
+   "NPC23",
+   "NPC29",
+   "NPC31"
+  ]
+ },
+ "0x095": {
+  "set_after": [
+   [
+    "NPC24",
+    "On behalf of everybody / here, thank you, young / man."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC20",
+    "What? A pig? / Haven't seen one.\\nI don't really watch / the land side, you / know, just t"
+   ],
+   [
+    "NPC22",
+    "A yellow dinosaur / showed up with a / little girl, and\\neverybody was laughing / and cryi"
+   ],
+   [
+    "NPC22",
+    "Did something happen / at the castle? I heard / some yelling..."
+   ],
+   [
+    "NPC22",
+    "He he he..."
+   ],
+   [
+    "NPC22",
+    "Hello there traveler! / Thirsty? Looking for a / nice quiet cafe?"
+   ],
+   [
+    "NPC22",
+    "Hey, you found your / pig. I bet you're / happy."
+   ],
+   [
+    "NPC22",
+    "I forgot my fishing / rod...\\nI knew I forgot / something!\\nBy the way, have you / seen my"
+   ],
+   [
+    "NPC22",
+    "I see you found your / pig. Be sure not to / let him escape again."
+   ],
+   [
+    "NPC22",
+    "I'd love to help you, / but we only train / monsters, and you\\ndon't seem to have one / wi"
+   ],
+   [
+    "NPC22",
+    "So this is where you / ran off to!"
+   ],
+   [
+    "NPC22",
+    "The King has ordered / that none shall pass / through this gate."
+   ],
+   [
+    "NPC22",
+    "Yes, as a matter of / fact, I did see a pink / pig-like animal!\\nHe ran right past me, / h"
+   ],
+   [
+    "NPC22",
+    "You are free to come / and go as you please."
+   ],
+   [
+    "NPC22",
+    "You found him! I was / worried about you Mr. / Piggy!"
+   ],
+   [
+    "NPC22",
+    "You found your pig. / That's good. I guess / he didn't go far."
+   ],
+   [
+    "NPC22",
+    "You got your pig back / safely! Now don't go / wandering off, Piggy!"
+   ],
+   [
+    "NPC22",
+    "Your little friend? He / was making a run for / the Eastern Pass."
+   ],
+   [
+    "NPC23",
+    "I don't just want to / have a big body, I / want to have a big\\nheart, too! I want to / he"
+   ],
+   [
+    "NPC23",
+    "I'm trying to catch / up on all my work, but / there's too much..."
+   ],
+   [
+    "NPC23",
+    "My brother and I are / finally on speaking / terms again.\\nWe realized it doesn't / matter"
+   ],
+   [
+    "NPC23",
+    "My neighbors told me / that Aki went to a / yellow walrus' house."
+   ],
+   [
+    "NPC23",
+    "So, what brings a big / strong boy like you / in here?"
+   ],
+   [
+    "NPC23",
+    "So, you found your / pig. That's great!"
+   ],
+   [
+    "NPC23",
+    "Sure, we have guava / juice. It's ^ 2000 / per glass."
+   ],
+   [
+    "NPC23",
+    "The land beyond the / Eastern Pass is very / dangerous. Be careful!"
+   ],
+   [
+    "NPC23",
+    "We can't train your / monster if you don't / bring him with you!"
+   ],
+   [
+    "NPC23",
+    "We're celebrating / tonight. Our daughter / came home!"
+   ],
+   [
+    "NPC24",
+    "Captured a robber, eh? / Aren't you the mighty / warrior! Hehehe."
+   ],
+   [
+    "NPC24",
+    "Good job."
+   ],
+   [
+    "NPC24",
+    "I saw the pig, err, I / mean, Sir $B, run / through this door."
+   ],
+   [
+    "NPC24",
+    "Well done, young / knight."
+   ],
+   [
+    "NPC24",
+    "Well done, young man."
+   ],
+   [
+    "NPC36",
+    "You've got quite a / collection. There were / 68 Living Toys\\nmade in all. They are / spre"
+   ],
+   [
+    "NPC47",
+    "I know we had to / defend ourselves, / but I wish we didn't\\nhave to do that. / She only w"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC15",
+   "NPC20",
+   "NPC22",
+   "NPC23",
+   "NPC24",
+   "NPC36",
+   "NPC47"
+  ]
+ },
+ "0x096": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC04",
+    "$A, / Let's play a game!\\nAh, you don't look / like you're in the / mood for a game."
+   ],
+   [
+    "NPC04",
+    "Did you see that?\\nI must be going crazy. / I thought I saw a huge / water bug go by here."
+   ],
+   [
+    "NPC04",
+    "Yeah, it's pretty / boring around here.\\nCourse, boring isn't / bad. I like boring.\\nAdven"
+   ],
+   [
+    "NPC05",
+    "It's getting late. Is / my husband still / down at the beach?"
+   ],
+   [
+    "NPC05",
+    "What's wrong? / $A..."
+   ],
+   [
+    "NPC05",
+    "What's wrong? / Why do you look so / sad?"
+   ],
+   [
+    "NPC05",
+    "What's wrong? / You look so sad. Did / the mayor scold you?"
+   ],
+   [
+    "NPC06",
+    "Bored? Of course you / are my dear. Little / boys like adventure.\\nOld people like me / li"
+   ],
+   [
+    "NPC06",
+    "Did I ever tell you / the story about Algo / and the toadstool?\\nWell, when Algo was / lit"
+   ],
+   [
+    "NPC06",
+    "Have you seen my / little Bebeo? He's / lost.\\nHere, Bebeo! Here, / Bebeo! / Come to Daddy"
+   ],
+   [
+    "NPC06",
+    "I wonder what I / should make for / dinner tonight...\\nLast night I made a / mushroom pie,"
+   ],
+   [
+    "NPC06",
+    "Keep your chin up, / $A. Remember, / men never cry."
+   ],
+   [
+    "NPC06",
+    "This is the worst / harvest we've ever / had.\\nWe've been trying / and trying, but / nothi"
+   ],
+   [
+    "NPC06",
+    "What's wrong, $A? / Why the long face?"
+   ],
+   [
+    "NPC06",
+    "What's wrong, $A? / You look sad.\\nIs it because of the / baby monster?"
+   ],
+   [
+    "NPC07",
+    "Are you tired, / $A? Do you want / to get some rest?"
+   ],
+   [
+    "NPC07",
+    "What's wrong, $A? / Why the long face?\\nYou still think that / what you saw was real? / It"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC04",
+   "NPC05",
+   "NPC06",
+   "NPC07"
+  ]
+ },
+ "0x097": {
+  "set_after": [
+   [
+    "NPC07",
+    "Goodnight, $A."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC06",
+    "Young man..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC05",
+   "NPC06",
+   "NPC07"
+  ]
+ },
+ "0x098": {
+  "set_after": [
+   [
+    "NPC31",
+    "Meditating? I call / that sleeping!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "First a Giant, now / that horrible worm / thing!\\nI know one thing, / though, nobody's goi"
+   ],
+   [
+    "NPC27",
+    "I'm just so happy. I / can't thank Lord / Kalkanor enough.\\nIt's wonderful to be / cooking"
+   ],
+   [
+    "NPC28",
+    "Did Saint Aruvin cure / your illness?"
+   ],
+   [
+    "NPC28",
+    "Graaaaooooh! / Graaaaaaoooh!\\nCome closer... / I want to eat your / brains!!\\nOf course, i"
+   ],
+   [
+    "NPC28",
+    "Hey! Just can't get / enough of my golden / voice, huh?\\nWant me to sing for / you again?"
+   ],
+   [
+    "NPC28",
+    "I can't believe I've / actually become bored / with the view from\\nhere. Do you want me / "
+   ],
+   [
+    "NPC28",
+    "I want to go home / and lead a normal / life..."
+   ],
+   [
+    "NPC28",
+    "I wish I was a zombie / myself...\\nThen I could stay with / my husband forever!"
+   ],
+   [
+    "NPC28",
+    "I'm doing what I can / to prevent more / zombies from showing\\nup, but I've got a / feelin"
+   ],
+   [
+    "NPC28",
+    "It's no good...\\nNo matter what I do, I / can't find the way to / Aruvin's sanctuary!"
+   ],
+   [
+    "NPC28",
+    "Oh, make him stop / before I faint!\\nI can't take it... / He's just so awesome!"
+   ],
+   [
+    "NPC28",
+    "Well, am I right? It's / not all that great / a view anymore, is it?"
+   ],
+   [
+    "NPC29",
+    "What!? The three / Triskenians were / wiped out?\\nDarn! I wanted to hunt / them down mysel"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26",
+   "NPC27",
+   "NPC28",
+   "NPC29",
+   "NPC31"
+  ]
+ },
+ "0x099": {
+  "set_after": [
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC32",
+    "You're back already? / Did you find any / treasure! Show me!\\nOh, wow! I hope I / get some"
+   ],
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [
+   [
+    "NPC46",
+    160
+   ]
+  ],
+  "files": [
+   "NPC16",
+   "NPC19",
+   "NPC21",
+   "NPC32",
+   "NPC43",
+   "NPC46"
+  ]
+ },
+ "0x09A": {
+  "set_after": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ],
+   [
+    "NPC19",
+    "Sacred Holy treasure? / Find find find?"
+   ]
+  ],
+  "chest": [
+   [
+    "NPC19",
+    126
+   ]
+  ],
+  "files": [
+   "NPC16",
+   "NPC19",
+   "NPC21",
+   "NPC43",
+   "NPC46"
+  ]
+ },
+ "0x09B": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [
+   [
+    "NPC16",
+    52
+   ]
+  ],
+  "files": [
+   "NPC16",
+   "NPC19",
+   "NPC21",
+   "NPC43",
+   "NPC46"
+  ]
+ },
+ "0x09C": {
+  "set_after": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [
+   [
+    "NPC43",
+    106
+   ]
+  ],
+  "files": [
+   "NPC16",
+   "NPC19",
+   "NPC21",
+   "NPC43",
+   "NPC46"
+  ]
+ },
+ "0x09D": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC24",
+    "I can't believe / Gwinladin was a / traitor..."
+   ],
+   [
+    "NPC24",
+    "Kalkanor and Ramal are / resting upstairs if / you want to see them."
+   ],
+   [
+    "NPC24",
+    "Lord Kalkanor and / Ramal are resting / upstairs."
+   ],
+   [
+    "NPC26",
+    "After all that work I / put into clearing the / north road, now I have\\nto worry about tha"
+   ],
+   [
+    "NPC26",
+    "God's Tower blew up? / Flying worms?\\nWhat's going on around / here?"
+   ],
+   [
+    "NPC26",
+    "I don't know how / anyone can expect me / to dry my laundry\\nwith that big old / worm up t"
+   ],
+   [
+    "NPC26",
+    "It's just not fair! / I haven't even had a / chance to meet Prince\\nCharming yet, and now "
+   ],
+   [
+    "NPC26",
+    "Look at that big / wormy thing!\\nHey... What's that / smell?\\nI think... / It's the worm! "
+   ],
+   [
+    "NPC26",
+    "No, don't you worry / about it. You've told / me all that you know.\\nI've got my own ways "
+   ],
+   [
+    "NPC26",
+    "See this picture? This / is the most powerful / living toy. He can\\ntake monsters out with"
+   ],
+   [
+    "NPC26",
+    "That worm might be / responsible for the / lack of fur fish."
+   ],
+   [
+    "NPC26",
+    "Why are children / so fascinated with / disgusting things like\\nthat worm? / I mean, it's "
+   ],
+   [
+    "NPC27",
+    "The Knoygns are very / upset! They're scared / out of their wits!\\nThat worm thing must / "
+   ],
+   [
+    "NPC31",
+    "Fare thee well."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC24",
+   "NPC26",
+   "NPC27",
+   "NPC31"
+  ],
+  "known": "story chapter 3 -- \"The Destiny\" (Save_GetLocationName)"
+ },
+ "0x09E": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC11",
+    "It feels like the / world has been turned / upside down.\\nMoney doesn't mean / much right "
+   ],
+   [
+    "NPC39",
+    "I'm so scared that I / can't even move!"
+   ],
+   [
+    "NPC39",
+    "Kalkanor was nearly / killed? You're / kidding aren't you?\\nWhat's going to happen / to us"
+   ],
+   [
+    "NPC39",
+    "The door's locked! / They must be too / scared to open it."
+   ],
+   [
+    "NPC39",
+    "They're horrible!"
+   ],
+   [
+    "NPC39",
+    "Those eerie clouds are / an omen of evil to / come."
+   ],
+   [
+    "NPC39",
+    "We've never had any / trouble with monsters / in the city until now.\\nWhat on earth is goi"
+   ],
+   [
+    "NPC39",
+    "What on earth is / going on?"
+   ],
+   [
+    "NPC39",
+    "What! / Xizan was unsealed!? / That's horrible!\\nBut... Who's Xizan?"
+   ],
+   [
+    "NPC39",
+    "What's going to happen / to us?"
+   ],
+   [
+    "NPC48",
+    "Thank you so much for / saving the city."
+   ],
+   [
+    "NPC48",
+    "Thank you! / You saved us all!\\nReward? Ah, yes, the / reward I offered...\\nAs Governor of"
+   ],
+   [
+    "NPC48",
+    "Zzzzzzzz..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC11",
+   "NPC39",
+   "NPC48"
+  ]
+ },
+ "0x0A0": {
+  "set_after": [
+   [
+    "NPC09",
+    "They're... gone!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC09",
+    "It's up to you now, / $A. Only you can / save the world."
+   ],
+   [
+    "NPC38",
+    "A column."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC09",
+   "NPC21",
+   "NPC38"
+  ]
+ },
+ "0x0A1": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC21"
+  ]
+ },
+ "0x0A2": {
+  "set_after": [
+   [
+    "NPC36",
+    "You're Professor / Zeppetto? The one that / invented Living Toys?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC36",
+    "What? You found all / of the Living Toys?\\nPlease, please... / Let me see them..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC36"
+  ]
+ },
+ "0x0A3": {
+  "set_after": [
+   [
+    "NPC36",
+    "You mean... We were / talking to a ghost?"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC36"
+  ]
+ },
+ "0x0A4": {
+  "set_after": [
+   [
+    "NPC03",
+    "Wake up! / Let's go!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "Everybody knows that / Clarian pelts are the / best in the world."
+   ],
+   [
+    "NPC02",
+    "Have you heard that / Bonik is planning to / build a house in the \\nDenime Plains? / I can"
+   ],
+   [
+    "NPC02",
+    "I can't believe I / was about to join / the Artema cult."
+   ],
+   [
+    "NPC02",
+    "I don't believe you! / Artema loves us! He / would never hurt us!"
+   ],
+   [
+    "NPC02",
+    "I guess this detective / work isn't all that / glamorous after all.\\nSometimes you find ou"
+   ],
+   [
+    "NPC02",
+    "I'm working for Bonik / now.\\nI'm distributing / flyers for his sales / blitz in San Clari"
+   ],
+   [
+    "NPC02",
+    "Why is everybody / talking about San / Claria all the time?"
+   ],
+   [
+    "NPC03",
+    "Everywhere you go it's / San Claria this, / San Claria that.\\nBonik sure knows how / to ru"
+   ],
+   [
+    "NPC03",
+    "I just came back from / San Claria. \\nThe fish was so / delicious."
+   ],
+   [
+    "NPC03",
+    "I wish I could take / a vacation and go / to San Claria..."
+   ],
+   [
+    "NPC03",
+    "I'd love to go on / our honeymoon, but I / can't find the time.\\nI also can't find / the m"
+   ],
+   [
+    "NPC03",
+    "I'm thinking about / going to San Claria / for my honeymoon."
+   ],
+   [
+    "NPC03",
+    "It's so hard to / choose! Orgo with its / fresh vegetables, or\\nSan Claria with its / fur "
+   ],
+   [
+    "NPC03",
+    "Now that my daughter / is married, I can / retire happily."
+   ],
+   [
+    "NPC03",
+    "That fellow Bonik is / a great businessman.\\nHe's going to open a / store in Zed Harbor / "
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC03"
+  ]
+ },
+ "0x0A5": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC09",
+    "We are the Picardians, / the guardians of the / world's knowledge."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC09"
+  ]
+ },
+ "0x0A7": {
+  "set_after": [
+   [
+    "NPC03",
+    "Teeeekok! Teeeeekok!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "You better hurry! / The wedding has / already started!"
+   ],
+   [
+    "NPC26",
+    "I heard a lot of / banging and shouting, / and things getting\\nknocked over. Then / there "
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03",
+   "NPC26",
+   "NPC27"
+  ]
+ },
+ "0x0AB": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC09",
+    "You've found all the / pieces of the Holy / Armor!\\nWay to go! You guys / are amazing!\\nNo"
+   ],
+   [
+    "NPC35",
+    "Welcome to Bonique! / Get it? It's oh, it's / you $A. I still \\ndon't have any / customers"
+   ],
+   [
+    "NPC41",
+    "Things out there seem / to be worse than ever. / I hope Jedro is safe."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC09",
+   "NPC16",
+   "NPC19",
+   "NPC35",
+   "NPC41",
+   "NPC43",
+   "NPC46"
+  ],
+  "known": "story chapter 4 -- \"Last Battle\" (Save_GetLocationName)"
+ },
+ "0x0AC": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC24",
+    "Well well, I remember / you... / What brings you here?\\nWhat?? You've come to / visit Jadi"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC24"
+  ]
+ },
+ "0x0AD": {
+  "set_after": [
+   [
+    "NPC16",
+    "If you woo-hoo want to / get to the heart of / the castle, you must\\nturn all four of the "
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "You already turned / this switch on."
+   ],
+   [
+    "NPC16",
+    "You are safe here in / my home. Do you want / to rest? Woo-hoo."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x0AE": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC16",
+    "You already turned / this switch on."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x0AF": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC16",
+    "You already turned / this switch on."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x0B0": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC16",
+    "You already turned / this switch on."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x0B1": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC16",
+    "You already turned / this switch on."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x0B2": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC16",
+    "Pushing it again / won't do any good."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x0B3": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC31"
+  ]
+ },
+ "0x0B4": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC31"
+  ]
+ },
+ "0x0B5": {
+  "set_after": [
+   [
+    "NPC27",
+    "Is that so? Well, we / won't take any more of / your time. Goodbye.\\nI guess it must have "
+   ]
+  ],
+  "gates": [
+   [
+    "NPC26",
+    "I heard a lot of / banging and shouting, / and things getting\\nknocked over. Then / there "
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC26",
+   "NPC27"
+  ]
+ },
+ "0x0B7": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC12",
+    "They say the beast of / the ruins was killed.\\nWhat? You defeated the / beast? Ha ha ha. S"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC12"
+  ]
+ },
+ "0x0C0": {
+  "set_after": [
+   [
+    "NPC07",
+    "Goodnight, $A."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC05",
+   "NPC07"
+  ]
+ },
+ "0x0C1": {
+  "set_after": [
+   [
+    "NPC21",
+    "You'll pay for your / actions now, little / boy!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC21",
+    "Ha ha ha! You taught / them a lesson!\\nThe city is safe / again, thanks to you!"
+   ],
+   [
+    "NPC21",
+    "I knew the first / time I saw you that / you were going to be\\na great warrior. Look / at "
+   ],
+   [
+    "NPC21",
+    "Khriiiiee! / Khriiiiee!"
+   ],
+   [
+    "NPC21",
+    "Rachel! / Come back!\\nAll the monsters are / dead! Please come / back!"
+   ],
+   [
+    "NPC21",
+    "Thank you so much. / Now I can get back to / selling flowers again.\\nWould you like a / fl"
+   ],
+   [
+    "NPC21",
+    "Thank you! You must / be tired after all / that fighting.\\nPlease come inside and / take a"
+   ],
+   [
+    "NPC21",
+    "Thank you, young man. / You did what that / so-called knight\\nKalkanor should have / done."
+   ],
+   [
+    "NPC21",
+    "Thank you. If it / wasn't for you, those / monsters would have\\nburned Trisken to the / gr"
+   ],
+   [
+    "NPC21",
+    "That was a very / impressive piece of / fighting!"
+   ],
+   [
+    "NPC21",
+    "That was amazing! / You are one tough / warrior.\\nThat pig is pretty / good, too."
+   ],
+   [
+    "NPC21",
+    "We're all counting on / you now, $A."
+   ],
+   [
+    "NPC21",
+    "What's going to happen / to us all?"
+   ],
+   [
+    "NPC21",
+    "Won't you come inside / and let me buy you a / glass of soda?"
+   ],
+   [
+    "NPC21",
+    "You are so brave! / I love big, strong, / brave men..."
+   ],
+   [
+    "NPC21",
+    "You are truly a great / knight!"
+   ],
+   [
+    "NPC21",
+    "You protected Aki and / her family, and every / other person in this\\ncity! You should be "
+   ],
+   [
+    "NPC21",
+    "You're a hero! You / saved Trisken!"
+   ],
+   [
+    "NPC21",
+    "You're all that we / have, now that / Kalkanor has fallen!"
+   ],
+   [
+    "NPC23",
+    "Hello! Choose any / table you like!"
+   ],
+   [
+    "NPC23",
+    "Hello, $A! Can I / offer you a free room / for the night?"
+   ],
+   [
+    "NPC23",
+    "Hey! We're in business / again, thanks to you!\\nSo... Care to buy / something from the / b"
+   ],
+   [
+    "NPC23",
+    "My wife and I can look / forward to a nice, / quiet life together."
+   ],
+   [
+    "NPC23",
+    "What an eerie sky. / Anyway, how about / buying something new?"
+   ],
+   [
+    "NPC23",
+    "Whatever you want, / just say it, and it's / yours. On the House."
+   ],
+   [
+    "NPC23",
+    "When I grow up, I'm / going to be a knight, / just like you!"
+   ],
+   [
+    "NPC23",
+    "You've saved us again, / $A. How can we / ever thank you?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC21",
+   "NPC23"
+  ]
+ },
+ "0x0C2": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC23",
+    "Okay, get ready!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC23"
+  ]
+ },
+ "0x0E6": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC07",
+    "I sense you've made / a firm decision, / $A.\\nDon't worry, I won't / stop you, you've made"
+   ],
+   [
+    "NPC10",
+    "Kalkanor looks cool, / but Ramal is way / better looking!"
+   ],
+   [
+    "NPC11",
+    "It feels like the / world has been turned / upside down.\\nMoney doesn't mean / much right "
+   ],
+   [
+    "NPC12",
+    "A great evil has / awoken? / What nonsense!"
+   ],
+   [
+    "NPC12",
+    "Have you heard the / stories about tunnels / that connect the whole\\nworld? / I wonder if "
+   ],
+   [
+    "NPC12",
+    "I don't know what's / wrong with the weather / these days..."
+   ],
+   [
+    "NPC12",
+    "I just saw a gigantic / monster in the sky! /"
+   ],
+   [
+    "NPC12",
+    "What was that?\\nWhat was that big / shadow that just / crossed the sky?"
+   ],
+   [
+    "NPC12",
+    "Why does it keep / getting colder? It / doesn't make sense."
+   ],
+   [
+    "NPC13",
+    "Every once in a while / you find a gold / nugget!"
+   ],
+   [
+    "NPC13",
+    "What! / You used the / Warp Gate!?\\nThat's fabulous! / My theory was correct!"
+   ],
+   [
+    "NPC14",
+    "How come peace never / seems to last very / long?\\nAre people going to / start murdering e"
+   ],
+   [
+    "NPC14",
+    "I believe I shall take / my leave of this place / and return to Isten."
+   ],
+   [
+    "NPC14",
+    "I don't know if they / are getting ready to / move or what, but they\\nhave been banging / "
+   ],
+   [
+    "NPC14",
+    "I don't know if they / are getting ready to / move or what, but they\\nhave been yapping / "
+   ],
+   [
+    "NPC14",
+    "I've lived a long / life. I've seen a lot / of strange things, and\\na lot of terrible / th"
+   ],
+   [
+    "NPC14",
+    "No offense intended, / but not even you, the / savior of Den Heldar,\\ncould defeat that / "
+   ],
+   [
+    "NPC14",
+    "That monster, it's in / one of my old books...\\nLegends tell of a / terrible monster that "
+   ],
+   [
+    "NPC14",
+    "Well what do you know? / Even famous old / Detective Longnose is\\ngiving up this time. / H"
+   ],
+   [
+    "NPC15",
+    "Have I escaped from / the tower only to have / that monster come?"
+   ],
+   [
+    "NPC15",
+    "Just when I thought / things had gotten back / to normal around here.\\nNow we've got that "
+   ],
+   [
+    "NPC15",
+    "Please feel free to / stop by again whenever / you are nearby. There\\nwill always be a pla"
+   ],
+   [
+    "NPC15",
+    "Thank you for getting / me out of that tower. / This is for you..."
+   ],
+   [
+    "NPC23",
+    "All I want is a chance / to grow up, to realize / my dreams.\\nAnd now those monsters / are"
+   ],
+   [
+    "NPC23",
+    "Another cloudy day. I / wonder if that monster / is to blame?"
+   ],
+   [
+    "NPC23",
+    "Don't forget, bravery / and hope will get you / through any jam."
+   ],
+   [
+    "NPC23",
+    "I don't care what's / going on out there. I / just want to sleep."
+   ],
+   [
+    "NPC23",
+    "I'm going to stay with / my husband, no matter / what happens..."
+   ],
+   [
+    "NPC23",
+    "The boss knows I nap / back here, but he / doesn't care anymore."
+   ],
+   [
+    "NPC23",
+    "They're not going to / hurt my wife, I won't / let them!"
+   ],
+   [
+    "NPC23",
+    "Those infernal / monsters are tearing / our city to pieces!\\nBuy what you need / and go te"
+   ],
+   [
+    "NPC23",
+    "We'll sell you the / weapons, you use 'em / against the monsters!"
+   ],
+   [
+    "NPC23",
+    "We're all going to / die!!"
+   ],
+   [
+    "NPC23",
+    "Yeah, and who's going / to save us from / Karmine?"
+   ],
+   [
+    "NPC26",
+    "After all that work I / put into clearing the / north road, now I have\\nto worry about tha"
+   ],
+   [
+    "NPC26",
+    "First a Giant, now / that horrible worm / thing!\\nI know one thing, / though, nobody's goi"
+   ],
+   [
+    "NPC26",
+    "God's Tower blew up? / Flying worms?\\nWhat's going on around / here?"
+   ],
+   [
+    "NPC26",
+    "I don't know how / anyone can expect me / to dry my laundry\\nwith that big old / worm up t"
+   ],
+   [
+    "NPC26",
+    "It's just not fair! / I haven't even had a / chance to meet Prince\\nCharming yet, and now "
+   ],
+   [
+    "NPC26",
+    "Look at that big / wormy thing!\\nHey... What's that / smell?\\nI think... / It's the worm! "
+   ],
+   [
+    "NPC26",
+    "No, don't you worry / about it. You've told / me all that you know.\\nI've got my own ways "
+   ],
+   [
+    "NPC26",
+    "See this picture? This / is the most powerful / living toy. He can\\ntake monsters out with"
+   ],
+   [
+    "NPC26",
+    "That worm might be / responsible for the / lack of fur fish."
+   ],
+   [
+    "NPC26",
+    "Why are children / so fascinated with / disgusting things like\\nthat worm? / I mean, it's "
+   ],
+   [
+    "NPC27",
+    "Ann told me what / happened.\\nThank you for standing / up for my daughter / against that g"
+   ],
+   [
+    "NPC27",
+    "Rooms are ^ 50 per / night. Do you want / one?"
+   ],
+   [
+    "NPC27",
+    "The Knoygns are very / upset! They're scared / out of their wits!\\nThat worm thing must / "
+   ],
+   [
+    "NPC27",
+    "They are out spreading / the word of Artema / throughout the land."
+   ],
+   [
+    "NPC28",
+    "Graaaaooooh! / Graaaaaaoooh!\\nWorm brains! / Tasty, gooey, worm / brains!\\nGraaaaooooh! / "
+   ],
+   [
+    "NPC28",
+    "I've looked out from / this position every / day for years...\\nBut I've never seen / anyth"
+   ],
+   [
+    "NPC28",
+    "My sickness doesn't / seem so important now.\\nI've got to get back / to my wife as soon as"
+   ],
+   [
+    "NPC28",
+    "No worm is going to / keep me from singing.\\nListen to this..."
+   ],
+   [
+    "NPC28",
+    "Nooooooooo!\\nNot that! Dear God, / not that beast!\\nPlease, God, don't / let me die!\\nI do"
+   ],
+   [
+    "NPC28",
+    "That big vorm is not / a good thing.\\nI vish Saint Aruvin / had never made him...\\nVhat? H"
+   ],
+   [
+    "NPC28",
+    "That flying worm just / topped off my list of / reasons to quit..."
+   ],
+   [
+    "NPC28",
+    "That worm was set / loose upon the world / by your beloved\\nKarmine. Doesn't that / bother"
+   ],
+   [
+    "NPC28",
+    "What a great song... / He's so great."
+   ],
+   [
+    "NPC28",
+    "What is that horrible / worm!?\\nIt's even uglier than / my husband!\\nDid Aruvin make that "
+   ],
+   [
+    "NPC29",
+    "Let's see... A little / salt, a little / pepper..."
+   ],
+   [
+    "NPC29",
+    "Smelly goat's milk?\\nI don't remember / ever saying that."
+   ],
+   [
+    "NPC29",
+    "The goats are all / spooked by that big / worm that's flying\\naround, and they / aren't gi"
+   ],
+   [
+    "NPC29",
+    "There's no sign of / spring yet this year.\\nHas the season of hope / gone forever, never t"
+   ],
+   [
+    "NPC29",
+    "What in the world is / happening around here? / \\nWhat was that big / explosion?\\nWhat hap"
+   ],
+   [
+    "NPC30",
+    "Poor $B... / And after we finally / returned it to\\nits mother. It's so / sad! It's not fa"
+   ],
+   [
+    "NPC31",
+    "It has begun. All will / be crushed under the / worms' writhing coils."
+   ],
+   [
+    "NPC32",
+    "First I saw a flying / dinosaur, now I've / seen a flying worm.\\nWhat's that? / Your pig f"
+   ],
+   [
+    "NPC32",
+    "Have you seen the / flying worm monster?"
+   ],
+   [
+    "NPC32",
+    "I saw it! I saw the / big worm flying up in / the sky!\\nDarkbeat is gonna show / that worm"
+   ],
+   [
+    "NPC32",
+    "Really? / I thought so.\\nThat's why it has / wings!"
+   ],
+   [
+    "NPC32",
+    "This year Santa is / coming in the form of / a worm.\\nI saw him flying...\\nWhy did he turn"
+   ],
+   [
+    "NPC34",
+    "Cup of Mocha, half / price! Espresso, half / price! Today only!\\nI don't know why I / both"
+   ],
+   [
+    "NPC34",
+    "Hey, $A, / have you seen Darkbeat / and Ibkee?\\nThey went to Trisken / to return Aki to he"
+   ],
+   [
+    "NPC34",
+    "I haven't seen / Darkbeat and Ibkee / for a while now...\\nWhat!? They were hurt? / Are the"
+   ],
+   [
+    "NPC34",
+    "I wonder when the / next ship is going / to arrive...\\nDid I ever tell you / about the tim"
+   ],
+   [
+    "NPC34",
+    "What am I going to / do?\\nIt's great to have a / baby, but if the ships / don't come, I wo"
+   ],
+   [
+    "NPC34",
+    "Yesterday, I saw a / huge flying sea / serpent from the\\nlighthouse. / I swear, it was rea"
+   ],
+   [
+    "NPC35",
+    "Do you think $E / will resemble his / father or his mother?"
+   ],
+   [
+    "NPC35",
+    "I can't believe I have / to let pigs into my / cafe now..."
+   ],
+   [
+    "NPC41",
+    "There are no monsters / in here. Not like out / there... <shudder>"
+   ],
+   [
+    "NPC48",
+    "I'm hiding from the / mistress again... / Oh, my ears!\\nAll I did was give a / little of t"
+   ],
+   [
+    "NPC48",
+    "Nobody ever pays / attention to me... / Those stupid adults..."
+   ],
+   [
+    "NPC48",
+    "Thank you! / You saved us all!\\nReward? Ah, yes, the / reward I offered...\\nAs Governor of"
+   ],
+   [
+    "NPC48",
+    "This is horrible... / Is it the end of the / world?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC07",
+   "NPC10",
+   "NPC11",
+   "NPC12",
+   "NPC13",
+   "NPC14",
+   "NPC15",
+   "NPC23",
+   "NPC26",
+   "NPC27",
+   "NPC28",
+   "NPC29",
+   "NPC30",
+   "NPC31",
+   "NPC32",
+   "NPC34",
+   "NPC35",
+   "NPC41",
+   "NPC48"
+  ]
+ },
+ "0x0EE": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x0EF": {
+  "set_after": [
+   [
+    "NPC21",
+    "$A! Where are you / going? We have to help / the Triskenians!"
+   ],
+   [
+    "NPC21",
+    "We have to help! / Hurry!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC21",
+    "$A! Where are you / going? We have to help / the Triskenians!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC21",
+   "NPC39"
+  ]
+ },
+ "0x0F0": {
+  "set_after": [
+   [
+    "NPC21",
+    "$A! Where are you / going? We have to help / the Triskenians!"
+   ],
+   [
+    "NPC21",
+    "We have to help! / Hurry!"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC21",
+   "NPC39"
+  ]
+ },
+ "0x0F1": {
+  "set_after": [
+   [
+    "NPC16",
+    "The WARP GATE KEY / flashes brightly."
+   ],
+   [
+    "NPC19",
+    "The WARP GATE KEY / flashes brightly."
+   ],
+   [
+    "NPC43",
+    "The WARP GATE KEY / flashes brightly."
+   ],
+   [
+    "NPC46",
+    "The WARP GATE KEY / flashes brightly."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC16",
+   "NPC19",
+   "NPC31",
+   "NPC37",
+   "NPC38",
+   "NPC43",
+   "NPC44",
+   "NPC46"
+  ]
+ },
+ "0x0F2": {
+  "set_after": [
+   [
+    "NPC09",
+    "Oh ye who would seek / the Holy Armor, know / this:\\nIn the Nord Temple, / deep in the lan"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC09"
+  ]
+ },
+ "0x0F3": {
+  "set_after": [
+   [
+    "NPC01",
+    "Nonsense! / I want you to have it. / Go ahead, take it."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC01",
+    "It looks like Bonik / forgot some of his / books."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC01"
+  ]
+ },
+ "0x0F4": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC22",
+    "Hmm. Let's talk again / when you've done a bit / more training, okay?"
+   ],
+   [
+    "NPC23",
+    "If at first you don't / succeed, try, try / again!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC22",
+   "NPC23"
+  ]
+ },
+ "0x0F5": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC09",
+    "A bed."
+   ],
+   [
+    "NPC09",
+    "Now that Celestia is / gone, you three are / our only hope.\\nDo you want to take / a rest "
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC09"
+  ],
+  "known": "checked by the field menu when drawing rows (disables an entry)"
+ },
+ "0x0F6": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC36",
+    "Well, my name is / Zeppetto, but the / Zeppetto you're\\nthinking of is my / grandfather. I"
+   ],
+   [
+    "NPC36",
+    "What? You found all / of the Living Toys?\\nPlease, please... / Let me see them..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC36"
+  ]
+ },
+ "0x0F8": {
+  "set_after": [],
+  "gates": [],
+  "chest": [
+   [
+    "NPC01",
+    2
+   ],
+   [
+    "NPC01",
+    3
+   ],
+   [
+    "NPC01",
+    15
+   ],
+   [
+    "NPC01",
+    16
+   ],
+   [
+    "NPC01",
+    1048
+   ],
+   [
+    "NPC01",
+    1056
+   ],
+   [
+    "NPC02",
+    9
+   ],
+   [
+    "NPC02",
+    16
+   ],
+   [
+    "NPC02",
+    111
+   ],
+   [
+    "NPC02",
+    1005
+   ],
+   [
+    "NPC03",
+    1
+   ],
+   [
+    "NPC03",
+    3
+   ],
+   [
+    "NPC03",
+    12
+   ],
+   [
+    "NPC03",
+    188
+   ],
+   [
+    "NPC03",
+    1057
+   ],
+   [
+    "NPC03",
+    1070
+   ],
+   [
+    "NPC04",
+    12
+   ],
+   [
+    "NPC05",
+    17
+   ],
+   [
+    "NPC05",
+    18
+   ],
+   [
+    "NPC05",
+    501
+   ],
+   [
+    "NPC05",
+    1023
+   ],
+   [
+    "NPC06",
+    1
+   ],
+   [
+    "NPC06",
+    11
+   ],
+   [
+    "NPC06",
+    14
+   ],
+   [
+    "NPC07",
+    10
+   ],
+   [
+    "NPC07",
+    503
+   ],
+   [
+    "NPC07",
+    504
+   ],
+   [
+    "NPC07",
+    510
+   ],
+   [
+    "NPC07",
+    1069
+   ],
+   [
+    "NPC07",
+    1071
+   ],
+   [
+    "NPC09",
+    62
+   ],
+   [
+    "NPC09",
+    116
+   ],
+   [
+    "NPC09",
+    170
+   ],
+   [
+    "NPC09",
+    1062
+   ],
+   [
+    "NPC10",
+    165
+   ],
+   [
+    "NPC10",
+    188
+   ],
+   [
+    "NPC10",
+    1034
+   ],
+   [
+    "NPC11",
+    6
+   ],
+   [
+    "NPC11",
+    11
+   ],
+   [
+    "NPC11",
+    188
+   ],
+   [
+    "NPC11",
+    1040
+   ],
+   [
+    "NPC11",
+    1064
+   ],
+   [
+    "NPC13",
+    2
+   ],
+   [
+    "NPC13",
+    15
+   ],
+   [
+    "NPC13",
+    166
+   ],
+   [
+    "NPC13",
+    1027
+   ],
+   [
+    "NPC13",
+    1053
+   ],
+   [
+    "NPC14",
+    1003
+   ],
+   [
+    "NPC14",
+    1059
+   ],
+   [
+    "NPC15",
+    1026
+   ],
+   [
+    "NPC16",
+    3
+   ],
+   [
+    "NPC16",
+    4
+   ],
+   [
+    "NPC16",
+    10
+   ],
+   [
+    "NPC16",
+    14
+   ],
+   [
+    "NPC16",
+    65
+   ],
+   [
+    "NPC16",
+    119
+   ],
+   [
+    "NPC16",
+    173
+   ],
+   [
+    "NPC16",
+    183
+   ],
+   [
+    "NPC16",
+    1016
+   ],
+   [
+    "NPC16",
+    1017
+   ],
+   [
+    "NPC16",
+    1018
+   ],
+   [
+    "NPC16",
+    1019
+   ],
+   [
+    "NPC16",
+    1037
+   ],
+   [
+    "NPC18",
+    12
+   ],
+   [
+    "NPC18",
+    14
+   ],
+   [
+    "NPC19",
+    3
+   ],
+   [
+    "NPC19",
+    5
+   ],
+   [
+    "NPC19",
+    6
+   ],
+   [
+    "NPC19",
+    113
+   ],
+   [
+    "NPC19",
+    167
+   ],
+   [
+    "NPC19",
+    184
+   ],
+   [
+    "NPC19",
+    1033
+   ],
+   [
+    "NPC19",
+    1035
+   ],
+   [
+    "NPC19",
+    1041
+   ],
+   [
+    "NPC19",
+    1060
+   ],
+   [
+    "NPC19",
+    3000
+   ],
+   [
+    "NPC20",
+    10
+   ],
+   [
+    "NPC20",
+    1052
+   ],
+   [
+    "NPC20",
+    3000
+   ],
+   [
+    "NPC21",
+    7
+   ],
+   [
+    "NPC21",
+    8
+   ],
+   [
+    "NPC21",
+    10
+   ],
+   [
+    "NPC21",
+    13
+   ],
+   [
+    "NPC21",
+    1068
+   ],
+   [
+    "NPC22",
+    7
+   ],
+   [
+    "NPC22",
+    8
+   ],
+   [
+    "NPC22",
+    10
+   ],
+   [
+    "NPC22",
+    13
+   ],
+   [
+    "NPC22",
+    1068
+   ],
+   [
+    "NPC23",
+    1
+   ],
+   [
+    "NPC23",
+    2
+   ],
+   [
+    "NPC23",
+    3
+   ],
+   [
+    "NPC23",
+    4
+   ],
+   [
+    "NPC23",
+    5
+   ],
+   [
+    "NPC23",
+    188
+   ],
+   [
+    "NPC23",
+    1007
+   ],
+   [
+    "NPC23",
+    1012
+   ],
+   [
+    "NPC24",
+    180
+   ],
+   [
+    "NPC24",
+    1039
+   ],
+   [
+    "NPC24",
+    1046
+   ],
+   [
+    "NPC26",
+    2
+   ],
+   [
+    "NPC26",
+    5
+   ],
+   [
+    "NPC27",
+    2
+   ],
+   [
+    "NPC27",
+    4
+   ],
+   [
+    "NPC27",
+    12
+   ],
+   [
+    "NPC27",
+    17
+   ],
+   [
+    "NPC27",
+    188
+   ],
+   [
+    "NPC27",
+    189
+   ],
+   [
+    "NPC27",
+    1008
+   ],
+   [
+    "NPC27",
+    1009
+   ],
+   [
+    "NPC28",
+    196
+   ],
+   [
+    "NPC28",
+    1029
+   ],
+   [
+    "NPC29",
+    4
+   ],
+   [
+    "NPC29",
+    10
+   ],
+   [
+    "NPC30",
+    4
+   ],
+   [
+    "NPC30",
+    5
+   ],
+   [
+    "NPC30",
+    18
+   ],
+   [
+    "NPC30",
+    61
+   ],
+   [
+    "NPC30",
+    115
+   ],
+   [
+    "NPC30",
+    169
+   ],
+   [
+    "NPC30",
+    181
+   ],
+   [
+    "NPC31",
+    1000
+   ],
+   [
+    "NPC31",
+    1010
+   ],
+   [
+    "NPC31",
+    1011
+   ],
+   [
+    "NPC32",
+    1024
+   ],
+   [
+    "NPC32",
+    1066
+   ],
+   [
+    "NPC33",
+    1
+   ],
+   [
+    "NPC33",
+    3
+   ],
+   [
+    "NPC33",
+    6
+   ],
+   [
+    "NPC34",
+    1049
+   ],
+   [
+    "NPC35",
+    4
+   ],
+   [
+    "NPC35",
+    6
+   ],
+   [
+    "NPC35",
+    188
+   ],
+   [
+    "NPC35",
+    189
+   ],
+   [
+    "NPC35",
+    1042
+   ],
+   [
+    "NPC35",
+    1043
+   ],
+   [
+    "NPC36",
+    125
+   ],
+   [
+    "NPC36",
+    1036
+   ],
+   [
+    "NPC39",
+    165
+   ],
+   [
+    "NPC39",
+    188
+   ],
+   [
+    "NPC39",
+    1034
+   ],
+   [
+    "NPC39",
+    1040
+   ],
+   [
+    "NPC39",
+    1064
+   ],
+   [
+    "NPC40",
+    1
+   ],
+   [
+    "NPC40",
+    2
+   ],
+   [
+    "NPC40",
+    5
+   ],
+   [
+    "NPC40",
+    14
+   ],
+   [
+    "NPC40",
+    56
+   ],
+   [
+    "NPC40",
+    110
+   ],
+   [
+    "NPC40",
+    164
+   ],
+   [
+    "NPC40",
+    509
+   ],
+   [
+    "NPC40",
+    511
+   ],
+   [
+    "NPC40",
+    1002
+   ],
+   [
+    "NPC40",
+    1004
+   ],
+   [
+    "NPC40",
+    1014
+   ],
+   [
+    "NPC40",
+    1032
+   ],
+   [
+    "NPC40",
+    1050
+   ],
+   [
+    "NPC40",
+    1055
+   ],
+   [
+    "NPC41",
+    6
+   ],
+   [
+    "NPC41",
+    18
+   ],
+   [
+    "NPC41",
+    189
+   ],
+   [
+    "NPC41",
+    508
+   ],
+   [
+    "NPC41",
+    1025
+   ],
+   [
+    "NPC42",
+    5
+   ],
+   [
+    "NPC42",
+    6
+   ],
+   [
+    "NPC42",
+    14
+   ],
+   [
+    "NPC42",
+    188
+   ],
+   [
+    "NPC42",
+    1031
+   ],
+   [
+    "NPC43",
+    4
+   ],
+   [
+    "NPC43",
+    63
+   ],
+   [
+    "NPC43",
+    117
+   ],
+   [
+    "NPC43",
+    171
+   ],
+   [
+    "NPC43",
+    1047
+   ],
+   [
+    "NPC44",
+    4
+   ],
+   [
+    "NPC44",
+    59
+   ],
+   [
+    "NPC44",
+    114
+   ],
+   [
+    "NPC44",
+    168
+   ],
+   [
+    "NPC44",
+    1021
+   ],
+   [
+    "NPC44",
+    1028
+   ],
+   [
+    "NPC44",
+    1061
+   ],
+   [
+    "NPC44",
+    1065
+   ],
+   [
+    "NPC45",
+    1
+   ],
+   [
+    "NPC45",
+    3
+   ],
+   [
+    "NPC45",
+    5
+   ],
+   [
+    "NPC45",
+    58
+   ],
+   [
+    "NPC45",
+    112
+   ],
+   [
+    "NPC45",
+    1001
+   ],
+   [
+    "NPC45",
+    1006
+   ],
+   [
+    "NPC45",
+    1030
+   ],
+   [
+    "NPC45",
+    1051
+   ],
+   [
+    "NPC45",
+    1054
+   ],
+   [
+    "NPC45",
+    3000
+   ],
+   [
+    "NPC46",
+    64
+   ],
+   [
+    "NPC46",
+    118
+   ],
+   [
+    "NPC46",
+    172
+   ],
+   [
+    "NPC46",
+    182
+   ],
+   [
+    "NPC46",
+    1020
+   ],
+   [
+    "NPC46",
+    1022
+   ],
+   [
+    "NPC47",
+    3
+   ],
+   [
+    "NPC47",
+    4
+   ],
+   [
+    "NPC47",
+    60
+   ],
+   [
+    "NPC47",
+    1038
+   ],
+   [
+    "NPC47",
+    1039
+   ],
+   [
+    "NPC48",
+    57
+   ],
+   [
+    "NPC48",
+    1044
+   ],
+   [
+    "NPC48",
+    1045
+   ]
+  ],
+  "files": [
+   "NPC01",
+   "NPC02",
+   "NPC03",
+   "NPC04",
+   "NPC05",
+   "NPC06",
+   "NPC07",
+   "NPC09",
+   "NPC10",
+   "NPC11",
+   "NPC13",
+   "NPC14",
+   "NPC15",
+   "NPC16",
+   "NPC18",
+   "NPC19",
+   "NPC20",
+   "NPC21",
+   "NPC22",
+   "NPC23",
+   "NPC24",
+   "NPC26",
+   "NPC27",
+   "NPC28",
+   "NPC29",
+   "NPC30",
+   "NPC31",
+   "NPC32",
+   "NPC33",
+   "NPC34",
+   "NPC35",
+   "NPC36",
+   "NPC39",
+   "NPC40",
+   "NPC41",
+   "NPC42",
+   "NPC43",
+   "NPC44",
+   "NPC45",
+   "NPC46",
+   "NPC47",
+   "NPC48"
+  ],
+  "known": "no-op in SetEventFlag -- writing it does nothing"
+ },
+ "0x0F9": {
+  "set_after": [
+   [
+    "NPC01",
+    "Definitely, a / wonderful name."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC01"
+  ],
+  "known": "story chapter 1 -- \"The Journey\"; also gates the Baby in battle"
+ },
+ "0x0FB": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC09"
+  ]
+ },
+ "0x0FC": {
+  "set_after": [
+   [
+    "NPC01",
+    "You're lucky you / survived!\\nYou want to go to / God's Tower? Sounds / awfully dangerous."
+   ],
+   [
+    "NPC07",
+    "Goodnight, $A."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC01",
+   "NPC02",
+   "NPC05",
+   "NPC07",
+   "NPC11",
+   "NPC31",
+   "NPC34",
+   "NPC37",
+   "NPC44"
+  ]
+ },
+ "0x0FD": {
+  "set_after": [
+   [
+    "NPC03",
+    "Let's see... / God's Tower...\\nYou need to go east / from here, to the / city of Zed Harbo"
+   ],
+   [
+    "NPC03",
+    "Wake up! / Let's go!"
+   ],
+   [
+    "NPC07",
+    "I guess it was just / an illusion..."
+   ],
+   [
+    "NPC19",
+    "What good is a flute / going to do us?"
+   ],
+   [
+    "NPC34",
+    "Go ahead and board now / then."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC02",
+   "NPC03",
+   "NPC07",
+   "NPC19",
+   "NPC21",
+   "NPC31",
+   "NPC34",
+   "NPC39"
+  ],
+  "known": "SET_FLAG 0xFD runs an internal reset routine instead of setting a bit"
+ },
+ "0x0FE": {
+  "set_after": [
+   [
+    "NPC06",
+    "Look! / It's following us.\\nLet's go ask the / Mayor what to do / with it!"
+   ],
+   [
+    "NPC34",
+    "I recommend the Isten / Pomegranate Juice..."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC06",
+   "NPC31",
+   "NPC34"
+  ],
+  "known": "permanent, force-set by ResetAllEventFlags"
+ },
+ "0x100": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x101": {
+  "set_after": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x102": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC07",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC07",
+   "NPC40"
+  ]
+ },
+ "0x103": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC05",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC05",
+   "NPC40"
+  ]
+ },
+ "0x104": {
+  "set_after": [
+   [
+    "NPC07",
+    "I wonder how it got / in there...\\nLet's take it with / us."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC07",
+    "Nothing here of / any interest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC07",
+   "NPC40"
+  ]
+ },
+ "0x180": {
+  "set_after": [
+   [
+    "NPC29",
+    "It's empty."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC29",
+    "It's empty."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC29"
+  ]
+ },
+ "0x181": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC23",
+    "It's empty."
+   ],
+   [
+    "NPC23",
+    "Searching the wooden / box..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC23"
+  ]
+ },
+ "0x182": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC23",
+    "It's empty."
+   ],
+   [
+    "NPC23",
+    "Searching the wooden / box..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC23"
+  ]
+ },
+ "0x183": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC23",
+    "It's empty."
+   ],
+   [
+    "NPC23",
+    "Searching the wooden / box..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC23"
+  ]
+ },
+ "0x184": {
+  "set_after": [
+   [
+    "NPC23",
+    "It's empty."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC23",
+    "It's empty."
+   ],
+   [
+    "NPC23",
+    "Searching the wooden / box..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC23"
+  ]
+ },
+ "0x185": {
+  "set_after": [
+   [
+    "NPC23",
+    "It's empty."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC23",
+    "It's empty."
+   ],
+   [
+    "NPC23",
+    "Searching the wooden / box..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC23"
+  ]
+ },
+ "0x187": {
+  "set_after": [
+   [
+    "NPC06",
+    "There's a Mind Berry / growing here!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC06",
+    "These flowers are so / pretty. I wish you had / flowers in your house."
+   ],
+   [
+    "NPC33",
+    "Hey, look at all those / candy bars!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC06",
+   "NPC33"
+  ]
+ },
+ "0x188": {
+  "set_after": [
+   [
+    "NPC06",
+    "Hmm. I wonder what / that could be."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC06",
+    "These poles are used / for drying laundry."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC06"
+  ]
+ },
+ "0x189": {
+  "set_after": [
+   [
+    "NPC07",
+    "Hey look! / What's that by your / right foot!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC07",
+    "Wow! It takes the / outer husk off the / rice just like that!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC07"
+  ]
+ },
+ "0x18A": {
+  "set_after": [
+   [
+    "NPC04",
+    "There's something in / the bottom of the / boat."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC04",
+    "It would be fun to go / for a boat ride."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC04"
+  ]
+ },
+ "0x18B": {
+  "set_after": [
+   [
+    "NPC05",
+    "Somebody must have / left this behind."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC05",
+    "This is where you put / your clothes when you / take a bath."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC05"
+  ]
+ },
+ "0x18C": {
+  "set_after": [
+   [
+    "NPC40",
+    "There is something / on the edge of the / well..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "Are you going to look / at your reflection all / day long? Let's go!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x18D": {
+  "set_after": [
+   [
+    "NPC40",
+    "Searching the wooden / box..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "Searching the wooden / box...\\nIt's empty."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x18E": {
+  "set_after": [
+   [
+    "NPC40",
+    "Thank you very much."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "Nice landslide. / Gives a nice earthy / feeling to the room."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x18F": {
+  "set_after": [
+   [
+    "NPC10",
+    "Look! / There's something / jammed inside it..."
+   ],
+   [
+    "NPC39",
+    "Look! There's / something jammed / under the lid..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC10",
+    "A cannon like this / could sink even a big / ship like the Zephyr."
+   ],
+   [
+    "NPC39",
+    "If we could only use / this cannon to blow / away the monsters..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC10",
+   "NPC39"
+  ]
+ },
+ "0x190": {
+  "set_after": [
+   [
+    "NPC07",
+    "Are you tired, / $A? Do you want / to get some rest?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC07",
+    "You're going to bring / him, right?"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC07"
+  ]
+ },
+ "0x191": {
+  "set_after": [
+   [
+    "NPC10",
+    "The harbor sure is / busy! Look at all this / stuff lying around.\\nLook! There's / somethi"
+   ],
+   [
+    "NPC39",
+    "The harbor sure is / busy! Look at all this / stuff lying around.\\nLook! There's / somethi"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC10",
+    "Searching the crate..."
+   ],
+   [
+    "NPC39",
+    "Searching the crate..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC10",
+   "NPC39"
+  ]
+ },
+ "0x192": {
+  "set_after": [
+   [
+    "NPC11",
+    "It's hurting my ears."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC11",
+    "$A! They're / throwing stuff at us!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC11"
+  ]
+ },
+ "0x193": {
+  "set_after": [
+   [
+    "NPC11",
+    "I've never heard of / anything growing out / of building blocks..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC11",
+    "I remember when you / used to play with / building blocks, too."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC11"
+  ]
+ },
+ "0x194": {
+  "set_after": [
+   [
+    "NPC48",
+    "I think I might get it / this time...\\nYes! I did it!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC48",
+    "I think I might get it / this time...\\nYes! I did it!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC48"
+  ]
+ },
+ "0x195": {
+  "set_after": [
+   [
+    "NPC48",
+    "I think I might get it / this time...\\nYes! I did it!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC48",
+    "I think I might get it / this time...\\nYes! I did it!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC48"
+  ]
+ },
+ "0x196": {
+  "set_after": [
+   [
+    "NPC11",
+    "There's a bug / crawling on it!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC11",
+    "There's a lot of water / in there."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC11"
+  ]
+ },
+ "0x197": {
+  "set_after": [
+   [
+    "NPC11",
+    "Ooh, feel how soft / this is. I love it!"
+   ],
+   [
+    "NPC11",
+    "Searching the / potted plant..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC11",
+    "Ooh, feel how soft / this is. I love it!"
+   ],
+   [
+    "NPC11",
+    "Searching the / potted plant..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC11"
+  ]
+ },
+ "0x198": {
+  "set_after": [
+   [
+    "NPC41",
+    "$A! I think / I see some money in / the dirt."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC41",
+    "This tunnel has only / just been started..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC41"
+  ]
+ },
+ "0x199": {
+  "set_after": [
+   [
+    "NPC41",
+    "Aiieee!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC41",
+    "You didn't find / anything."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC41"
+  ]
+ },
+ "0x19A": {
+  "set_after": [
+   [
+    "NPC13",
+    "Just because you found / something doesn't make / it right."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC13"
+  ]
+ },
+ "0x19B": {
+  "set_after": [
+   [
+    "NPC13",
+    "Everybody thinks Galik / is weird, but he / really is just shy."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC13",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [
+   [
+    "NPC13",
+    4
+   ]
+  ],
+  "files": [
+   "NPC13"
+  ]
+ },
+ "0x19C": {
+  "set_after": [
+   [
+    "NPC13",
+    "That's not a toy. / Please resist the urge / to take it for a spin."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC13",
+    "That's not a toy. / Please resist the urge / to take it for a spin."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC13"
+  ]
+ },
+ "0x19D": {
+  "set_after": [
+   [
+    "NPC42",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC42",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC42"
+  ]
+ },
+ "0x19E": {
+  "set_after": [
+   [
+    "NPC42",
+    "You found this next to / the pile of records."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC42",
+    "Ah, an old phonograph / machine. I wonder what / records he has..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC42"
+  ]
+ },
+ "0x19F": {
+  "set_after": [
+   [
+    "NPC35",
+    "Hey, I know who my / friends are. Go on, / take this, it's on me."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC35"
+  ]
+ },
+ "0x1A0": {
+  "set_after": [
+   [
+    "NPC18",
+    "Look! There's / something under this / table!"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC18"
+  ]
+ },
+ "0x1A1": {
+  "set_after": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC19"
+  ]
+ },
+ "0x1A2": {
+  "set_after": [
+   [
+    "NPC19",
+    "It's empty."
+   ],
+   [
+    "NPC19",
+    "Searching the wooden / box..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC19",
+    "It's empty."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC19"
+  ]
+ },
+ "0x1A3": {
+  "set_after": [
+   [
+    "NPC19",
+    "It's empty."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC19",
+    "It's empty."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC19"
+  ]
+ },
+ "0x1A4": {
+  "set_after": [
+   [
+    "NPC19",
+    "It's empty."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC19",
+    "It's empty."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC19"
+  ]
+ },
+ "0x1A5": {
+  "set_after": [
+   [
+    "NPC20",
+    "You can have that if / you want it."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC20",
+    "I saw you guys go past / here on a big water / bug a few minutes ago.\\nI bet you didn't ev"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC20"
+  ]
+ },
+ "0x1A6": {
+  "set_after": [
+   [
+    "NPC21",
+    "You find some worn-out / armor."
+   ],
+   [
+    "NPC22",
+    "You find some worn-out / armor."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC21",
+    "You find some worn-out / armor."
+   ],
+   [
+    "NPC22",
+    "You find some worn-out / armor."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC21",
+   "NPC22"
+  ]
+ },
+ "0x1A7": {
+  "set_after": [
+   [
+    "NPC21",
+    "Cheap is good, but / they could at least / cut the grass..."
+   ],
+   [
+    "NPC22",
+    "Cheap is good, but / they could at least / cut the grass..."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC21",
+   "NPC22"
+  ]
+ },
+ "0x1A8": {
+  "set_after": [
+   [
+    "NPC23",
+    "Aiiieee! A bug!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC23",
+    "You don't find / anything unusual."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC23"
+  ]
+ },
+ "0x1A9": {
+  "set_after": [
+   [
+    "NPC27",
+    "Aiiieee! A bug!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC27",
+    "You didn't find / anything unusual."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC27"
+  ]
+ },
+ "0x1AA": {
+  "set_after": [
+   [
+    "NPC23",
+    "You're brighter than / you look, $A!"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC23"
+  ]
+ },
+ "0x1AB": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC33",
+    "$B loves candy / bars. Should we / take one for $B?"
+   ],
+   [
+    "NPC33",
+    "Hey, look at all those / candy bars!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC33"
+  ]
+ },
+ "0x1AC": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x1AD": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x1AE": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC26"
+  ]
+ },
+ "0x1AF": {
+  "set_after": [
+   [
+    "NPC27",
+    "You find a small box / underneath the book...\\nThe box contains / a go go bean."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC27",
+    "This book has been / baking in the sun. The / pages have yellowed."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC27"
+  ]
+ },
+ "0x1B0": {
+  "set_after": [
+   [
+    "NPC27",
+    "I thought it laid an / egg!"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC27"
+  ]
+ },
+ "0x1B1": {
+  "set_after": [
+   [
+    "NPC27",
+    "Hey! Look what I found / stuck to the teddy / bear..."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC27"
+  ]
+ },
+ "0x1B2": {
+  "set_after": [
+   [
+    "NPC10",
+    "An empty treasure / chest."
+   ],
+   [
+    "NPC11",
+    "Look! Something is / jammed in that open / space down there."
+   ],
+   [
+    "NPC11",
+    "May Artema grant you / strength in your / struggle against evil."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC39",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC10",
+   "NPC11",
+   "NPC39"
+  ]
+ },
+ "0x1B3": {
+  "set_after": [
+   [
+    "NPC29",
+    "A bed."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC29",
+    "A bed."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC29"
+  ]
+ },
+ "0x1B4": {
+  "set_after": [
+   [
+    "NPC29",
+    "A bed."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC29",
+    "A bed."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC29"
+  ]
+ },
+ "0x1B5": {
+  "set_after": [
+   [
+    "NPC27",
+    "Clap clap clap.\\nAre we clapping / to get the gods' / attention?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC27",
+    "Someone, probably a / believer, has left an / offering of spinach."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC27"
+  ]
+ },
+ "0x1B6": {
+  "set_after": [
+   [
+    "NPC03",
+    "Don't touch that! / It's dirty..."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x1B7": {
+  "set_after": [
+   [
+    "NPC02",
+    "Wow, it looks like / it's growing."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "Those logs are huge!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x1B8": {
+  "set_after": [
+   [
+    "NPC05",
+    "It smells like the / ocean."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC05"
+  ]
+ },
+ "0x1B9": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC05",
+    "Oh, yeah!"
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC05"
+  ]
+ },
+ "0x1BA": {
+  "set_after": [
+   [
+    "NPC40",
+    "You can have one if / you promise to kill / that horrible monster."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "Searching the jar..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x1BB": {
+  "set_after": [],
+  "gates": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x1BC": {
+  "set_after": [
+   [
+    "NPC40",
+    "If you eat that, you / won't be able to move / at all for a while."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "It was empty."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x1BD": {
+  "set_after": [
+   [
+    "NPC02",
+    "I wonder if they are / really eating this?"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "You didn't find / anything."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x1BE": {
+  "set_after": [
+   [
+    "NPC03",
+    "Look! / Something fell out."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x1BF": {
+  "set_after": [
+   [
+    "NPC03",
+    "Look! / Something fell out."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "Nothing there."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x1C0": {
+  "set_after": [
+   [
+    "NPC03",
+    "I think we could / make more money / fighting monsters..."
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x1C2": {
+  "set_after": [
+   [
+    "NPC03",
+    "Searching the jar..."
+   ],
+   [
+    "NPC03",
+    "You didn't find / anything."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "You didn't find / anything."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03"
+  ]
+ },
+ "0x1C3": {
+  "set_after": [
+   [
+    "NPC03",
+    "You didn't find / anything."
+   ],
+   [
+    "NPC07",
+    "I wonder how it got / in there...\\nLet's take it with / us."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC03",
+    "You didn't find / anything."
+   ],
+   [
+    "NPC07",
+    "Nothing here of / any interest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC03",
+   "NPC07",
+   "NPC40"
+  ]
+ },
+ "0x1C5": {
+  "set_after": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x1C6": {
+  "set_after": [
+   [
+    "NPC35",
+    "It's empty."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC35",
+    "It's empty."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC35"
+  ]
+ },
+ "0x1C7": {
+  "set_after": [
+   [
+    "NPC35",
+    "Eek!"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC35",
+    "Do you think this / lighthouse has ghosts? / I heard most do..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC35"
+  ]
+ },
+ "0x1C8": {
+  "set_after": [
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC46"
+  ]
+ },
+ "0x1C9": {
+  "set_after": [
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC46"
+  ]
+ },
+ "0x1CA": {
+  "set_after": [
+   [
+    "NPC44",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC44",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC44"
+  ]
+ },
+ "0x1CB": {
+  "set_after": [
+   [
+    "NPC44",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC44",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC44"
+  ]
+ },
+ "0x1CC": {
+  "set_after": [
+   [
+    "NPC44",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC44",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC44"
+  ]
+ },
+ "0x1CD": {
+  "set_after": [
+   [
+    "NPC44",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC44",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC44"
+  ]
+ },
+ "0x1CE": {
+  "set_after": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC45"
+  ]
+ },
+ "0x1CF": {
+  "set_after": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC45"
+  ]
+ },
+ "0x1D0": {
+  "set_after": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC45"
+  ]
+ },
+ "0x1D1": {
+  "set_after": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC45"
+  ]
+ },
+ "0x1D2": {
+  "set_after": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC45"
+  ]
+ },
+ "0x1D3": {
+  "set_after": [
+   [
+    "NPC47",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC47",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC47"
+  ]
+ },
+ "0x1D4": {
+  "set_after": [
+   [
+    "NPC47",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC47",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC47"
+  ]
+ },
+ "0x1D5": {
+  "set_after": [
+   [
+    "NPC47",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC47",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC47"
+  ]
+ },
+ "0x1D6": {
+  "set_after": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC43"
+  ]
+ },
+ "0x1D7": {
+  "set_after": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC43"
+  ]
+ },
+ "0x1D8": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x1D9": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x1DA": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x1DB": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x1DC": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x1DD": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x1DE": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x1DF": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x1E0": {
+  "set_after": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC19"
+  ]
+ },
+ "0x1E1": {
+  "set_after": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC19"
+  ]
+ },
+ "0x1E2": {
+  "set_after": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC19",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC19"
+  ]
+ },
+ "0x1E3": {
+  "set_after": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x1E4": {
+  "set_after": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x1E5": {
+  "set_after": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x1E6": {
+  "set_after": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x1E7": {
+  "set_after": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x1E8": {
+  "set_after": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x1E9": {
+  "set_after": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x1EA": {
+  "set_after": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x1EB": {
+  "set_after": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x1EC": {
+  "set_after": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x1ED": {
+  "set_after": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC30",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC30"
+  ]
+ },
+ "0x1EE": {
+  "set_after": [
+   [
+    "NPC40",
+    "Searching the wooden / box..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "Searching the wooden / box...\\nIt's empty."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x1EF": {
+  "set_after": [
+   [
+    "NPC40",
+    "Searching the bag..."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC40",
+    "Searching the bag..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC40"
+  ]
+ },
+ "0x1F0": {
+  "set_after": [
+   [
+    "NPC48",
+    "I wondered where that / had gone.\\nIts style is all / wrong for me, you may / have it if y"
+   ]
+  ],
+  "gates": [
+   [
+    "NPC48",
+    "A hot pink vase! / Now that's what I call / \"Bad Taste\"."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC48"
+  ]
+ },
+ "0x1F1": {
+  "set_after": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC45"
+  ]
+ },
+ "0x1F2": {
+  "set_after": [
+   [
+    "NPC02",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC02",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x1F3": {
+  "set_after": [
+   [
+    "NPC24",
+    "Besides, I've got lots / of things to remind me / of my late husband."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC24",
+    "Good job."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC24"
+  ]
+ },
+ "0x1F4": {
+  "set_after": [
+   [
+    "NPC36",
+    "Mr. O'Neal says that / the Professor doesn't / need it anymore."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC36",
+    "Searching the / cabinet..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC36"
+  ]
+ },
+ "0x1F5": {
+  "set_after": [
+   [
+    "NPC09",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC09",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC09"
+  ]
+ },
+ "0x1F6": {
+  "set_after": [
+   [
+    "NPC09",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC09",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC09"
+  ]
+ },
+ "0x1F7": {
+  "set_after": [
+   [
+    "NPC09",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC09",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC09"
+  ]
+ },
+ "0x1F8": {
+  "set_after": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC43",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC43"
+  ]
+ },
+ "0x1F9": {
+  "set_after": [
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC46"
+  ]
+ },
+ "0x1FA": {
+  "set_after": [
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC46",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC46"
+  ]
+ },
+ "0x1FB": {
+  "set_after": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC16",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC16"
+  ]
+ },
+ "0x1FC": {
+  "set_after": [
+   [
+    "NPC13",
+    "There's something down / there, but I can't / quite reach it."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC13",
+    "Searching the / wooden box..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC13"
+  ]
+ },
+ "0x1FD": {
+  "set_after": [
+   [
+    "NPC13",
+    "There's something down / there, but I can't / quite reach it."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC13",
+    "Searching the / wooden box..."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC13"
+  ]
+ },
+ "0x1FE": {
+  "set_after": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "gates": [
+   [
+    "NPC45",
+    "An empty treasure / chest."
+   ]
+  ],
+  "chest": [],
+  "files": [
+   "NPC45"
+  ]
+ },
+ "0x1FF": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC47"
+  ]
+ },
+ "0xD00": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC27"
+  ]
+ },
+ "0x1F01": {
+  "set_after": [],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC27"
+  ]
+ },
+ "0x2424": {
+  "set_after": [],
+  "gates": [],
+  "chest": [
+   [
+    "NPC02",
+    271
+   ]
+  ],
+  "files": [
+   "NPC02"
+  ]
+ },
+ "0x3447": {
+  "set_after": [
+   [
+    "NPC22",
+    "What's wrong, $B? / What's out there?"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC22"
+  ]
+ },
+ "0xA200": {
+  "set_after": [
+   [
+    "NPC34",
+    "Honey! I'm home! / Oh, I've missed you so / much!\\nUh, honey? Did you put / on some weight"
+   ]
+  ],
+  "gates": [],
+  "chest": [],
+  "files": [
+   "NPC34"
+  ]
+ },
+ "0x000": {
+  "known": "always reads true (CheckEventFlag special-cases it)"
+ },
+ "0x0FF": {
+  "known": "permanent, force-set by ResetAllEventFlags"
+ }
+}

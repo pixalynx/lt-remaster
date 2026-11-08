@@ -1,0 +1,11 @@
+# Living Tool Remaster (research 16, epic LT-101): Guardian's Crusade's own code on the patched
+# PSoXide core, with a native renderer growing over it. Its own workspace, like emu-host/: it links
+# the GPL core in process, which the Living Tool app doesn't.
+[workspace]
+resolver = "2"
+members = ["app", "testset", "lockstep", "scene", "assets", "native"]
+
+[profile.release]
+# The core is the hot path: a frame is ~3.5 ms optimised and several times that without.
+opt-level = 3
+debug = 1

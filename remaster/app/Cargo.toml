@@ -1,0 +1,38 @@
+[package]
+name = "lt-remaster"
+description = "Living Tool Remaster: Guardian's Crusade from the player's own disc, its code on PSoXide, drawn by a native renderer"
+version = "0.1.0"
+edition = "2021"
+# Links PSoXide's core (GPL-2.0-or-later).
+license = "GPL-3.0-or-later"
+publish = false
+
+[dependencies]
+# The core: PSoXide d4d8006 plus the code-hook commit, as emu-host/ pins it.
+emulator-core = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b27fff97dc9b265d776fb031ca0c920c0f243f95" }
+psx-iso = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b27fff97dc9b265d776fb031ca0c920c0f243f95" }
+lt-emu-hooks = { path = "../../emu-host/hooks" }
+# The host program as a library (LT-117): its machine, patched disc, sound and protocol server.
+# `--host` serves Living Tool's Play screen with it; the standalone window uses its disc and sound.
+lt-emu-host = { path = "../../emu-host/host" }
+lt-emu-protocol = { path = "../../emu-host/protocol" }
+# Which release a disc is (the boot EXE).
+lt-core = { path = "../../app/crates/lt-core" }
+sha1_smol = "1"
+# The native view (Stage A): the takeover, the asset resolver, the compositor.
+lt-native = { path = "../native" }
+lt-assets = { path = "../assets" }
+# The window, the GPU, controllers.
+winit = "0.30"
+wgpu = "24"
+pollster = "0.4"
+bytemuck = { version = "1", features = ["derive"] }
+gilrs = "0.11"
+# The window's toolbar (look, lights, aspect, frame rate): egui on the same wgpu device.
+egui = "0.31"
+egui-wgpu = "0.31"
+egui-winit = { version = "0.31", default-features = false, features = ["wayland", "x11"] }
+# --screenshot.
+png = "0.18"
+# The debug overlay's letters (public domain 8 x 8 font).
+font8x8 = { version = "0.3", default-features = false }
