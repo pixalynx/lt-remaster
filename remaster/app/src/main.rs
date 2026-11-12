@@ -252,7 +252,7 @@ impl App {
                 "native {}x {}{}  {:.1} fps of {}  {} ticks  {:.2} ms a frame (max {:.2})  dropped {}{}",
                 self.args.scale,
                 if v.lit { "lit" } else { "original" },
-                if v.lit && v.lights != lt_native::light::Lights::ALL { format!(" (shadows {}, lamps {})", on(v.lights.shadows), on(v.lights.lamps)) } else { String::new() },
+                if v.lit && v.lights != lt_native::light::Lights::ALL { format!(" (shadows {}, lamps {}, water {})", on(v.lights.shadows), on(v.lights.lamps), on(v.lights.water)) } else { String::new() },
                 st.native_fps,
                 v.fps,
                 st.native_ticks,

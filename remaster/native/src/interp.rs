@@ -24,7 +24,9 @@
 //!   cutscene cut);
 //! - a character moving more than [`ACTOR_JUMP`] (a character placed elsewhere): that character only.
 //!
-//! The emulated 2D layer stays at 30: every frame takes it from tick B.
+//! The emulated 2D layer stays at 30: every frame takes it from tick B. Its billboards are the
+//! exception (LT-145): they're placed in the world and seen through the camera in between
+//! (`crate::billboard::between`), with [`Pose::from_a`] and [`Pose::from_b`].
 
 use lt_assets::Frame;
 use lt_scene::Record;
@@ -51,6 +53,12 @@ pub struct Pose {
     /// parts didn't match.
     pub morphed: u32,
     pub snapped_characters: u32,
+    /// How far from tick A to tick B (0 to 1), and each tick's view space to B's world frame (A's
+    /// with the shift across seams): what the billboards are blended in (LT-145,
+    /// `crate::billboard::between`).
+    pub t: f64,
+    pub from_a: Affine,
+    pub from_b: Affine,
 }
 
 /// Why a frame snaps to tick B.
@@ -65,6 +73,8 @@ pub enum Snap {
     CameraCut,
 }
 
+/// One a frame: its size doesn't matter.
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, Debug)]
 pub enum Between {
     Pose(Pose),
@@ -168,16 +178,24 @@ fn split(m: &M3, rows: bool) -> Option<([f64; 3], M3)> {
 }
 
 /// `a` to `b` at `t`: scales lerped, rotation slerped (elementwise when either isn't a rotation).
+///
+/// A GTE matrix in 4.12 is a rotation only to about 1/4096, and the slerp's is exact; what's left
+/// of each (`m` less its rotation and scales) is lerped as well, so `t` = 0 and 1 are `a` and `b`
+/// exactly and nothing jumps at a tick (LT-145: it was a fifth of a pixel).
 fn blend(a: &M3, b: &M3, t: f64, rows: bool) -> M3 {
+    let scaled = |r: &M3, s: [f64; 3]| -> M3 {
+        if rows {
+            [0, 1, 2].map(|i| r[i].map(|v| v * s[i]))
+        } else {
+            [0, 1, 2].map(|i| [0, 1, 2].map(|j| r[i][j] * s[j]))
+        }
+    };
     match (split(a, rows), split(b, rows)) {
         (Some((sa, ra)), Some((sb, rb))) => {
-            let r = matrix(slerp(quat(&ra), quat(&rb), t));
-            let s = lerp3(sa, sb, t);
-            if rows {
-                [0, 1, 2].map(|i| r[i].map(|v| v * s[i]))
-            } else {
-                [0, 1, 2].map(|i| [0, 1, 2].map(|j| r[i][j] * s[j]))
-            }
+            let (qa, qb) = (quat(&ra), quat(&rb));
+            let m = scaled(&matrix(slerp(qa, qb, t)), lerp3(sa, sb, t));
+            let (ea, eb) = (scaled(&matrix(qa), sa), scaled(&matrix(qb), sb));
+            [0, 1, 2].map(|i| [0, 1, 2].map(|j| m[i][j] + (a[i][j] - ea[i][j]) * (1.0 - t) + (b[i][j] - eb[i][j]) * t))
         }
         _ => [0, 1, 2].map(|i| [0, 1, 2].map(|j| a[i][j] + (b[i][j] - a[i][j]) * t)),
     }
@@ -193,10 +211,15 @@ pub fn between(a: (&Record, &Frame), b: (&Record, &Frame), t: f64) -> Between {
     let (va, vb) = (Affine::of(&ca.view), Affine::of(&cb.view));
     let (Some(ia), Some(ib)) = (va.inverse(), vb.inverse()) else { return Between::Snap(Snap::NoCamera) };
 
-    // The shift from A's world frame to B's, from a chunk both drew (the current one if it can).
+    // The shift from A's world frame to B's, from a chunk both drew (the current one if it can). A
+    // battle (LT-116) has no chunks: its arena is one world, the same from tick to tick.
+    let battle = ra.mode == lt_assets::BATTLE_MODE && fa.chunks.is_empty() && fb.chunks.is_empty();
     let pairs = || fb.chunks.iter().filter_map(|c| fa.chunks.iter().find(|d| d.chunk == c.chunk).map(|d| (c, d)));
-    let Some((cb_, ca_)) = pairs().find(|(c, _)| c.chunk == rb.chunk).or_else(|| pairs().next()) else { return Between::Snap(Snap::NoSharedChunk) };
-    let shift = sub3(ib.after(&Affine::of(&cb_.model_view)).t, ia.after(&Affine::of(&ca_.model_view)).t);
+    let shift = match pairs().find(|(c, _)| c.chunk == rb.chunk).or_else(|| pairs().next()) {
+        Some((cb_, ca_)) => sub3(ib.after(&Affine::of(&cb_.model_view)).t, ia.after(&Affine::of(&ca_.model_view)).t),
+        None if battle => [0.0; 3],
+        None => return Between::Snap(Snap::NoSharedChunk),
+    };
 
     // The camera: its eye (where the inverse view puts the origin) and its rotation.
     let (eye_a, eye_b) = (add3(ia.t, shift), ib.t);
@@ -265,7 +288,8 @@ pub fn between(a: (&Record, &Frame), b: (&Record, &Frame), t: f64) -> Between {
                 .collect()
         })
         .collect();
-    Between::Pose(Pose { view, chunks, parts, morphed, snapped_characters: snapped })
+    let from_a = Affine { m: ia.m, t: add3(ia.t, shift) };
+    Between::Pose(Pose { view, chunks, parts, morphed, snapped_characters: snapped, t, from_a, from_b: ib })
 }
 
 #[cfg(test)]

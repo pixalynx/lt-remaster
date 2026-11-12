@@ -1,7 +1,7 @@
 [package]
 name = "lt-remaster"
 description = "Living Tool Remaster: Guardian's Crusade from the player's own disc, its code on PSoXide, drawn by a native renderer"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 # Links PSoXide's core (GPL-2.0-or-later).
 license = "GPL-3.0-or-later"

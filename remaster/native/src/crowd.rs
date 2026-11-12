@@ -247,7 +247,8 @@ impl Crowd {
     /// texture the first time. Every one's shadow animation steps, in view or not.
     pub fn update(&mut self, r: &Record, ram: &dyn Ram, vram: &[u16], assets: &mut Assets, reach: Reach) -> Vec<Drawn> {
         let Some(cam) = r.camera.as_ref() else { return Vec::new() };
-        if r.actors.len() < CHARACTER_COUNT * CHARACTER_BYTES {
+        // A battle (LT-116) draws its own actors; the field's records wait for its end.
+        if r.actors.len() < CHARACTER_COUNT * CHARACTER_BYTES || r.mode == lt_assets::BATTLE_MODE {
             return Vec::new();
         }
         let home = wide::home(r);
@@ -300,11 +301,13 @@ impl Crowd {
             let Some(model) = self.model(ram, vram, assets, a.model(), r.chunk) else { continue };
             let Some(body) = model.base.first() else { continue };
             let vertices = self.posed(ram, &a, body, (shadow.cur, shadow.tgt, shadow.weight));
-            let mut parts = vec![PartUse { object: 0, world, model_view: compose(&cam.view, &world), vertices }];
+            // Doors and chests are drawn through the part drawer's second entry (keyed on the far corner).
+            let entry = u8::from(matches!(a.kind(), 2 | 3));
+            let mut parts = vec![PartUse { object: 0, world, model_view: compose(&cam.view, &world), vertices, entry, light: None, arena_light: None }];
             if a.kind() == 3 {
                 let Some(top) = model.base.get(1) else { continue };
                 let l = lid(&a);
-                parts.push(PartUse { object: 1, world: l, model_view: compose(&cam.view, &l), vertices: top.clone() });
+                parts.push(PartUse { object: 1, world: l, model_view: compose(&cam.view, &l), vertices: top.clone(), entry, light: None, arena_light: None });
             }
             out.push(Drawn { character: CharacterUse { index: i as u16, mesh: model.mesh, texture: model.texture, source: model.source.clone(), parts }, screen_x });
         }

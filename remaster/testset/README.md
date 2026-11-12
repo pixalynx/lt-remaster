@@ -18,7 +18,7 @@ cargo run --release -p lt-testset -- build "<Guardian's Crusade (USA).bin>" <car
 cargo run --release -p lt-testset -- check "<Guardian's Crusade (USA).bin>" <set dir>
 ```
 
-- `build` makes every scene from power-on, in about four minutes on an M1 Pro (15 scenes).
+- `build` makes every scene from power-on, in about four minutes on an M1 Pro (19 scenes).
 - `check` replays each scene twice on fresh machines and fails unless both replays end with the
   digest the build stored.
 - The card is the late-game one the compat tour uses (`memcard04-karmine-fly.mcd`, level 6–43
@@ -34,6 +34,8 @@ The recipes follow `app/crates/lt-emu/examples/compat_tour.rs`:
   chunk's walk map (nearest (0, 0), or a given spot).
 - **Random battles:** found by walking squares.
 - **Flight:** the World mod's root-mode switch.
+- **Story moments:** the story flags a scene needs are set as the warp lands, before the Knight is
+  stood on the spot (a talk trigger there then runs).
 
 | Scene | Starts at | Tape |
 |---|---|---|
@@ -52,6 +54,10 @@ The recipes follow `app/crates/lt-emu/examples/compat_tour.rs`:
 | `tower` | the North Tower (chunk 433) | walking |
 | `lamps` | an inn's bar (chunk 348), the Knight stood by its table lamps | standing |
 | `door` | the opening, 300 frames before the Knight leaves the house into the village (chunk 326 to 78) | the New Game tape: ✕ on |
+| `gift` | the Elder's house (chunk 403) from the village, flags 0x82 and 0x0D set: his talk trigger, 600 frames in | ✕ every 60 frames: Mr. O'Neal jumps out of the gift box to the Knight |
+| `zeppetto` | Zeppetto's house (chunk 346) from the late save, flag 0xF6 set (every Living Toy found), the Knight facing him, 1,200 frames into the talk | ✕ every 60 frames: Zeppetto flickers out, Mr. O'Neal hops to the Knight |
+| `first-flight` | the overworld scene's start with story flag 0xBA cleared and root mode 28: OVR24, the first flight (300 frames in) | 2,700 frames of LT-118's probe steering: the sea and islands, then Karmine |
+| `water` | the village's pond (chunk 78, by (-886, -437)) | walking about by it |
 
 ## Which checks use which scenes (research 16, epic LT-101)
 
@@ -65,6 +71,9 @@ The recipes follow `app/crates/lt-emu/examples/compat_tour.rs`:
 | LT-114 widescreen and draw distance (A7) | `village`, `overworld` |
 | LT-116 battles (A8), LT-129 battle logic (C5) | `battle-1`, `battle-late` |
 | LT-118 draw paths spike | `flight`, `menu`, `cutscene`, `interior` (doors) |
+| LT-142 event actors | `gift` (`Event_ActorApproachKnightTask`), `zeppetto` (it and `Event_ActorFlickerInTask`) |
+| LT-143 the first flight's sky (OVR24) | `first-flight` |
+| LT-146 water in the lit look | `water`, `first-flight` (water found and drawn); `interior`, `lamps`, `cave`, `tower`, `gift`, `zeppetto`, `late`, `cutscene` (none found) |
 | LT-120 / LT-121 sequencer hook and synth (B1, B2) | `cutscene`, `village`, `battle-1` |
 | LT-124 native FMV (B5) | `boot` |
 | LT-125 input and camera (C1) | `village`, `overworld` |

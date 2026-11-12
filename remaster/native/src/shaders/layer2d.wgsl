@@ -1,11 +1,17 @@
 // Living Tool Remaster's 2D layer (LT-111). Vendored from PSoXide's hardware renderer
 // (pixalynx/PSoXide-emulator b27fff9, emu/crates/psx-gpu-render/src/shaders/prim.wgsl,
-// GPL-2.0-or-later) and changed in four places, each marked "LT-111":
+// GPL-2.0-or-later) and changed in four places, each marked "LT-111", and a fifth, "LT-144":
 // - the target is the display area at the internal scale, not all of VRAM (`u_view`);
 // - each vertex carries its ordering-table bucket; a fragment is dropped where the native 3D
 //   polygon under it is in the same or a nearer bucket (`u_order`), as the GPU's painting would;
 // - a second output marks the 2D layer's coverage (green channel);
 // - a fragment's PSX pixel adds the display origin (attribute planes, dither).
+// LT-144: a vertex is placed at its floating-point position (`fpos`), the integer one but for a
+// billboard's sub-pixel corners.
+// LT-116: a 15-bit texel inside the battle transition's copy of a frame samples the native picture
+// of that frame instead (`u_copy`), between texels too.
+// LT-140: a frozen frame's quads and their copies in a widened view's margins (`frozen`) draw the
+// native picture of that frame at their pixel (`frozen_tex`), dimmed by their colour.
 //
 // PSX hardware-renderer shader - VRAM-shaped target.
 //
@@ -54,6 +60,15 @@ const VRAM_H_F: f32 =  512.0;
 @group(0) @binding(2) var<uniform> u_view: vec4<f32>;
 // LT-111: the bucket + 1 of the native 3D polygon at each target pixel (0 where none).
 @group(0) @binding(3) var u_order: texture_2d<f32>;
+// LT-116: the battle transition's copy of a frame, and the VRAM rect it stands for (x, y, w, h;
+// w = 0 when there's none).
+@group(0) @binding(4) var copy_tex: texture_2d<f32>;
+@group(0) @binding(5) var copy_sampler: sampler;
+@group(0) @binding(6) var<uniform> u_copy: vec4<f32>;
+// LT-140: the native picture of a frozen frame, and whether there's one (x > 0) with the target's
+// size (y, z): a frozen frame's quad samples it at its own pixel.
+@group(0) @binding(7) var frozen_tex: texture_2d<f32>;
+@group(0) @binding(8) var<uniform> u_frozen: vec4<f32>;
 
 struct VertexIn {
     @location(0) pos:   vec2<i32>,
@@ -68,6 +83,10 @@ struct VertexIn {
     @location(8) planes3: vec4<u32>,
     // LT-111: the packet's bucket.
     @location(9) bucket: f32,
+    // LT-144: where to place it.
+    @location(10) fpos: vec2<f32>,
+    // LT-140: 1 on a frozen frame's quad, 2 on its copy in a margin.
+    @location(11) frozen: u32,
 }
 
 struct VertexOut {
@@ -86,6 +105,8 @@ struct VertexOut {
     @location(7) @interpolate(flat) planes3: vec4<u32>,
     // LT-111: the packet's bucket.
     @location(8) @interpolate(flat) bucket: f32,
+    // LT-140: a frozen frame's quad (1) or its copy (2).
+    @location(9) @interpolate(flat) frozen: u32,
 }
 
 // ---------------------------------------------------------------------------
@@ -200,7 +221,8 @@ fn blend_encode(rgb: vec3<f32>) -> vec3<f32> {
 @vertex
 fn vs_main(in: VertexIn) -> VertexOut {
     // PSX-VRAM-space (0..1024, 0..512) → NDC (-1..+1, Y-flipped).
-    var pos_psx = vec2<f32>(f32(in.pos.x), f32(in.pos.y));
+    // LT-144: `fpos`, which is `pos` but for a billboard's sub-pixel corners.
+    var pos_psx = in.fpos;
     // The CPU rasterizer covers a polygon pixel when the pixel's top-left
     // corner lies in the triangle (top-left tie rule, verified edge for edge
     // against `tri_raster_setup`), and evaluates colour and UV at that corner.
@@ -224,6 +246,7 @@ fn vs_main(in: VertexIn) -> VertexOut {
     out.planes1 = in.planes1;
     out.planes2 = in.planes2;
     out.planes3 = in.planes3;
+    out.frozen = in.frozen;
     return out;
 }
 
@@ -549,6 +572,21 @@ fn fs_main(in: VertexOut) -> Out2d {
         let b = f32(plane_attr(in, 2u, px)) + plane_delta(in, 2u, sub);
         color = vec4<f32>(clamp(vec3<f32>(r, g, b), vec3<f32>(0.0), vec3<f32>(255.0)) / 255.0, in.color.a);
     }
+    // LT-140: a frozen frame: the native picture of it at this pixel, dimmed by the quad's colour
+    // as the game's copy is. A copy in a margin has nothing to show without it.
+    if in.frozen != 0u {
+        if u_frozen.x > 0.0 {
+            let c = textureSampleLevel(frozen_tex, copy_sampler, in.position.xy / u_frozen.yz, 0.0).rgb;
+            var rgb = c;
+            if (in.flags & FLAG_RAW_TEXTURE) == 0u {
+                rgb = min(c * round(color.rgb * 255.0) / 128.0, vec3<f32>(1.0));
+            }
+            return out2d(vec4<f32>(blend_encode(rgb), 1.0));
+        }
+        if in.frozen == 2u {
+            discard;
+        }
+    }
     if !textured {
         var rgb = color.rgb;
         if dither {
@@ -604,6 +642,23 @@ fn fs_main(in: VertexOut) -> Out2d {
         suv += vec2<f32>(0.5, 0.5);
     }
     let uv8 = apply_tex_window(page_uv(suv), in.tex_window);
+    // LT-116: the battle transition's copy of a frame: the native picture, between texels too. Its
+    // texels are all semi-transparent (the game sets each one's STP bit) and none is clear.
+    if u_copy.z > 0.0 && tex_depth(in.flags) == 2u {
+        let at = vec2<f32>(tpage_origin(in.flags) + uv8) + fract(suv);
+        let rel = (at - u_copy.xy) / u_copy.zw;
+        if all(rel >= vec2<f32>(0.0)) && all(rel < vec2<f32>(1.0)) {
+            if (in.flags & FLAG_TEX_OPAQUE_PASS) != 0u {
+                discard;
+            }
+            let c = textureSampleLevel(copy_tex, copy_sampler, rel, 0.0).rgb;
+            var rgb = c;
+            if (in.flags & FLAG_RAW_TEXTURE) == 0u {
+                rgb = min(c * round(color.rgb * 255.0) / 128.0, vec3<f32>(1.0));
+            }
+            return out2d(vec4<f32>(blend_encode(rgb), 1.0));
+        }
+    }
     let texel = sample_texel(in.flags, uv8);
     if texel == 0u {
         discard;

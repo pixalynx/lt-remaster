@@ -8,14 +8,28 @@
 //!   GTE's model-view matrix) and each `WorldChunk_DrawObjectMesh` group it draws.
 //! - **Characters:** each `Model_DrawParts` call made by `Npc_DrawIfVisible`, keyed by character
 //!   index: the world matrix (ctx+0x11C), the model-view matrix, the part record and a copy of its
-//!   live, already-posed vertices.
+//!   live, already-posed vertices. Two field event tasks draw an actor themselves the same way
+//!   (LT-142): `Event_ActorApproachKnightTask` (Mr. O'Neal jumping to the Knight) and
+//!   `Event_ActorFlickerInTask` (Zeppetto flickering out); their calls are characters too
+//!   ([`Drawer`]).
 //! - **Torches:** the flame records (type 5) when `Field_DrawTorchFlames` runs: the village's
 //!   light sources.
+//! - **The first flight's sky (LT-143):** OVR24 draws its sea and islands as map cells with its own
+//!   drawer (`func_80133914`, the chunk mesh format, lit by NCDS and fogged): each cell drawn, its
+//!   model-view matrix and place, and the GTE's lighting registers ([`SkyCell`], [`Record::sky_gte`]).
+//!   Its task draws the area's model 2 at the Knight, the Baby's glow (an additive effect, left on
+//!   the 2D layer): recorded as a character ([`Drawer::Flight`]), not set aside.
 //! - **VRAM moves:** each `SetDrawMove` (a VRAM-to-VRAM copy the GPU runs with the tick's ordering
 //!   table): the field's 13 texture and palette animations, the water among them.
 //! - **Character records** as the tick leaves them (LT-119): every NPC's place, facing and
 //!   animation state, drawn or not, and the two flags that hold the NPCs' animation and drawing.
 //!   The machine's RAM a frame later is already the next tick's.
+//! - **Battles (LT-116):** OVR03 draws the actors and Toys (`FUN_80144b48`) and the arena
+//!   (`func_8014B4A4`, through `Model_DrawParts`' second entry; `FUN_8014c97c` while a battle light
+//!   is set) with the same part records. Each is a character ([`Drawer::Battle`], [`Drawer::Arena`]),
+//!   with the GTE's light registers at the call ([`GteLight`]): battle is where the game lights by
+//!   normals, and those registers hold its light (directions, colours, the back colour) with every
+//!   flash. The battle camera is the view at ctx+0x98 and the GTE's H (400) and offset.
 //!
 //! Ids are stable across ticks ([`Group::id`] is the chunk id and the mesh's offset in the chunk;
 //! characters are keyed by index; [`Flame::id`] is the torch list's generation and the record
@@ -26,6 +40,7 @@ use emulator_core::Cpu;
 use lt_emu_hooks::{Action, Call, Handler, Hook, Hooks};
 use serde::Serialize;
 
+pub mod census;
 pub mod check;
 
 /// `main()`'s loop: `jal ExecTaskTree` (the tick's tasks start) and `jal ProcessLoadRequestQueue`
@@ -48,8 +63,85 @@ pub const TORCH_FLAMES_WORD: u32 = 0x27BD_FF70;
 pub const MODEL_DRAW_PARTS: u32 = 0x8019_DD70;
 pub const MODEL_DRAW_PARTS_2: u32 = 0x8019_DD68;
 pub const DRAW_OBJECTS_SIZE: u32 = 0x100;
+/// OVR02's event tasks that draw an actor with `Model_DrawParts(pose, ctx, 1)` (LT-142): Tier-2
+/// opcode 0x23 runs them, as tasks 0 and 6 of `D_801FC40C`. Each with its first word and size
+/// (to the next function).
+pub const APPROACH_KNIGHT: u32 = 0x801E_249C;
+pub const APPROACH_KNIGHT_WORD: u32 = 0x27BD_FFD0;
+pub const APPROACH_KNIGHT_SIZE: u32 = 0x41C;
+pub const FLICKER_IN: u32 = 0x801E_2A3C;
+pub const FLICKER_IN_WORD: u32 = 0x27BD_FFD8;
+pub const FLICKER_IN_SIZE: u32 = 0x180;
+/// The records they move, as fixed in their code: the approach's is `CHARACTERS[22]`, or
+/// `CHARACTERS[3]` while the current chunk is Zeppetto's house (0x15A); the flicker's is
+/// `CHARACTERS[2]`. The pose they draw is the record's slot's part record (+0x31).
+const APPROACHING: u32 = 0x8014_6AD0;
+const APPROACHING_AT_ZEPPETTOS: u32 = 0x8014_66A8;
+const ZEPPETTOS: u32 = 0x15A;
+const FLICKERING: u32 = 0x8014_6670;
+/// `D_801FD688`: the area's models (TMD addresses), by a record's +0x16, as the actor loop hands
+/// `Npc_DrawIfVisible` its model.
+const MODELS: u32 = 0x801F_D688;
+/// OVR24, the first flight's sky scene (LT-143). `func_80133914(lists, pool, cursor, ot)` draws one
+/// map cell: the hand-written sibling of `WorldChunk_DrawObjectMesh`. `func_80132074`, the scene's
+/// task, draws the area's model 2 (`D_801FD690`, built into `D_801350C0`; it asks for a second
+/// part, which is empty).
+pub const SKY_CELL: u32 = 0x8013_3914;
+pub const SKY_CELL_WORD: u32 = 0x27BD_FFD8;
+pub const SKY_TASK: u32 = 0x8013_2074;
+pub const SKY_TASK_WORD: u32 = 0x27BD_FFA8;
+pub const SKY_TASK_SIZE: u32 = 0x18A0;
+const SKY_MODEL: u32 = 0x801F_D690;
+const SKY_PARTS: u32 = 0x8013_50C0;
+/// The character index the flight task's parts take: past the records (0x50 and up are the
+/// overworld's wanderers, which end before 0x57).
+pub const SKY_MODEL_INDEX: u16 = 0x100;
+/// `func_80134A4C`'s cell window (`D_801351E0`: 25 × s16 type, s8 column, s8 row), the map's
+/// offset per column or row (`D_80135048`, s16: the wrap, ±9,216 or 0) and the cell types'
+/// records (16 bytes each from 0x8001000C: lists, pool, culling centre). Every type shares one
+/// vertex pool in map coordinates, so a cell at offset 0 is drawn through the view itself.
+const SKY_WINDOW: u32 = 0x8013_51E0;
+const SKY_OFFSETS: u32 = 0x8013_5048;
+const SKY_RECORDS: u32 = 0x8001_000C;
+/// The one normal every cell's NCDS lights with (`D_80135058`).
+const SKY_NORMAL: u32 = 0x8013_5058;
+/// A sky cell's id in the chunk id space: past every chunk, its row and column in the map.
+pub const SKY_CHUNKS: u16 = 0xF000;
 /// Main: libgpu's `SetDrawMove(DR_MOVE *p, RECT *rect, int x, int y)`.
 pub const SET_DRAW_MOVE: u32 = 0x801A_8D48;
+/// OVR03 (battle presentation, at 0x80139000; LT-116): the actors' drawer (`FUN_80144b48`, from
+/// `Battle_SetupActorsTask`), the arena's task (`func_8014B4A4`, root mode 8's) and the arena drawer
+/// it calls while a battle light is set (`FUN_8014c97c`, hand asm), each with its first word and
+/// size (to the next function). OVR03 loads in battle only, so the words keep the hooks quiet
+/// elsewhere.
+pub const BATTLE_ACTOR: u32 = 0x8014_4B48;
+pub const BATTLE_ACTOR_WORD: u32 = 0x27BD_FF10;
+pub const BATTLE_ACTOR_SIZE: u32 = 0xC88;
+pub const BATTLE_ARENA: u32 = 0x8014_B4A4;
+pub const BATTLE_ARENA_WORD: u32 = 0x27BD_FFC0;
+pub const BATTLE_ARENA_SIZE: u32 = 0x14D8;
+pub const ARENA_LIT: u32 = 0x8014_C97C;
+pub const ARENA_LIT_WORD: u32 = 0x18E0_017E;
+/// The battle actors (gc-sys `D_801B74C4`, 0x80010000): nine records of 0x40C bytes, each drawn
+/// with the part record at +0x400.
+pub const BATTLE_ACTORS: u32 = 0x8001_0000;
+pub const BATTLE_ACTOR_BYTES: u32 = 0x40C;
+pub const BATTLE_ACTOR_COUNT: u32 = 9;
+/// The arena's light source (`D_8014E540`, `Battle_SetLightSource`): x, y, z (s16, the offset the
+/// drawer adds to each vertex), the side flag, the strength (s32 at +8), r, g, b and "set this
+/// tick" at +0xC..+0xF.
+pub const ARENA_LIGHT: u32 = 0x8014_E540;
+/// The battle's lights (OVR03 data): the world's light matrix (`D_8014E440`, each row a light's
+/// direction; an actor's light matrix is it times the actor's rotation) and the area's base colour
+/// matrix with its back colour (`D_8014E300[1]`, a MATRIX whose translation is the back colour;
+/// `Battle_InitAreaLighting` sets it from the area's entry in `D_8014E460`). Flashes blend an actor's
+/// own copy (actor+0x70) away from the base and back.
+pub const BATTLE_WORLD_LIGHTS: u32 = 0x8014_E440;
+pub const BATTLE_BASE_COLOURS: u32 = 0x8014_E320;
+/// The character indices battle draws take: an actor's is [`BATTLE_INDEX`] + its slot, the arena's
+/// [`ARENA_INDEX`] (past the field's records and the first flight's 0x100).
+pub const BATTLE_INDEX: u16 = 0x200;
+pub const ARENA_INDEX: u16 = 0x2FF;
 
 const CTX: u32 = 0x1F80_0000;
 const CHUNK_DATA: u32 = 0x8001_0000;
@@ -145,11 +237,152 @@ pub struct Group {
     pub object: u32,
 }
 
-/// One drawn character (`Npc_DrawIfVisible` → `Model_DrawParts`).
+/// What drew a character.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]
+pub enum Drawer {
+    /// The field's actor loop, through `Npc_DrawIfVisible`.
+    #[default]
+    Npc,
+    /// `Event_ActorApproachKnightTask`: the actor jumps from the Knight to its place, turning.
+    ApproachKnight,
+    /// `Event_ActorFlickerInTask`: the actor shown on some ticks only, for 30 ticks.
+    FlickerIn,
+    /// OVR24's first-flight task (`func_80132074`): the area's model 2 at the Knight, the Baby's
+    /// glow. Every polygon of it is semi-transparent (added): an effect, which the 2D layer draws
+    /// with the PS1's blend. Recorded, not set aside ([`character_call`] leaves it out).
+    Flight,
+    /// A battle actor or Toy (OVR03 `FUN_80144b48`, LT-116).
+    Battle,
+    /// The battle arena (OVR03 `func_8014B4A4`, or `FUN_8014c97c` with the arena light, LT-116).
+    Arena,
+}
+
+/// The event task a `Model_DrawParts` call comes from, and the record it draws (LT-142).
+pub fn event_actor(c: &Call) -> Option<(Drawer, u32)> {
+    if within(c.ra(), APPROACH_KNIGHT, APPROACH_KNIGHT_SIZE) && c.read_u32(APPROACH_KNIGHT) == APPROACH_KNIGHT_WORD {
+        let at_zeppettos = c.read_u32(CTX + 0xE8) == ZEPPETTOS;
+        Some((Drawer::ApproachKnight, if at_zeppettos { APPROACHING_AT_ZEPPETTOS } else { APPROACHING }))
+    } else if within(c.ra(), FLICKER_IN, FLICKER_IN_SIZE) && c.read_u32(FLICKER_IN) == FLICKER_IN_WORD {
+        Some((Drawer::FlickerIn, FLICKERING))
+    } else {
+        None
+    }
+}
+
+/// Whether a `Model_DrawParts` call is the first flight's task's (LT-143).
+pub fn flight_part(c: &Call) -> bool {
+    within(c.ra(), SKY_TASK, SKY_TASK_SIZE) && c.read_u32(SKY_TASK) == SKY_TASK_WORD
+}
+
+/// Whether a `Model_DrawParts` call is the field's actor loop's: from `Npc_DrawIfVisible`, with
+/// OVR02 there. OVR04 (battle) loads at the same address, and its effects call `Model_DrawParts`
+/// too, so the address alone isn't enough (LT-116).
+pub fn npc_call(c: &Call) -> bool {
+    within(c.ra(), NPC_DRAW, NPC_DRAW_SIZE) && c.read_u32(NPC_DRAW) == NPC_DRAW_WORD
+}
+
+/// The battle drawer a `Model_DrawParts` call comes from (LT-116): an actor's or the arena's, with
+/// OVR03 loaded.
+pub fn battle_call(c: &Call) -> Option<Drawer> {
+    if within(c.ra(), BATTLE_ACTOR, BATTLE_ACTOR_SIZE) && c.read_u32(BATTLE_ACTOR) == BATTLE_ACTOR_WORD {
+        Some(Drawer::Battle)
+    } else if within(c.ra(), BATTLE_ARENA, BATTLE_ARENA_SIZE) && c.read_u32(BATTLE_ARENA) == BATTLE_ARENA_WORD {
+        Some(Drawer::Arena)
+    } else {
+        None
+    }
+}
+
+/// Whether a `Model_DrawParts` call draws a character the native view takes over: from
+/// `Npc_DrawIfVisible`, an event task, or a battle's actors and arena (LT-116). (The first flight's
+/// glow and the battle effects stay on the 2D layer.)
+pub fn character_call(c: &Call) -> bool {
+    npc_call(c) || event_actor(c).is_some() || battle_call(c).is_some()
+}
+
+/// The GTE's lighting registers at a battle draw (LT-116), as `Model_DrawParts` lights with them:
+/// - `llm`: the light matrix, each row a light's direction in the model's space (4.12; the world's
+///   lights, `D_8014E440`, times the model's rotation);
+/// - `lcm`: the colour matrix, each column a light's colour (4.12);
+/// - `bk`: the back colour (0x1000 = 1.0, colour 255).
+///
+/// NCS gives a corner `bk + lcm · max(0, llm · n)`, and the GPU modulates its texture by it (128 is
+/// 1.0). A flash is a change to `lcm` and `bk`, per actor (`Battle_BlendActorLight`).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct GteLight {
+    pub llm: [[i16; 3]; 3],
+    pub lcm: [[i16; 3]; 3],
+    pub bk: [i32; 3],
+}
+
+impl GteLight {
+    /// The registers from control words 8..=20 (as `SkyGte::control` holds them).
+    pub fn from_control(c: &[u32]) -> GteLight {
+        let (lo, hi) = (|v: u32| v as u16 as i16, |v: u32| (v >> 16) as u16 as i16);
+        let m = |b: usize| [[lo(c[b]), hi(c[b]), lo(c[b + 1])], [hi(c[b + 1]), lo(c[b + 2]), hi(c[b + 2])], [lo(c[b + 3]), hi(c[b + 3]), lo(c[b + 4])]];
+        GteLight { llm: m(8), bk: [c[13] as i32, c[14] as i32, c[15] as i32], lcm: m(16) }
+    }
+
+    /// The GTE's now.
+    pub fn from_gte(cpu: &Cpu) -> GteLight {
+        let g = cpu.cop2();
+        let c: Vec<u32> = (0..21).map(|i| g.read_control(i)).collect();
+        Self::from_control(&c)
+    }
+
+    /// Its control words 8..=20, to load a GTE with.
+    pub fn control(&self) -> [(u8, u32); 13] {
+        let pair = |a: i16, b: i16| a as u16 as u32 | (b as u16 as u32) << 16;
+        let m = |m: &[[i16; 3]; 3]| [pair(m[0][0], m[0][1]), pair(m[0][2], m[1][0]), pair(m[1][1], m[1][2]), pair(m[2][0], m[2][1]), m[2][2] as u16 as u32];
+        let (l, c) = (m(&self.llm), m(&self.lcm));
+        [(8, l[0]), (9, l[1]), (10, l[2]), (11, l[3]), (12, l[4]), (13, self.bk[0] as u32), (14, self.bk[1] as u32), (15, self.bk[2] as u32), (16, c[0]), (17, c[1]), (18, c[2]), (19, c[3]), (20, c[4])]
+    }
+}
+
+/// The arena's light source as `FUN_8014c97c` drew with it (LT-116, `D_8014E540`): the offset it adds
+/// to each of the arena's vertices (the light at minus it), its strength and colour.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct ArenaLight {
+    pub offset: [i16; 3],
+    pub strength: i32,
+    pub rgb: [u8; 3],
+}
+
+/// One map cell OVR24 draws (`func_80133914`, LT-143).
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct SkyCell {
+    /// Its column and row in the map, and its type: which of the area's cell meshes it is.
+    pub cell: [u8; 2],
+    pub kind: u16,
+    /// Its primitive lists (the chunk group format) and vertex pool, as `func_80133914` gets them.
+    pub lists: u32,
+    pub pool: u32,
+    /// Where it sits in the world (x, 0, z), and the GTE's model-view matrix (the view moved there).
+    pub offset: [i32; 3],
+    pub model_view: Matrix,
+}
+
+impl SkyCell {
+    /// Its id among the chunks: [`SKY_CHUNKS`] with its row and column.
+    pub fn id(&self) -> u16 {
+        SKY_CHUNKS | (self.cell[1] as u16) << 4 | self.cell[0] as u16
+    }
+}
+
+/// The GTE as OVR24 lights its cells (LT-143): every control register at the tick's first cell
+/// (light, colour and back colour matrices, the far colour and the depth cue), and the normal.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct SkyGte {
+    pub control: [u32; 32],
+    pub normal: [i16; 3],
+}
+
+/// One drawn character (`Npc_DrawIfVisible`, or an event task, → `Model_DrawParts`).
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
 pub struct CharacterDraw {
     /// The character index (0 the Knight, 1 the Baby), stable across ticks.
     pub index: u16,
+    pub by: Drawer,
     /// Its record (`CHARACTERS[index]`) and its position there.
     pub record: u32,
     /// The model it's drawn with: a TMD in RAM, its pointers relocated (`Npc_DrawIfVisible`'s
@@ -164,13 +397,19 @@ pub struct CharacterDraw {
 pub struct PartDraw {
     /// The part record (0x3C bytes; gc-sys `Part`).
     pub record: u32,
-    /// Which entry drew it: 0 = `Model_DrawParts`, 1 = its second entry (0x8019DD68).
+    /// Which entry drew it: 0 = `Model_DrawParts`, 1 = its second entry (0x8019DD68), which keys a
+    /// polygon on its farthest corner; 2 = the arena's lit drawer (`FUN_8014c97c`, LT-116), which
+    /// does too.
     pub entry: u8,
     /// The world matrix (ctx+0x11C) and the GTE's composed model-view matrix.
     pub world: Matrix,
     pub model_view: Matrix,
     /// The live vertices (part record +0x2C, count at +0x38): this tick's pose, already morphed.
     pub vertices: Vec<[i16; 3]>,
+    /// A battle draw's light (LT-116): the GTE's registers it was lit with, and the arena light
+    /// when `FUN_8014c97c` drew it (entry 2).
+    pub light: Option<GteLight>,
+    pub arena_light: Option<ArenaLight>,
 }
 
 /// A torch flame: a light source.
@@ -209,10 +448,16 @@ pub struct Record {
     /// Whether the torch pass ran, and the torches it had.
     pub torch_pass: bool,
     pub flames: Vec<Flame>,
-    /// `Model_DrawParts` calls from elsewhere (effects, menus): not characters.
+    /// `Model_DrawParts` calls from elsewhere (battles, OVR24's sky scene): not characters.
     pub other_models: u32,
     /// The VRAM copies set up this tick, in order.
     pub moves: Vec<VramMove>,
+    /// OVR24's sky cells drawn this tick, and the GTE that lit them (LT-143).
+    pub sky: Vec<SkyCell>,
+    pub sky_gte: Option<SkyGte>,
+    /// A battle's lights this tick (LT-116): the world's light directions ([`BATTLE_WORLD_LIGHTS`])
+    /// as `llm`, and the area's base colours and back colour ([`BATTLE_BASE_COLOURS`]).
+    pub battle_light: Option<GteLight>,
     /// The character records at the tick's end ([`CHARACTER_COUNT`] × [`CHARACTER_BYTES`]).
     #[serde(skip)]
     pub actors: Vec<u8>,
@@ -234,6 +479,8 @@ pub fn hooks() -> Hooks {
         Hook::observe("Model_DrawParts", MODEL_DRAW_PARTS),
         Hook::observe("Model_DrawParts (second entry)", MODEL_DRAW_PARTS_2),
         Hook::observe("SetDrawMove", SET_DRAW_MOVE),
+        Hook::observe("func_80133914 (OVR24 sky cell)", SKY_CELL).guarded(SKY_CELL_WORD),
+        Hook::observe("FUN_8014c97c (OVR03 lit arena)", ARENA_LIT).guarded(ARENA_LIT_WORD),
     ])
     .expect("the capture's hook table")
 }
@@ -329,32 +576,129 @@ impl Capture {
         d.groups.push(Group { id: ((d.chunk as u64) << 32) | mesh.wrapping_sub(base) as u64, mesh, object });
     }
 
+    /// The battle camera (LT-116): the view at ctx+0x98 and the GTE's H and offset, at the tick's
+    /// first battle draw. Battle draws at 320 × 224.
+    fn battle_camera(&mut self, c: &Call, r: &mut Record) {
+        if r.camera.is_none() {
+            let g = c.cpu().cop2();
+            r.camera = Some(Camera {
+                view: Matrix::from_bytes(&c.read(CTX + 0x98, 0x20)),
+                h: g.read_control(26) as u16,
+                offset: [(g.read_control(24) as i32) >> 16, (g.read_control(25) as i32) >> 16],
+                wide: false,
+            });
+        }
+        if r.battle_light.is_none() {
+            let (world, base) = (Matrix::from_bytes(&c.read(BATTLE_WORLD_LIGHTS, 0x20)), Matrix::from_bytes(&c.read(BATTLE_BASE_COLOURS, 0x20)));
+            r.battle_light = Some(GteLight { llm: world.m, lcm: base.m, bk: base.t });
+        }
+    }
+
+    /// Which battle actor a part is: the slot whose record draws it (+0x400).
+    fn battle_actor(c: &Call, part: u32) -> Option<u32> {
+        (0..BATTLE_ACTOR_COUNT).find(|k| phys(c.read_u32(BATTLE_ACTORS + k * BATTLE_ACTOR_BYTES + 0x400)) == phys(part))
+    }
+
     fn part(&mut self, c: &Call, r: &mut Record, entry: u8) {
-        let Some((index, record, model)) = self.npc.filter(|_| within(c.ra(), NPC_DRAW, NPC_DRAW_SIZE)) else {
+        let battle = battle_call(c);
+        let drawn = match self.npc.filter(|_| within(c.ra(), NPC_DRAW, NPC_DRAW_SIZE)) {
+            Some(npc) => Some((Drawer::Npc, npc)),
+            None if flight_part(c) => Some((Drawer::Flight, (SKY_MODEL_INDEX, SKY_PARTS, phys(c.read_u32(SKY_MODEL)) | 0x8000_0000))),
+            // A battle actor: its slot's index, its record, no model pointer (lt-assets finds the
+            // model by its parts' shapes).
+            None if battle == Some(Drawer::Battle) => {
+                self.battle_camera(c, r);
+                Self::battle_actor(c, c.arg(0)).map(|k| (Drawer::Battle, (BATTLE_INDEX + k as u16, BATTLE_ACTORS + k * BATTLE_ACTOR_BYTES, 0)))
+            }
+            None if battle == Some(Drawer::Arena) => {
+                self.battle_camera(c, r);
+                Some((Drawer::Arena, (ARENA_INDEX, 0, 0)))
+            }
+            None => event_actor(c).map(|(by, record)| {
+                let index = ((record - CHARACTERS) / CHARACTER_BYTES as u32) as u16;
+                let model = c.read_u32(MODELS + c.read(record + 0x16, 1)[0] as u32 * 4);
+                (by, (index, record, phys(model) | 0x8000_0000))
+            }),
+        };
+        let Some((by, (index, record, model))) = drawn else {
             r.other_models += 1;
             return;
         };
         let part = c.arg(0);
         let p = c.read(part, 0x3C);
+        // A part with no polygons draws nothing (the flight task's second: model 2 has one object).
+        if p[..0x28].iter().all(|&b| b == 0) {
+            return;
+        }
         let verts = u32::from_le_bytes([p[0x2C], p[0x2D], p[0x2E], p[0x2F]]);
         let n = u16::from_le_bytes([p[0x38], p[0x39]]) as usize;
         let raw = if verts != 0 && n <= 0x1000 { c.read(verts, n * 8) } else { Vec::new() };
         let vertices = raw.chunks_exact(8).map(|v| [0, 2, 4].map(|i| i16::from_le_bytes([v[i], v[i + 1]]))).collect();
+        let battle = matches!(by, Drawer::Battle | Drawer::Arena);
         let draw = PartDraw {
             record: part,
             entry,
             world: Matrix::from_bytes(&c.read(CTX + 0x11C, 0x20)),
             model_view: Matrix::from_gte(c.cpu()),
             vertices,
+            light: battle.then(|| GteLight::from_gte(c.cpu())),
+            arena_light: (entry == 2).then(|| {
+                let l = c.read(ARENA_LIGHT, 0x10);
+                let h = |i: usize| i16::from_le_bytes([l[i], l[i + 1]]);
+                ArenaLight { offset: [h(0), h(2), h(4)], strength: i32::from_le_bytes([l[8], l[9], l[10], l[11]]), rgb: [l[12], l[13], l[14]] }
+            }),
         };
-        match r.characters.iter_mut().find(|ch| ch.index == index) {
+        match r.characters.iter_mut().find(|ch| ch.index == index && ch.by == by) {
             Some(ch) => ch.parts.push(draw),
             None => {
-                let pos = c.read(record, 6);
+                // The flight's parts and the arena have no record: their place is the world matrix's.
+                let pos = if matches!(by, Drawer::Flight | Drawer::Arena) { draw.world.t.iter().flat_map(|&v| (v as i16).to_le_bytes()).collect() } else { c.read(record, 6) };
                 let h = |i: usize| i16::from_le_bytes([pos[i], pos[i + 1]]);
-                r.characters.push(CharacterDraw { index, record, model, position: [h(0), h(2), h(4)], parts: vec![draw] });
+                r.characters.push(CharacterDraw { index, by, record, model, position: [h(0), h(2), h(4)], parts: vec![draw] });
             }
         }
+    }
+
+    /// A sky cell: the camera if no chunk gave it, the GTE's lighting at the tick's first, and which
+    /// of the window's 25 cells this is (its type's record holds these lists, and its place under
+    /// the view is the GTE's translation, as `func_80134A4C` sets it).
+    fn sky_cell(&mut self, c: &Call, r: &mut Record) {
+        let view = Matrix::from_bytes(&c.read(CTX + 0x98, 0x20));
+        let g = c.cpu().cop2();
+        if r.camera.is_none() {
+            r.camera = Some(Camera {
+                view,
+                h: g.read_control(26) as u16,
+                offset: [(g.read_control(24) as i32) >> 16, (g.read_control(25) as i32) >> 16],
+                wide: c.read(CTX + 0x4C, 1)[0] != 0,
+            });
+        }
+        if r.sky_gte.is_none() {
+            let n = c.read(SKY_NORMAL, 6);
+            r.sky_gte = Some(SkyGte {
+                control: std::array::from_fn(|i| g.read_control(i as u8)),
+                normal: [0, 2, 4].map(|i| i16::from_le_bytes([n[i], n[i + 1]])),
+            });
+        }
+        let model_view = Matrix::from_gte(c.cpu());
+        let (lists, pool) = (c.arg(0), c.arg(1));
+        let window = c.read(SKY_WINDOW, 25 * 4);
+        // Eight offsets, but the window reaches rows 8 and 9: the game reads on into the normal
+        // after the table (row 9 is moved 6,000 down the map), and so does this.
+        let offsets = c.read(SKY_OFFSETS, 0x40);
+        let off = |i: u8| offsets.get(i as usize * 2..i as usize * 2 + 2).map_or(0, |b| i16::from_le_bytes([b[0], b[1]]) as i32);
+        let found = window.as_chunks::<4>().0.iter().find_map(|e| {
+            let kind = u16::from_le_bytes([e[0], e[1]]);
+            let (x, y) = (e[2], e[3]);
+            if c.read_u32(SKY_RECORDS + kind as u32 * 16) != lists {
+                return None;
+            }
+            let o = [off(x), 0, -off(y)];
+            let t = if o == [0, 0, 0] { view.t } else { view.place(o) };
+            (t == model_view.t).then_some((kind, [x, y], o))
+        });
+        let (kind, cell, offset) = found.unwrap_or((0xFFFF, [0xFF, 0xFF], [0; 3]));
+        r.sky.push(SkyCell { cell, kind, lists, pool, offset, model_view });
     }
 
     fn torches(&mut self, c: &Call, r: &mut Record) {
@@ -413,6 +757,9 @@ impl Handler for Capture {
                         let h = |i: usize| u16::from_le_bytes([rect[i], rect[i + 1]]);
                         r.moves.push(VramMove { from: [h(0), h(2), h(4), h(6)], to: [c.arg(2) as u16, c.arg(3) as u16] });
                     }
+                    9 => self.sky_cell(c, &mut r),
+                    // The arena with its light (LT-116): the same part, drawn by hand asm.
+                    10 => self.part(c, &mut r, 2),
                     _ => {}
                 }
                 self.cur = Some(r);
@@ -443,7 +790,14 @@ mod tests {
 
     #[test]
     fn the_hook_table_holds() {
-        assert_eq!(hooks().hooks().len(), 9);
+        assert_eq!(hooks().hooks().len(), 11);
+        assert_eq!(BATTLE_ACTOR + BATTLE_ACTOR_SIZE, 0x8014_57D0, "BabyForm_RestoreStats follows");
+        assert_eq!(BATTLE_ARENA + BATTLE_ARENA_SIZE, ARENA_LIT, "FUN_8014c97c follows");
         assert!(within(0x801E_9E98, NPC_DRAW, NPC_DRAW_SIZE) && !within(NPC_DRAW + NPC_DRAW_SIZE + 4, NPC_DRAW, NPC_DRAW_SIZE));
+        // The event tasks' calls return to 0x801E2890 (the approach) and 0x801E2B54 (the flicker).
+        assert!(within(0x801E_2890, APPROACH_KNIGHT, APPROACH_KNIGHT_SIZE) && within(0x801E_2B54, FLICKER_IN, FLICKER_IN_SIZE));
+        assert_eq!(APPROACH_KNIGHT + APPROACH_KNIGHT_SIZE, 0x801E_28B8, "Event_KnightJumpTask follows");
+        assert_eq!(FLICKER_IN + FLICKER_IN_SIZE, 0x801E_2BBC, "NamingScreen_CommitNameTask follows");
+        assert_eq!(((APPROACHING - CHARACTERS) / 0x38, (APPROACHING_AT_ZEPPETTOS - CHARACTERS) / 0x38, (FLICKERING - CHARACTERS) / 0x38), (22, 3, 2));
     }
 }

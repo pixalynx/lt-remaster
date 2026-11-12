@@ -9,14 +9,15 @@ use lt_assets::gpu::{Cache, Wgpu};
 use lt_assets::tmd::Ram;
 use lt_assets::{Assets, Frame};
 use lt_emu_hooks::{Action, Call, Handler, Hook, Hooks};
-use lt_scene::{hooks, Capture, Record, DRAW_OBJECTS, DRAW_OBJECTS_WORD, MODEL_DRAW_PARTS, MODEL_DRAW_PARTS_2, NPC_DRAW, NPC_DRAW_SIZE};
+use lt_scene::{hooks, Capture, Record, DRAW_OBJECTS, DRAW_OBJECTS_WORD, MODEL_DRAW_PARTS, MODEL_DRAW_PARTS_2};
 use lt_testset::{Image, Machine, Scene};
 
+use crate::billboard;
 use crate::composite::{Compositor, Picture, Rendered};
 use crate::crowd::Crowd;
 use crate::draw;
 use crate::gte::Precision;
-use crate::interp::{between, Between, Snap};
+use crate::interp::{between, Between, Pose, Snap};
 use crate::layer2d;
 use crate::light::{self, Look};
 use crate::takeover::{self, Shown, Table, Takeover};
@@ -42,6 +43,10 @@ pub struct Probe {
     pub skip_geometry: bool,
     /// Zero the length of these packets in the first table (the GPU walks past them).
     pub hide: Vec<u32>,
+    /// Set the battle arena's light (`D_8014E540`) to this as each tick's arena task starts, so the
+    /// arena is drawn by `FUN_8014c97c` (LT-116: as a Toy's ability does with
+    /// `Battle_SetLightSource`).
+    pub arena_light: Option<lt_scene::ArenaLight>,
 }
 
 struct Both {
@@ -54,11 +59,6 @@ struct Both {
     /// Ticks captured, and whether the last one's table has come yet.
     ended: u64,
     claimed: bool,
-}
-
-fn within(ra: u32, start: u32, size: u32) -> bool {
-    let (ra, start) = (ra & 0x1FFF_FFFF, start & 0x1FFF_FFFF);
-    ra > start && ra <= start + size
 }
 
 impl Handler for Both {
@@ -104,7 +104,26 @@ impl Handler for Both {
                 Action::Continue
             }
             1 if self.probe.skip_geometry && self.starts == 1 && self.tables == 0 => Action::Return(Some(c.arg(1))),
-            2 | 3 if self.probe.skip_geometry && self.starts == 1 && self.tables == 0 && within(c.ra(), NPC_DRAW, NPC_DRAW_SIZE) => Action::Return(None),
+            2 | 3 if self.probe.skip_geometry && self.starts == 1 && self.tables == 0 && lt_scene::character_call(c) => Action::Return(None),
+            // The first flight's cells: the cursor back as it came.
+            4 if self.probe.skip_geometry && self.starts == 1 && self.tables == 0 => Action::Return(Some(c.arg(2))),
+            // The arena's lit drawer draws nothing.
+            5 if self.probe.skip_geometry && self.starts == 1 && self.tables == 0 => Action::Return(None),
+            6 => {
+                if let Some(l) = &self.probe.arena_light {
+                    let mut b = [0u8; 0x10];
+                    for (i, v) in l.offset.iter().enumerate() {
+                        b[i * 2..i * 2 + 2].copy_from_slice(&v.to_le_bytes());
+                    }
+                    b[8..12].copy_from_slice(&l.strength.to_le_bytes());
+                    b[12..15].copy_from_slice(&l.rgb);
+                    b[15] = 1;
+                    // The side flag (+6) stays the game's.
+                    c.write(lt_scene::ARENA_LIGHT, &b[..6]);
+                    c.write(lt_scene::ARENA_LIGHT + 8, &b[8..]);
+                }
+                Action::Continue
+            }
             _ => Action::Continue,
         }
     }
@@ -219,6 +238,9 @@ impl Session {
             all.push(Hook::replace("probe: skip WorldChunk_DrawObjects", DRAW_OBJECTS).guarded(DRAW_OBJECTS_WORD));
             all.push(Hook::replace("probe: skip Model_DrawParts", MODEL_DRAW_PARTS));
             all.push(Hook::replace("probe: skip Model_DrawParts (second entry)", MODEL_DRAW_PARTS_2));
+            all.push(Hook::replace("probe: skip func_80133914", lt_scene::SKY_CELL).guarded(lt_scene::SKY_CELL_WORD));
+            all.push(Hook::replace("probe: skip FUN_8014c97c", lt_scene::ARENA_LIT).guarded(lt_scene::ARENA_LIT_WORD));
+            all.push(Hook::observe("probe: arena light", lt_scene::BATTLE_ARENA).guarded(lt_scene::BATTLE_ARENA_WORD));
         }
         let h = Hooks::new(all)?;
         h.install(&mut m.cpu);
@@ -241,7 +263,8 @@ impl Session {
 /// The native view of `tick` at `scale` × the display area: its terrain and characters (when the
 /// tick drew the field) and its 2D layer; or, while the game shows something its tables don't draw,
 /// `shown` (the displayed picture) enlarged. The original look is the game's unlit 3D (LT-111);
-/// the lit look lights it and leaves the blob shadows out (LT-112).
+/// the lit look lights it and, while it casts real shadows, leaves the blob shadows out (LT-112,
+/// LT-144).
 pub fn native(tick: &Tick, shown: &Shown, assets: &Assets, cache: &mut Cache<Wgpu>, comp: &mut Compositor, scale: u32) -> Picture {
     native_look(tick, shown, assets, cache, comp, scale, Look::Original)
 }
@@ -259,6 +282,13 @@ pub fn native_at(tick: &Tick, shown: &Shown, assets: &Assets, cache: &mut Cache<
     }
 }
 
+/// How a view's 2D layer draws (LT-144): the blob shadows left out while the lit look casts real
+/// shadows (`light` its uniforms, `lights` what's switched on); billboards with sub-pixel corners
+/// above 1×, and into the margins of a view widened by `left` columns a side.
+pub fn layer_options(light: Option<&light::Uniforms>, lights: light::Lights, scale: u32, left: u32) -> layer2d::Options {
+    layer2d::Options { no_blob_shadows: light.is_some_and(|u| lights.apply(u.clone()).shadow_on), float: scale > 1, wide: left > 0, fades_4_3: false }
+}
+
 /// The native view of a tick as the app shows it: left on the GPU, or (a movie) the shown picture.
 pub enum View {
     Rendered(Rendered),
@@ -274,6 +304,12 @@ fn sight(tick: &Tick, reach: Reach) -> draw::Sight {
 /// 4:3 whatever `reach` is.
 #[allow(clippy::too_many_arguments)]
 pub fn view(tick: &Tick, shown: &Shown, assets: &Assets, cache: &mut Cache<Wgpu>, comp: &mut Compositor, scale: u32, look: Look, reach: Reach) -> View {
+    view_with(tick, shown, assets, cache, comp, scale, look, reach, &|o| o)
+}
+
+/// [`view`] with its 2D layer's options changed by `adjust` (a measurement's).
+#[allow(clippy::too_many_arguments)]
+pub fn view_with(tick: &Tick, shown: &Shown, assets: &Assets, cache: &mut Cache<Wgpu>, comp: &mut Compositor, scale: u32, look: Look, reach: Reach, adjust: &dyn Fn(layer2d::Options) -> layer2d::Options) -> View {
     if tick.table.passthrough {
         return View::Picture(comp.present(shown, scale));
     }
@@ -288,29 +324,40 @@ pub fn view(tick: &Tick, shown: &Shown, assets: &Assets, cache: &mut Cache<Wgpu>
         _ => None,
     };
     let light = scene.as_ref().and_then(|s| light::uniforms(&tick.record, s));
-    let layer = layer2d::layer_with(&tick.table, scale, light.is_some());
+    let layer = layer2d::layer_with(&tick.table, scale, adjust(layer_options(light.as_ref(), comp.lights, scale, sight.left)));
     View::Rendered(comp.render(scene.as_ref(), &tick.table, &layer, cache, scale, light.as_ref(), sight.left))
 }
 
-/// The native view `t` of the way from `prev` to `tick` (LT-113): `tick` as it is when there's no
-/// `prev`, at `t` = 1, or when the two snap (a warp, a door, a cut: the reason is returned). The
-/// 2D layer is `tick`'s whatever `t` is: it stays at the game's 30.
-///
-/// At a `reach` past the game's, both ticks are widened alike first (`crate::wide::frame`).
-#[allow(clippy::too_many_arguments)]
-pub fn view_between(prev: Option<&Tick>, tick: &Tick, t: f64, shown: &Shown, assets: &Assets, cache: &mut Cache<Wgpu>, comp: &mut Compositor, scale: u32, look: Look, reach: Reach) -> (View, Option<Snap>) {
-    let frame = wide::frame(&tick.record, &tick.frame, &tick.crowd, assets, reach);
-    let (pose, snap) = match prev {
+/// The pose `t` of the way from `prev` to `tick` (LT-113), `frame` being `tick`'s widened to
+/// `reach` (`crate::wide::frame`, `prev`'s is widened alike): none when there's no `prev`, at
+/// `t` = 1, in a movie, or when the two snap (a warp, a door, a cut: the reason).
+pub fn pose_between(prev: Option<&Tick>, tick: &Tick, frame: &Frame, t: f64, assets: &Assets, reach: Reach) -> (Option<Pose>, Option<Snap>) {
+    match prev {
         Some(p) if t < 1.0 && !tick.table.passthrough => {
             let before = wide::frame(&p.record, &p.frame, &p.crowd, assets, reach);
-            match between((&p.record, &before), (&tick.record, &frame), t) {
+            match between((&p.record, &before), (&tick.record, frame), t) {
                 Between::Pose(pose) => (Some(pose), None),
                 Between::Snap(s) => (None, Some(s)),
             }
         }
         _ => (None, None),
-    };
-    let Some(pose) = pose else { return (view(tick, shown, assets, cache, comp, scale, look, reach), snap) };
+    }
+}
+
+/// The native view `t` of the way from `prev` to `tick` (LT-113): `tick` as it is when there's no
+/// `prev`, at `t` = 1, or when the two snap (a warp, a door, a cut: the reason is returned).
+///
+/// The 2D layer is `tick`'s whatever `t` is: it stays at the game's 30. Its billboards are the
+/// exception (LT-145): each is placed in the world, blended with tick A's when it moved, and seen
+/// through the camera in between ([`crate::billboard::between`]), with sub-pixel corners at any
+/// scale.
+///
+/// At a `reach` past the game's, both ticks are widened alike first (`crate::wide::frame`).
+#[allow(clippy::too_many_arguments)]
+pub fn view_between(prev: Option<&Tick>, tick: &Tick, t: f64, shown: &Shown, assets: &Assets, cache: &mut Cache<Wgpu>, comp: &mut Compositor, scale: u32, look: Look, reach: Reach) -> (View, Option<Snap>) {
+    let frame = wide::frame(&tick.record, &tick.frame, &tick.crowd, assets, reach);
+    let (pose, snap) = pose_between(prev, tick, &frame, t, assets, reach);
+    let (Some(pose), Some(prev)) = (pose, prev) else { return (view(tick, shown, assets, cache, comp, scale, look, reach), snap) };
     cache.prepare(assets, &frame);
     let sight = sight(tick, reach);
     let normals = match look {
@@ -318,8 +365,14 @@ pub fn view_between(prev: Option<&Tick>, tick: &Tick, t: f64, shown: &Shown, ass
         Look::Original => None,
     };
     let scene = draw::scene_with(&tick.record, &frame, assets, Precision::Float, normals, Some(&pose), sight);
-    let light = light::uniforms(&tick.record, &scene);
-    let layer = layer2d::layer_with(&tick.table, scale, light.is_some());
+    let mut light = light::uniforms(&tick.record, &scene);
+    // The waves run on the game's frames, `t` of the way between the two ticks (LT-146).
+    if let Some(u) = light.as_mut() {
+        u.time = crate::water::clock(prev.record.frame, tick.record.frame, t);
+    }
+    let moved = billboard::between(&prev.table.billboards, &tick.table.billboards, &pose);
+    let opts = layer2d::Options { float: true, ..layer_options(light.as_ref(), comp.lights, scale, sight.left) };
+    let layer = layer2d::layer_from(&tick.table, &moved.projections, scale, opts);
     (View::Rendered(comp.render(Some(&scene), &tick.table, &layer, cache, scale, light.as_ref(), sight.left)), None)
 }
 
@@ -350,6 +403,32 @@ pub fn on_screen(p: &Picture, table: &Table, shown: &Shown, scale: u32) -> (Vec<
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::light::{Area, Lights, Rig, Uniforms};
+    use crate::takeover::{Linked, Table};
+
+    /// @LT-144/2: with shadows on, the blob shadows under characters are gone; with shadows off or
+    /// in the original look they are kept. The flight shadow (not a character's) is kept in all
+    /// three.
+    #[test]
+    fn lt144_2_blob_shadows_only_while_real_shadows_are_cast() {
+        let lit = |shadow_on| Uniforms { rig: Rig::of(Area::Outdoor), eye: [0.0; 3], shadow: [[0.0; 4]; 4], shadow_on, texel: 1.0, points: vec![], debug: 0, fog: [0.0; 3], water: true, time: 0.0 };
+        // A subtractive POLY_F4 (a blob shadow's shape) in the blob shadows' prims, and a second
+        // the same but not marked: the flight shadow.
+        let quad = vec![0x2A40_4040, (110 << 16) | 100, (110 << 16) | 120, (120 << 16) | 100, (120 << 16) | 120];
+        let blob = Linked { addr: crate::takeover::BLOB_SHADOWS, bucket: 50, words: quad.clone(), aside: false, shadow: true };
+        let flight = Linked { addr: crate::takeover::BLOB_SHADOWS + 0x118, bucket: 50, words: quad, aside: false, shadow: false };
+        let table = Table { packets: vec![blob, flight], env: [0xE100_0000, 0xE200_0000, 0xE300_0000, 0xE407_FFFF | (511 << 10), 0xE500_0000, 0xE600_0000], ..Table::default() };
+        let drawn = |opts: layer2d::Options| {
+            // Quads drawn: two triangles each.
+            let l = layer2d::layer_with(&table, 2, opts);
+            (l.blob_shadows, l.vertices.len() / 6)
+        };
+        let off = Lights { shadows: false, lamps: true, water: true };
+        assert_eq!(drawn(layer_options(Some(&lit(true)), Lights::ALL, 2, 0)), (0, 1), "lit, shadows on: the blob out, the flight shadow kept");
+        assert_eq!(drawn(layer_options(Some(&lit(true)), off, 2, 0)), (1, 2), "lit, shadows switched off");
+        assert_eq!(drawn(layer_options(Some(&lit(false)), Lights::ALL, 2, 0)), (1, 2), "lit, no shadow map this tick");
+        assert_eq!(drawn(layer_options(None, Lights::ALL, 2, 0)), (1, 2), "the original look");
+    }
 
     #[test]
     fn on_screen_shifts_by_the_screen_position() {

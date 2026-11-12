@@ -8,6 +8,9 @@
 //! - **Characters** match their model TMD to a file by its primitives, and each drawn part to its
 //!   TMD object; a model no file holds is read back from RAM ([`model`]). Either way the live,
 //!   posed vertices of the part are what's drawn.
+//! - **The first flight's sky cells** (LT-143) are read from RAM: OVR24's cell meshes are chunk
+//!   group lists the overlay holds, decoded as a chunk group's, their atlas cut from VRAM ([`sky`]).
+//!   Each drawn cell is a [`ChunkUse`] with a `lt_scene::SKY_CHUNKS` id.
 //! - **Textures:** a chunk's atlas comes from the files (`field_vram`, `build_atlas`); a model's
 //!   from the running game's VRAM. Tiles that sample VRAM the game animates (the water and the
 //!   field's 13 `SetDrawMove` copies) are decoded again every tick from the emulated VRAM
@@ -28,6 +31,7 @@ pub mod chunk;
 pub mod gpu;
 pub mod mesh;
 pub mod model;
+pub mod sky;
 pub mod tmd;
 pub mod vram;
 
@@ -46,10 +50,17 @@ pub enum MeshKey {
     Chunk(u16, u64),
     /// A model: its signature.
     Model(u64),
+    /// A first-flight sky cell type (LT-143): its bytes' hash.
+    Sky(u64),
 }
 
 /// A texture asset: the hash of its size and pixels as first decoded.
 pub type TextureKey = u64;
+
+/// The game mode a battle runs in (ctx+0x43), and the area its models' textures are decoded for
+/// (LT-116): past every chunk id.
+pub const BATTLE_MODE: u8 = 2;
+pub const BATTLE_AREA: u16 = 0xB000;
 
 pub fn texture_key(t: &TextureData) -> TextureKey {
     let h = fnv_on(tmd::fnv(b"atlas"), &t.w.to_le_bytes());
@@ -88,6 +99,11 @@ pub struct PartUse {
     pub model_view: Matrix,
     /// This tick's vertices, which the object's corners index.
     pub vertices: Vec<[i16; 3]>,
+    /// The part drawer's entry (`lt_scene::PartDraw::entry`: 1 and 2 key on the farthest corner),
+    /// and a battle draw's light (LT-116).
+    pub entry: u8,
+    pub light: Option<lt_scene::GteLight>,
+    pub arena_light: Option<lt_scene::ArenaLight>,
 }
 
 /// New texels for an animated tile of a texture.
@@ -180,6 +196,7 @@ pub struct Assets<'a> {
     pub index: ModelIndex,
     chunks: HashMap<u16, Option<ChunkAsset>>,
     models: HashMap<u64, Option<ModelAsset>>,
+    skies: HashMap<u64, Option<sky::SkyAsset>>,
     textures: HashMap<TextureKey, Texture>,
     /// A model's texture in an area (the current chunk): decoded from VRAM there once.
     model_textures: HashMap<(u64, u16), TextureKey>,
@@ -199,6 +216,7 @@ impl<'a> Assets<'a> {
             index,
             chunks: HashMap::new(),
             models: HashMap::new(),
+            skies: HashMap::new(),
             textures: HashMap::new(),
             model_textures: HashMap::new(),
             animated: Animated::default(),
@@ -210,6 +228,7 @@ impl<'a> Assets<'a> {
         match key {
             MeshKey::Chunk(id, _) => self.chunks.get(&id)?.as_ref().map(|c| &c.mesh),
             MeshKey::Model(sig) => self.models.get(&sig)?.as_ref().map(|m| &m.mesh),
+            MeshKey::Sky(key) => self.skies.get(&key)?.as_ref().map(|s| &s.mesh),
         }
     }
 
@@ -217,6 +236,7 @@ impl<'a> Assets<'a> {
     pub fn label(&self, key: MeshKey) -> String {
         match key {
             MeshKey::Chunk(id, _) => format!("chunk/{id}"),
+            MeshKey::Sky(key) => format!("sky cell {key:016x}"),
             MeshKey::Model(sig) => self
                 .models
                 .get(&sig)
@@ -421,15 +441,46 @@ impl<'a> Assets<'a> {
         }
 
         let mut whole: Option<OwnedVram> = None;
-        for ch in &r.characters {
-            // The model pointer's TMD: an NPC's model (the party's is a leftover).
-            let ptr =
-                tmd::from_ram(ram, ch.model).and_then(|t| Some((ch.model, tmd::signature(&t)?, t)));
-            let slot = ram
-                .read(ch.record + CHARACTER_SLOT, 1)
-                .first()
-                .copied()
-                .unwrap_or(0xFF) as u32;
+        // The first flight's sky cells (LT-143): each type's mesh read from RAM, decoded once.
+        for cell in &r.sky {
+            let miss = |why: &str| Miss::Group { chunk: cell.id(), offset: cell.lists, why: why.to_string() };
+            let Some(body) = sky::read(ram, cell.lists) else {
+                f.misses.push(miss("its lists don't parse"));
+                continue;
+            };
+            let Some(verts) = lt_core::world::lists(&body, 0).and_then(|(prims, _, _)| sky::pool_bytes(ram, cell.pool, &prims)) else {
+                f.misses.push(miss("its pool is too big"));
+                continue;
+            };
+            let key = sky::key(&body, &verts);
+            if !self.skies.contains_key(&key) {
+                let v = whole.get_or_insert_with(|| OwnedVram::whole(view.clone()));
+                let built = sky::build(&body, &verts, v).map(|(mesh, tex)| sky::SkyAsset { mesh, texture: self.add_texture(tex) });
+                self.skies.insert(key, built);
+            }
+            let Some(a) = self.skies[&key].as_ref() else {
+                f.misses.push(miss("its lists don't decode"));
+                continue;
+            };
+            f.chunks.push(ChunkUse { chunk: cell.id(), mesh: MeshKey::Sky(key), texture: a.texture, slot: 0xFF, offset: cell.offset, model_view: cell.model_view, groups: vec![0] });
+        }
+
+        // A model's texture is decoded once per area: the field chunk's, or a battle's (LT-116: the
+        // battle VRAM is another layout).
+        let area = if r.mode == BATTLE_MODE { BATTLE_AREA } else { r.chunk };
+        // The first flight's glow (LT-143) is an additive effect the 2D layer draws.
+        for ch in r.characters.iter().filter(|c| c.by != lt_scene::Drawer::Flight) {
+            let battle = matches!(ch.by, lt_scene::Drawer::Battle | lt_scene::Drawer::Arena);
+            // The model pointer's TMD: an NPC's model (the party's is a leftover). Battle draws have
+            // none: their parts' shapes find their files.
+            let ptr = (!battle)
+                .then(|| tmd::from_ram(ram, ch.model).and_then(|t| Some((ch.model, tmd::signature(&t)?, t))))
+                .flatten();
+            let slot = if battle {
+                0xFFFF
+            } else {
+                ram.read(ch.record + CHARACTER_SLOT, 1).first().copied().unwrap_or(0xFF) as u32
+            };
             let first = PART_RECORDS + slot * PART_BYTES;
             let mut chosen: Option<u64> = None;
             let mut parts = Vec::with_capacity(ch.parts.len());
@@ -460,6 +511,9 @@ impl<'a> Assets<'a> {
                             world: p.world,
                             model_view: p.model_view,
                             vertices: p.vertices.clone(),
+                            entry: p.entry,
+                            light: p.light,
+                            arena_light: p.arena_light,
                         });
                     }
                     Ok((sig, _)) => f.misses.push(Miss::Part {
@@ -483,14 +537,14 @@ impl<'a> Assets<'a> {
                 }
                 continue;
             };
-            let texture = match self.model_textures.get(&(sig, r.chunk)) {
+            let texture = match self.model_textures.get(&(sig, area)) {
                 Some(&k) => k,
                 None => {
                     let v = whole.get_or_insert_with(|| OwnedVram::whole(view.clone()));
                     let mut m = self.models[&sig].as_ref().expect("picked").render.clone();
                     let tex: TextureData = build_atlas(&mut m, v).into();
                     let k = self.add_texture(tex);
-                    self.model_textures.insert((sig, r.chunk), k);
+                    self.model_textures.insert((sig, area), k);
                     k
                 }
             };

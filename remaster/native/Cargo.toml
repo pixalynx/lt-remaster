@@ -11,6 +11,7 @@ emulator-core = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b
 lt-emu-hooks = { path = "../../emu-host/hooks" }
 lt-core = { path = "../../app/crates/lt-core" }
 lt-scene = { path = "../scene" }
+gc-sys = { path = "../../app/crates/gc-sys" }
 lt-assets = { path = "../assets" }
 lt-testset = { path = "../testset" }
 wgpu = "24"
@@ -18,6 +19,8 @@ bytemuck = "1"
 pollster = "0.4"
 png = "0.18"
 lt-lockstep = { path = "../lockstep" }
+# PSoXide's GTE, as the emulator runs it: the first flight's NCDS colours and depth cue (LT-143).
+psx-gte-core = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b27fff97dc9b265d776fb031ca0c920c0f243f95" }
 # PSoXide's hardware renderer: its GP0 decoder (Translator) feeds the 2D layer.
 psx-gpu-render = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b27fff97dc9b265d776fb031ca0c920c0f243f95" }
 

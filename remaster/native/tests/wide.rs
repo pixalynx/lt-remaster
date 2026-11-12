@@ -110,7 +110,8 @@ fn lt114_3_characters_in_the_margins_show() {
 }
 
 /// @LT-114/4: the HUD, dialogue and menus stay the game's 4:3 picture in the middle at 16:10, 16:9
-/// and 21:9: the same pixels, at the same scale, and none in the margins.
+/// and 21:9: the same pixels, at the same scale, and none in the margins. (The field's billboards
+/// reach the margins since LT-144: the check keeps them to the 4:3.)
 #[test]
 #[ignore = "needs LT_DISC, LT_TESTSET and a GPU"]
 fn lt114_4_hud_and_dialogue_stay_put_at_each_aspect() {

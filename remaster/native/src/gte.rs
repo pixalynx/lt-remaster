@@ -8,6 +8,8 @@
 //!   `nclip`), RTPS on vertex 3 (its own flags), the depth test over all four.
 //! - **Models** (`Model_DrawParts`): flags & 0xFFC40000 (bit 31 sums every error but depth cueing),
 //!   then `nclip`, then the nearest SZ & 0xFFFC < 0x3000. A quad's fourth vertex is not checked.
+//!   Its second entry (0x8019DD68: the field's doors and chests, the battle arena) and the arena's
+//!   lit drawer (`FUN_8014c97c`) key on the farthest SZ instead ([`Path::ModelFar`], LT-116).
 //!
 //! The SZ a path keys on, over 4, is also the polygon's ordering-table bucket ([`Drawn::bucket`]):
 //! the farthest vertex for terrain, the nearest for models.
@@ -27,6 +29,15 @@ pub const FAR: u32 = 0x3000;
 pub enum Path {
     Terrain,
     Model,
+    /// A model through `Model_DrawParts`' second entry: the model's tests, keyed on the farthest SZ.
+    ModelFar,
+}
+
+impl Path {
+    /// The path a part takes from the entry that drew it (`lt_scene::PartDraw::entry`).
+    pub fn of_entry(entry: u8) -> Path {
+        if entry == 0 { Path::Model } else { Path::ModelFar }
+    }
 }
 
 /// How to project.
@@ -151,10 +162,19 @@ impl Gte {
 
     /// The same transform in floating point: sub-pixel screen position and depth.
     pub fn float(&self, v: [f32; 3]) -> Screen {
-        let p: Vec<f64> = match &self.exact {
-            Some((m, t)) => (0..3).map(|r| t[r] + (0..3).map(|c| m[r][c] * v[c] as f64).sum::<f64>()).collect(),
-            None => (0..3).map(|r| self.tr[r] as f64 + (0..3).map(|c| self.rt[r][c] as f64 * v[c] as f64).sum::<f64>() / 4096.0).collect(),
-        };
+        self.screen(self.view(v))
+    }
+
+    /// `v` in view space (`RT · v + TR`, before the divide), in floating point.
+    pub fn view(&self, v: [f32; 3]) -> [f64; 3] {
+        match &self.exact {
+            Some((m, t)) => [0, 1, 2].map(|r| t[r] + (0..3).map(|c| m[r][c] * v[c] as f64).sum::<f64>()),
+            None => [0, 1, 2].map(|r| self.tr[r] as f64 + (0..3).map(|c| self.rt[r][c] as f64 * v[c] as f64).sum::<f64>() / 4096.0),
+        }
+    }
+
+    /// A view-space point on screen, in floating point.
+    pub fn screen(&self, p: [f64; 3]) -> Screen {
         let z = p[2].max(1.0);
         let h = self.h as f64;
         Screen { x: (self.ofx as f64 / 65536.0 + h * p[0] / z) as f32, y: (self.ofy as f64 / 65536.0 + h * p[1] / z) as f32, z: p[2] as f32 }
@@ -226,7 +246,7 @@ fn judge(gte: &Gte, path: Path, precision: Precision, verts: &[[f32; 3]], bounds
     let n = verts.len();
     let (mask, zero_cull, check_v3) = match path {
         Path::Terrain => (TERRAIN_FLAGS, true, true),
-        Path::Model => (MODEL_FLAGS, false, false),
+        Path::Model | Path::ModelFar => (MODEL_FLAGS, false, false),
     };
     // The GTE's integer tests on the vertices as the GTE would have them (whole units).
     let p: Vec<(i32, i32, u16, u32)> = verts.iter().map(|&v| gte.rtps(v.map(|x| x.round().clamp(-32768.0, 32767.0) as i16))).collect();
@@ -245,9 +265,10 @@ fn judge(gte: &Gte, path: Path, precision: Precision, verts: &[[f32; 3]], bounds
     if nclip(s(0), s(1), s(2)) <= 0.0 {
         return (out, 0, Some(Cull::Back));
     }
-    // The key SZ: terrain's farthest vertex, a model's nearest (the GTE's SZ either way).
+    // The key SZ: terrain's farthest vertex, a model's nearest, the second entry's farthest (the
+    // GTE's SZ either way; a quad's fourth vertex counts).
     let zs = p.iter().map(|q| q.2 as u32);
-    let key = if path == Path::Terrain { zs.max() } else { zs.min() }.unwrap_or(0) & 0xFFFC;
+    let key = if path == Path::Model { zs.min() } else { zs.max() }.unwrap_or(0) & 0xFFFC;
     let bucket = key / 4;
     if key >= bounds.far || (zero_cull && key == 0) {
         return (out, bucket, Some(Cull::Depth));

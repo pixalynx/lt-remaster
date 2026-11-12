@@ -375,6 +375,30 @@ pub fn mesh(c: &[u8]) -> Option<Mesh> {
     Some(Mesh { groups, pool, prims, mesh_end: mesh_end as u32 })
 }
 
+/// One group's eight primitive lists (F3 … GT4, [`LIST_DWORDS`] a record) at `at` in `body`: its
+/// primitives, the count per list and where the lists end. A chunk group's layout; OVR24's sky
+/// cells (the first flight, `func_80133914`) hold theirs the same way. `None` when they run past
+/// `body`.
+pub fn lists(body: &[u8], at: usize) -> Option<(Vec<Prim>, [u32; 8], usize)> {
+    let mut prims = Vec::new();
+    let mut counts = [0u32; 8];
+    let mut p = at;
+    for (k, &dw) in LIST_DWORDS.iter().enumerate() {
+        let n = le32(body.get(p..p + 4)?, 0) as usize;
+        p += 4;
+        if p + n * dw * 4 > body.len() {
+            return None;
+        }
+        counts[k] = n as u32;
+        for j in 0..n {
+            let w = |i: usize| le32(body, p + (j * dw + i) * 4);
+            prims.push(record(k as u8, &w));
+        }
+        p += n * dw * 4;
+    }
+    Some((prims, counts, p))
+}
+
 fn record(list: u8, w: &dyn Fn(usize) -> u32) -> Prim {
     let lo = |v: u32| (v & 0xFFFF) as u16;
     let hi = |v: u32| (v >> 16) as u16;
@@ -470,4 +494,36 @@ pub fn pack_for(table: &[(u16, u16)], chunk: u32, flag: &dyn Fn(u16) -> bool) ->
         value = -1;
     }
     (value >= 0).then_some(value as u32)
+}
+
+#[cfg(test)]
+mod lists_tests {
+    use super::*;
+
+    /// The eight lists of a group: one flat triangle, one Gouraud quad, the rest empty.
+    #[test]
+    fn a_groups_lists_decode() {
+        let mut b = Vec::new();
+        let mut put = |w: u32| b.extend_from_slice(&w.to_le_bytes());
+        put(1); // F3
+        put(0x2010_2030); // code 0x20, rgb 30 20 10
+        put(0x0002_0001); // indices 1, 2
+        put(0x0000_0003); // index 3
+        for _ in 0..5 {
+            put(0); // FT3 F4 FT4 G3 GT3
+        }
+        put(1); // G4
+        for c in [0x3800_0101u32, 0x0002_0202, 0x0003_0303, 0x0004_0404] {
+            put(c);
+        }
+        put(0x0001_0000); // indices 0, 1
+        put(0x0003_0002); // indices 2, 3
+        put(0); // GT4
+        let (prims, counts, end) = lists(&b, 0).unwrap();
+        assert_eq!(counts, [1, 0, 0, 0, 0, 0, 1, 0]);
+        assert_eq!(end, b.len());
+        assert_eq!((prims[0].n, prims[0].code, prims[0].rgb[0], &prims[0].idx[..3]), (3, 0x20, [0x30, 0x20, 0x10], &[1u16, 2, 3][..]));
+        assert_eq!((prims[1].n, prims[1].code, prims[1].rgb[3], prims[1].idx), (4, 0x38, [4, 4, 4], [0, 1, 2, 3]));
+        assert!(lists(&b[..b.len() - 4], 0).is_none(), "cut short");
+    }
 }

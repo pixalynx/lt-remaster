@@ -33,6 +33,8 @@ pub const CTX: u32 = 0x1F80_0000;
 pub const SLOTS: u32 = 0x801C_E800;
 /// `Character_Struct[0]`, the Knight: s16 x, h, z.
 pub const KNIGHT: u32 = 0x8014_6600;
+/// `g_EventFlags`: flag n is bit n % 32 of word n / 32.
+pub const EVENT_FLAGS: u32 = 0x801C_E810;
 pub const MODE_BATTLE: u8 = 2;
 
 /// The PS1 buttons.
@@ -195,6 +197,20 @@ impl Machine {
         }
     }
 
+    /// Sets story flag `n` (the scenes that need a story state plant it, LT-142).
+    pub fn set_flag(&mut self, n: u16) {
+        let at = EVENT_FLAGS + (n as u32 / 32) * 4;
+        let word = u32::from_le_bytes(self.read(at, 4).try_into().unwrap()) | 1 << (n % 32);
+        self.write(at, &word.to_le_bytes());
+    }
+
+    /// Clears story flag `n`.
+    pub fn clear_flag(&mut self, n: u16) {
+        let at = EVENT_FLAGS + (n as u32 / 32) * 4;
+        let word = u32::from_le_bytes(self.read(at, 4).try_into().unwrap()) & !(1 << (n % 32));
+        self.write(at, &word.to_le_bytes());
+    }
+
     pub fn field(&self) -> Field {
         let ctx = self.read(CTX, 0x100);
         let s = self.read(SLOTS, 12);
@@ -349,7 +365,10 @@ impl Scene {
 }
 
 /// The scenes in the set, in build order.
-pub const SCENES: [&str; 15] = ["boot", "cutscene", "village", "menu", "overworld", "battle-1", "interior", "dungeon", "late", "flight", "battle-late", "cave", "tower", "lamps", "door"];
+pub const SCENES: [&str; 20] = [
+    "boot", "cutscene", "village", "menu", "overworld", "battle-1", "interior", "dungeon", "late", "flight", "battle-late", "cave", "tower", "lamps", "door", "gift", "zeppetto",
+    "first-flight", "water", "battle-start",
+];
 
 /// SHA-1 of a file, for the manifest.
 pub fn sha1(bytes: &[u8]) -> String {

@@ -140,6 +140,11 @@ fn placed(home: &Matrix, offset: [i32; 3]) -> Matrix {
 /// a few rows of home, any with a point of its footprint passing [`object_in`] with some slack. None
 /// off the grid.
 pub fn neighbours(r: &Record, reach: Reach) -> Vec<(u16, [i32; 3])> {
+    // The first flight's sky (LT-143) has no grid around it: its chunk id is left at 0. A battle
+    // (LT-116) is drawn in its arena, whatever chunk the field was on.
+    if !r.sky.is_empty() || r.mode == lt_assets::BATTLE_MODE {
+        return Vec::new();
+    }
     let Some((mv, h, width)) = base(r) else { return Vec::new() };
     let home = home(r) as u32;
     let (Some((gx, gy)), Some((hx, hz))) = (world::grid_cell(home), overworld::origin(home)) else { return Vec::new() };

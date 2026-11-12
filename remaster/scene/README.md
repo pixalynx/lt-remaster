@@ -55,3 +55,26 @@ LT_DISC=… LT_TESTSET=… LT_DRAW_HOOKS=<dir>/hooks.jsonl cargo test --release 
 - **Ids:** no id names two things in any field scene. About 99 % of group and character draws carry the last tick's id. The torch list reloads twice in `flight` and gets new ids each time.
 - **Cost:** the capture adds 0.057 ms per tick on the village scene (best of 5, release, M1 Pro).
 - **Other scenes:** every field tick is complete in `overworld`, `interior` (one chunk), `dungeon`, `late`, `flight`, `menu` and `cutscene`. Ticks with no field (a battle, a fade) are counted but not checked.
+
+## The draw-path census (LT-118)
+
+Which code draws 3D at all, and what A1's capture misses. The result is research 16 §4.5.
+
+```sh
+target/release/lt-scene census "<…bin>" <set> [scene…]           # the functions that project, then each scene's calls by caller
+target/release/lt-scene probe "<…bin>" <set> first-flight [dir]  # OVR24's first-flight sky scene, which the test set doesn't reach
+target/release/lt-scene refs "<…bin>" <function>…                # what calls a function, and where its address is stored
+LT_DISC=… cargo test --release -p lt-scene --test census -- --ignored   # @LT-118/1 (/2 runs without the disc)
+```
+
+- **How it finds them (`census.rs`):** every 3D vertex goes through `RTPS` or `RTPT`, so `scan` lists the gc-sys
+  functions of main and all 25 overlays (read off the disc) that hold one. There are 12.
+- **Entry stubs:** `entry_stubs` adds tiny functions that branch into one of them. Main's `FUN_8019dd68` enters
+  `Model_DrawParts` past its first instruction, so a hook there alone misses the arena and some NPC draws.
+- **Counting:** `Census` hooks every entry, observe only. It counts each call by caller, named for the overlay
+  actually loaded there: `Code::function_at` compares RAM with each overlay file, with no signature words.
+- **Static callers:** `static_callers` finds every `jal`; `pointers_to` finds stored words and `lui`/`addiu` pairs.
+- **Results:** all 15 scenes take about 5 minutes. Rows 1 and 2 (terrain; characters, doors and chest lids) are the
+  field's only 3D, and A1 captures both. The rest are billboards, shadows and point tests (LT-144), two story oddities
+  (LT-142 event actors, LT-143 OVR24's sky scene) and battles (LT-116). `func_8018C65C` and the two
+  `Model_ProjectAndCull*` helpers are never called in retail.

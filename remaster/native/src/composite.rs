@@ -27,6 +27,18 @@
 //!
 //! A mask target records coverage: red where the native 3D drew, green where the 2D layer did.
 //!
+//! **The battle transition (LT-116)** copies the frame on screen into VRAM (`MoveImage`) and swirls
+//! it away. Each picture is kept with the draw area it was drawn for, so when the transition copies
+//! that area, the picture is copied in its place ([`FrameCopy`], at N×), and the transition's moves
+//! of columns and rows are made on it too. The 2D layer samples it wherever a 15-bit texel lies in
+//! the copy: the swirl shows the remastered frame.
+//!
+//! **A frozen frame (LT-140).** The field menu, a chunk load and battles copy the frame on
+//! screen into VRAM in two halves and show it dimmed under their panels. The native view keeps the
+//! whole picture it last drew for that draw area ([`Frozen`], margins too) while VRAM still holds
+//! the game's copy, and the 2D layer draws the frozen frame's quads, and their copies in a widened
+//! view's margins, from it.
+//!
 //! **Colour codes.** The 2D pipelines hand the blender `8 × code` (`blend_encode`), and only a
 //! value's top five bits are its colour, as in PSoXide, whose VRAM holds the code. The low bits a
 //! blend leaves aren't colour: a full-screen subtract fade of 31 over 255 leaves 7, and sparkles
@@ -48,10 +60,65 @@ use crate::light::{caster_bytes, Uniforms, CASTER_BYTES, SHADOW_SIZE};
 use crate::raster::{pack, shader_with_order, VERTEX_BYTES};
 use crate::takeover::{Shown, Table};
 
-/// A lit corner: the original look's 28 bytes, then world position and normal.
-const LIT_BYTES: u64 = VERTEX_BYTES + 24;
+/// A lit corner: the original look's 28 bytes, then world position, normal, fog, water, the
+/// distance to the shore, and where its triangle's stretches of shore are in the shores buffer
+/// (LT-148: 0, none, for all but water).
+const LIT_BYTES: u64 = VERTEX_BYTES + 36 + 4;
+/// A lit corner's attributes (`lit.wgsl`, `In`).
+const LIT_ATTRIBUTES: [wgpu::VertexAttribute; 8] = wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x2, 2 => Uint8x4, 3 => Float32, 4 => Float32x3, 5 => Float32x3, 6 => Float32x3, 7 => Uint32];
 /// A shadow caster draw's transform (mesh to world), at this stride in the draws buffer.
 const DRAW_STRIDE: u64 = 256;
+
+/// The battle transition's copy of a frame (LT-116): the VRAM rect it stands for, and the native
+/// picture of that frame at `scale` × (with a scratch texture for moves within it).
+struct FrameCopy {
+    rect: [u16; 4],
+    scale: u32,
+    tex: wgpu::Texture,
+    scratch: wgpu::Texture,
+}
+
+/// The picture last drawn for a draw area (LT-116): one of `finals` (kept when they're made again
+/// for a new size), its margin (PSX pixels) and scale, and the capture's tick it was drawn for
+/// (LT-140).
+#[derive(Clone)]
+struct Final {
+    tex: wgpu::Texture,
+    left: u32,
+    scale: u32,
+    tick: Option<u64>,
+}
+
+/// A frame freeze's picture (LT-140): the native picture of the frozen frame, whole, the VRAM rects
+/// the game copied it to, and a sum of what VRAM held there just after (it stands for the copy
+/// while VRAM still does).
+struct Frozen {
+    tex: wgpu::Texture,
+    rects: Vec<[u16; 4]>,
+    sum: u64,
+    /// Where its 4:3 part starts, as a share of its width.
+    share: f64,
+}
+
+/// How many ticks before a freeze its picture may have been drawn (LT-140).
+const FROZEN_TICKS: u64 = 6;
+/// How far a frozen picture's margins may be from the view's, as a share of the width (LT-140):
+/// whole pixels at 320 and 512 wide give 16:9 margins a few thousandths apart.
+const SHARE_SLACK: f64 = 0.01;
+
+/// A sum of VRAM's halfwords in `rects` (x, y, w, h), to tell when the game writes over them.
+fn vram_sum(vram: &[u16], rects: &[[u16; 4]]) -> u64 {
+    let mut h = 0xCBF2_9CE4_8422_2325u64;
+    for &[x, y, w, ht] in rects {
+        for row in y as usize..(y as usize + ht as usize).min(512) {
+            let start = row * 1024 + x as usize;
+            for &v in vram.get(start..(start + w as usize).min((row + 1) * 1024)).unwrap_or(&[]) {
+                h = (h ^ v as u64).wrapping_mul(0x100_0000_01B3);
+            }
+        }
+    }
+    h
+}
 
 /// A buffer kept between draws, grown when a draw needs more.
 #[derive(Default)]
@@ -84,6 +151,11 @@ const COLOUR: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
 const MASK: wgpu::TextureFormat = wgpu::TextureFormat::Rg8Unorm;
 const ORDER: wgpu::TextureFormat = wgpu::TextureFormat::R32Float;
 const DEPTH: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
+/// The mirrored pass's picture (LT-147): linear light, alpha where it drew.
+const MIRRORED: wgpu::TextureFormat = wgpu::TextureFormat::Rgba16Float;
+/// The mirror's uniforms (`lit.wgsl`, `struct Mirror`): the clip matrix, the plane, and the
+/// shore's switch (LT-148).
+const MIRROR_BYTES: u64 = 64 + 16 + 16;
 
 /// The base layer: a picture of the display area, enlarged nearest to the target (black in a wider
 /// view's margins).
@@ -166,6 +238,7 @@ pub struct Rendered {
 }
 
 /// A composited picture: RGBA, and per pixel whether the native 3D and the 2D layer drew there.
+#[derive(Clone, Default)]
 pub struct Picture {
     pub w: u32,
     pub h: u32,
@@ -203,9 +276,32 @@ pub struct Compositor {
     vb2: Grow,
     vbc: Grow,
     draws: Grow,
+    /// The water triangles' stretches of shore (LT-148): three `[x0, z0, x1, z1]` a triangle, the
+    /// first none.
+    shores: Grow,
     light: wgpu::Buffer,
     shadow_map: wgpu::Texture,
     shadow_cmp: wgpu::Sampler,
+    /// The water's ripple map and its repeating, mipmapped sampler (LT-146, `crate::water`).
+    ripples: wgpu::TextureView,
+    ripple_sampler: wgpu::Sampler,
+    /// The water's mirrored pass (LT-147): its pipeline, the mirror's uniforms, the layout the lit
+    /// pass reads its picture through, that picture's sampler, and a blank one (nothing mirrored).
+    pipe_mirror: wgpu::RenderPipeline,
+    mirror: wgpu::Buffer,
+    mirror_layout: wgpu::BindGroupLayout,
+    mirror_sampler: wgpu::Sampler,
+    blank_mirror: wgpu::BindGroup,
+    /// The mirrored pass's targets, kept while the size stays: colour, depth.
+    mirror_targets: Option<(u32, u32, [wgpu::Texture; 2])>,
+    /// Whether the mirrored pass may run (on; off to measure what it adds), whether the last
+    /// render ran it, and how many renders have.
+    pub reflections: bool,
+    pub reflected: bool,
+    pub mirrored: u64,
+    /// Whether the water's shallows, foam and caustics are drawn (LT-148; on, off to measure what
+    /// they add).
+    pub shallows: bool,
     /// The last draw's targets, kept while the size stays: colour, mask, order, depth.
     targets: Option<(u32, u32, [wgpu::Texture; 4])>,
     resolve_layout: wgpu::BindGroupLayout,
@@ -214,6 +310,32 @@ pub struct Compositor {
     /// next.
     finals: Vec<wgpu::Texture>,
     next_final: usize,
+    /// The picture last drawn for each draw area (x, y), kept through a change of size (LT-116,
+    /// LT-140).
+    final_of: HashMap<[u16; 2], Final>,
+    /// The battle transition's copy of a frame, while it runs; its sampler and uniform (the rect, or
+    /// zero), and a blank texture bound when there's none.
+    frame_copy: Option<FrameCopy>,
+    /// The table whose moves were made last (its tick and first move): a table drawn again (a frame
+    /// between ticks, LT-113) doesn't make them twice.
+    moves_made: Option<(Option<u64>, crate::takeover::ImageMove)>,
+    copy_sampler: wgpu::Sampler,
+    copy_rect: wgpu::Buffer,
+    blank_copy: wgpu::Texture,
+    /// Renders that drew from a frame copy (LT-116, for measuring).
+    pub copied: u64,
+    /// A frame freeze's picture while VRAM holds the game's copy (LT-140); the table whose copies
+    /// were taken last (its tick and first copy: a table drawn again doesn't take them twice); the
+    /// shader's uniform (whether there's one, the target's size).
+    frozen: Option<Frozen>,
+    frozen_made: Option<(Option<u64>, crate::takeover::ImageMove)>,
+    frozen_info: wgpu::Buffer,
+    frozen_on: bool,
+    /// Renders that had a frozen frame's picture (LT-140, for measuring).
+    pub frozen_renders: u64,
+    /// A frozen frame drawn from the native picture of it (LT-140, the default); off, the game's
+    /// own copy is drawn, as a measurement against the game's picture wants.
+    pub frozen_frames: bool,
     /// Chunk normals, kept across ticks (`crate::draw::lit`).
     pub normals: crate::light::Normals,
     /// The parts of the lighting that are on (LT-117's Lights toggles).
@@ -310,7 +432,19 @@ impl Compositor {
         let m2 = device.create_shader_module(wgpu::ShaderModuleDescriptor { label: Some("2D layer"), source: wgpu::ShaderSource::Wgsl(include_str!("shaders/layer2d.wgsl").into()) });
         let layout2d = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("2D layer"),
-            entries: &[texture_entry(0, wgpu::TextureSampleType::Uint), uniform_entry(1), uniform_entry(2), texture_entry(3, UNFILTERED)],
+            entries: &[
+                texture_entry(0, wgpu::TextureSampleType::Uint),
+                uniform_entry(1),
+                uniform_entry(2),
+                texture_entry(3, UNFILTERED),
+                // The battle transition's frame copy (LT-116).
+                texture_entry(4, wgpu::TextureSampleType::Float { filterable: true }),
+                wgpu::BindGroupLayoutEntry { binding: 5, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
+                uniform_entry(6),
+                // A frozen frame's picture (LT-140).
+                texture_entry(7, wgpu::TextureSampleType::Float { filterable: true }),
+                uniform_entry(8),
+            ],
         });
         let pl2 = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: None, bind_group_layouts: &[&layout2d], push_constant_ranges: &[] });
         let mut attrs = vec![
@@ -324,6 +458,8 @@ impl Compositor {
             attrs.push(wgpu::VertexAttribute { format: wgpu::VertexFormat::Uint32x4, offset: 20 + 16 * k, shader_location: 5 + k as u32 });
         }
         attrs.push(wgpu::VertexAttribute { format: wgpu::VertexFormat::Float32, offset: 84, shader_location: 9 });
+        attrs.push(wgpu::VertexAttribute { format: wgpu::VertexFormat::Float32x2, offset: 88, shader_location: 10 });
+        attrs.push(wgpu::VertexAttribute { format: wgpu::VertexFormat::Uint32, offset: 96, shader_location: 11 });
         let pipes2d = (0..5)
             .map(|kind| {
                 let constants = HashMap::from([("BLEND_KIND".to_string(), kind as f64)]);
@@ -362,6 +498,19 @@ impl Compositor {
         });
         let buffer = |label| device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: 16, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
         let (filter, view) = (buffer("texture filter"), buffer("view"));
+        let copy_rect = buffer("frame copy");
+        let frozen_info = buffer("frozen frame");
+        let copy_sampler = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("frame copy"), mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, ..Default::default() });
+        let blank_copy = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("no frame copy"),
+            size: wgpu::Extent3d { width: 1, height: 1, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: COLOUR,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        });
 
         // Lit (LT-112): the lit pass and the shadow map's.
         let ml = device.create_shader_module(wgpu::ShaderModuleDescriptor { label: Some("lit 3D"), source: wgpu::ShaderSource::Wgsl(include_str!("shaders/lit.wgsl").into()) });
@@ -371,9 +520,22 @@ impl Compositor {
                 uniform_entry(0),
                 wgpu::BindGroupLayoutEntry { binding: 1, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Depth, view_dimension: wgpu::TextureViewDimension::D2, multisampled: false }, count: None },
                 wgpu::BindGroupLayoutEntry { binding: 2, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison), count: None },
+                texture_entry(3, wgpu::TextureSampleType::Float { filterable: true }),
+                wgpu::BindGroupLayoutEntry { binding: 4, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
+                uniform_entry(5),
+                // LT-148: each water triangle's three nearest stretches of shore.
+                wgpu::BindGroupLayoutEntry { binding: 6, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Storage { read_only: true }, has_dynamic_offset: false, min_binding_size: None }, count: None },
             ],
         });
-        let pll = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: None, bind_group_layouts: &[&layout3d, &lit_layout], push_constant_ranges: &[] });
+        // The mirrored pass's picture, read by the lit pass only (LT-147).
+        let mirror_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("mirrored"),
+            entries: &[
+                texture_entry(0, wgpu::TextureSampleType::Float { filterable: true }),
+                wgpu::BindGroupLayoutEntry { binding: 1, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
+            ],
+        });
+        let pll = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: None, bind_group_layouts: &[&layout3d, &lit_layout, &mirror_layout], push_constant_ranges: &[] });
         let pipe_lit = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("lit 3D"),
             layout: Some(&pll),
@@ -381,7 +543,7 @@ impl Compositor {
                 module: &ml,
                 entry_point: Some("vs"),
                 compilation_options: Default::default(),
-                buffers: &[wgpu::VertexBufferLayout { array_stride: LIT_BYTES, step_mode: wgpu::VertexStepMode::Vertex, attributes: &wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x2, 2 => Uint8x4, 3 => Float32, 4 => Float32x3, 5 => Float32x3] }],
+                buffers: &[wgpu::VertexBufferLayout { array_stride: LIT_BYTES, step_mode: wgpu::VertexStepMode::Vertex, attributes: &LIT_ATTRIBUTES }],
             },
             fragment: Some(wgpu::FragmentState { module: &ml, entry_point: Some("fs"), compilation_options: Default::default(), targets: &targets3 }),
             primitive: wgpu::PrimitiveState { cull_mode: None, ..Default::default() },
@@ -399,7 +561,7 @@ impl Compositor {
                 module: &ml,
                 entry_point: Some("vs_depth"),
                 compilation_options: Default::default(),
-                buffers: &[wgpu::VertexBufferLayout { array_stride: LIT_BYTES, step_mode: wgpu::VertexStepMode::Vertex, attributes: &wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x2, 2 => Uint8x4, 3 => Float32, 4 => Float32x3, 5 => Float32x3] }],
+                buffers: &[wgpu::VertexBufferLayout { array_stride: LIT_BYTES, step_mode: wgpu::VertexStepMode::Vertex, attributes: &LIT_ATTRIBUTES }],
             },
             fragment: Some(wgpu::FragmentState { module: &ml, entry_point: Some("fs_depth"), compilation_options: Default::default(), targets: &no_writes }),
             primitive: wgpu::PrimitiveState { cull_mode: None, ..Default::default() },
@@ -407,6 +569,51 @@ impl Compositor {
             multisample: Default::default(),
             multiview: None,
             cache: None,
+        });
+        // The mirrored pass (LT-147): the lit corners again, through the mirror, at a fraction of
+        // the picture's size.
+        let plm = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: None, bind_group_layouts: &[&layout3d, &lit_layout], push_constant_ranges: &[] });
+        let pipe_mirror = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("mirrored"),
+            layout: Some(&plm),
+            vertex: wgpu::VertexState {
+                module: &ml,
+                entry_point: Some("vs_reflect"),
+                compilation_options: Default::default(),
+                buffers: &[wgpu::VertexBufferLayout { array_stride: LIT_BYTES, step_mode: wgpu::VertexStepMode::Vertex, attributes: &LIT_ATTRIBUTES }],
+            },
+            fragment: Some(wgpu::FragmentState { module: &ml, entry_point: Some("fs_reflect"), compilation_options: Default::default(), targets: &[Some(MIRRORED.into())] }),
+            primitive: wgpu::PrimitiveState { cull_mode: None, ..Default::default() },
+            depth_stencil: Some(wgpu::DepthStencilState { format: DEPTH, depth_write_enabled: true, depth_compare: wgpu::CompareFunction::LessEqual, stencil: Default::default(), bias: Default::default() }),
+            multisample: Default::default(),
+            multiview: None,
+            cache: None,
+        });
+        let mirror = device.create_buffer(&wgpu::BufferDescriptor { label: Some("mirror"), size: MIRROR_BYTES, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
+        let mirror_sampler = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("mirrored"), mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, ..Default::default() });
+        let blank_tex = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("nothing mirrored"),
+            size: wgpu::Extent3d { width: 1, height: 1, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: MIRRORED,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        queue.write_texture(
+            wgpu::TexelCopyTextureInfo { texture: &blank_tex, mip_level: 0, origin: wgpu::Origin3d::ZERO, aspect: wgpu::TextureAspect::All },
+            &[0u8; 8],
+            wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(8), rows_per_image: Some(1) },
+            wgpu::Extent3d { width: 1, height: 1, depth_or_array_layers: 1 },
+        );
+        let blank_mirror = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("nothing mirrored"),
+            layout: &mirror_layout,
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&blank_tex.create_view(&Default::default())) },
+                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&mirror_sampler) },
+            ],
         });
         let ms = device.create_shader_module(wgpu::ShaderModuleDescriptor { label: Some("shadow map"), source: wgpu::ShaderSource::Wgsl(include_str!("shaders/shadow.wgsl").into()) });
         let caster_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("casters"), entries: &[uniform_entry(0)] });
@@ -449,6 +656,39 @@ impl Compositor {
             view_formats: &[],
         });
         let shadow_cmp = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("shadow"), mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, compare: Some(wgpu::CompareFunction::LessEqual), ..Default::default() });
+        // The water's ripples (LT-146): one tileable map, every mip, sampled repeating.
+        let maps = crate::water::ripple_map();
+        let side = crate::water::RIPPLE_SIZE as u32;
+        let ripple_tex = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("ripples"),
+            size: wgpu::Extent3d { width: side, height: side, depth_or_array_layers: 1 },
+            mip_level_count: maps.len() as u32,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8Unorm,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        for (level, data) in maps.iter().enumerate() {
+            let w = (side >> level).max(1);
+            queue.write_texture(
+                wgpu::TexelCopyTextureInfo { texture: &ripple_tex, mip_level: level as u32, origin: wgpu::Origin3d::ZERO, aspect: wgpu::TextureAspect::All },
+                data,
+                wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(w * 4), rows_per_image: Some(w) },
+                wgpu::Extent3d { width: w, height: w, depth_or_array_layers: 1 },
+            );
+        }
+        let ripples = ripple_tex.create_view(&Default::default());
+        let ripple_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("ripples"),
+            address_mode_u: wgpu::AddressMode::Repeat,
+            address_mode_v: wgpu::AddressMode::Repeat,
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::FilterMode::Linear,
+            anisotropy_clamp: 8,
+            ..Default::default()
+        });
         let mr = device.create_shader_module(wgpu::ShaderModuleDescriptor { label: Some("resolve"), source: wgpu::ShaderSource::Wgsl(RESOLVE.into()) });
         let resolve_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("resolve"), entries: &[texture_entry(0, UNFILTERED), texture_entry(1, UNFILTERED)] });
         let plr = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: None, bind_group_layouts: &[&resolve_layout], push_constant_ranges: &[] });
@@ -473,6 +713,19 @@ impl Compositor {
             base_layout,
             base_pipe,
             layout2d,
+            final_of: HashMap::new(),
+            frame_copy: None,
+            moves_made: None,
+            copy_sampler,
+            copy_rect,
+            blank_copy,
+            copied: 0,
+            frozen: None,
+            frozen_made: None,
+            frozen_info,
+            frozen_on: false,
+            frozen_renders: 0,
+            frozen_frames: true,
             pipes2d,
             vram,
             filter,
@@ -488,9 +741,22 @@ impl Compositor {
             vb2: Grow::default(),
             vbc: Grow::default(),
             draws: Grow::default(),
+            shores: Grow::default(),
             light,
             shadow_map,
             shadow_cmp,
+            ripples,
+            ripple_sampler,
+            pipe_mirror,
+            mirror,
+            mirror_layout,
+            mirror_sampler,
+            blank_mirror,
+            mirror_targets: None,
+            reflections: true,
+            reflected: false,
+            mirrored: 0,
+            shallows: true,
             targets: None,
             resolve_layout,
             resolve_pipe,
@@ -512,9 +778,22 @@ impl Compositor {
                 self.texture("depth", w, h, DEPTH, attach),
             ];
             self.targets = Some((w, h, t));
+            // The pictures last drawn for each draw area stay: a frame freeze (LT-140) may want
+            // one drawn at the size before (the field at 512 wide, the menu at 320).
             self.finals = (0..3).map(|_| self.texture("picture", w, h, COLOUR, attach | wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_SRC)).collect();
         }
         self.targets.as_ref().map(|(_, _, t)| t.clone()).expect("targets")
+    }
+
+    /// The mirrored pass's colour and depth targets for a `w` × `h` picture (kept between draws).
+    fn mirror_targets(&mut self, w: u32, h: u32) -> [wgpu::Texture; 2] {
+        let (w, h) = (w.div_ceil(crate::water::MIRROR_DIVISOR), h.div_ceil(crate::water::MIRROR_DIVISOR));
+        if !matches!(&self.mirror_targets, Some((tw, th, _)) if *tw == w && *th == h) {
+            let attach = wgpu::TextureUsages::RENDER_ATTACHMENT;
+            let t = [self.texture("mirrored", w, h, MIRRORED, attach | wgpu::TextureUsages::TEXTURE_BINDING), self.texture("mirrored depth", w, h, DEPTH, attach)];
+            self.mirror_targets = Some((w, h, t));
+        }
+        self.mirror_targets.as_ref().map(|(_, _, t)| t.clone()).expect("mirror targets")
     }
 
     fn bind3d(&mut self, cache: &Cache<Wgpu>, key: TextureKey) {
@@ -543,6 +822,141 @@ impl Compositor {
             }
         }
         Picture { w, h, rgba, native: vec![false; (w * h) as usize], layer: vec![false; (w * h) as usize] }
+    }
+
+    /// The battle transition's moves for `table` (LT-116), into `enc` before the table is drawn: a
+    /// copy of a draw area takes the picture last drawn for it; a move within the copy is made on
+    /// the picture, `scale` ×. With no moves the copy is dropped (the transition is over). Writes
+    /// the copy's rect (or zeros) for the 2D layer.
+    fn frame_moves(&mut self, enc: &mut wgpu::CommandEncoder, table: &Table, scale: u32, size: [u32; 2]) {
+        if table.moves.is_empty() {
+            self.frame_copy = None;
+            self.moves_made = None;
+        }
+        let this = table.moves.first().map(|&m| (table.tick, m));
+        let again = this.is_some() && this == self.moves_made;
+        self.moves_made = this.or(self.moves_made);
+        let copy = |enc: &mut wgpu::CommandEncoder, from: &wgpu::Texture, at: [u32; 2], to: &wgpu::Texture, dst: [u32; 2], size: [u32; 2]| {
+            enc.copy_texture_to_texture(
+                wgpu::TexelCopyTextureInfo { texture: from, mip_level: 0, origin: wgpu::Origin3d { x: at[0], y: at[1], z: 0 }, aspect: wgpu::TextureAspect::All },
+                wgpu::TexelCopyTextureInfo { texture: to, mip_level: 0, origin: wgpu::Origin3d { x: dst[0], y: dst[1], z: 0 }, aspect: wgpu::TextureAspect::All },
+                wgpu::Extent3d { width: size[0], height: size[1], depth_or_array_layers: 1 },
+            );
+        };
+        for m in table.moves.iter().filter(|_| !again) {
+            let [sx, sy, mw, mh] = m.from;
+            if let Some(Final { tex, left, scale: s, .. }) = self.final_of.get(&[sx, sy]).cloned() {
+                // The frame on screen copied: its picture, the copied part of it.
+                let picture = tex;
+                let (w, h) = (mw as u32 * s, mh as u32 * s);
+                // Drawn at this size: the field at another width isn't the frame copied.
+                if s != scale || [picture.width(), picture.height()] != size || left * s + w > picture.width() || h > picture.height() {
+                    continue;
+                }
+                if !self.frame_copy.as_ref().is_some_and(|c| c.tex.width() == w && c.tex.height() == h) {
+                    let usage = wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_SRC | wgpu::TextureUsages::COPY_DST;
+                    self.frame_copy = Some(FrameCopy { rect: [0; 4], scale, tex: self.texture("frame copy", w, h, COLOUR, usage), scratch: self.texture("frame copy scratch", w, h, COLOUR, usage) });
+                }
+                let c = self.frame_copy.as_mut().expect("made");
+                c.rect = [m.to[0], m.to[1], mw, mh];
+                copy(enc, &picture, [left * s, 0], &c.tex, [0, 0], [w, h]);
+            } else if let Some(c) = &self.frame_copy {
+                // A part of the copy moved within it.
+                let [cx, cy, cw, ch] = c.rect.map(u32::from);
+                let (fx, fy, tx, ty, mw, mh) = (sx as u32, sy as u32, m.to[0] as u32, m.to[1] as u32, mw as u32, mh as u32);
+                let inside = |x: u32, y: u32| x >= cx && y >= cy && x + mw <= cx + cw && y + mh <= cy + ch;
+                if mw == 0 || mh == 0 || !inside(fx, fy) || !inside(tx, ty) {
+                    continue;
+                }
+                let s = c.scale;
+                copy(enc, &c.tex, [(fx - cx) * s, (fy - cy) * s], &c.scratch, [0, 0], [mw * s, mh * s]);
+                copy(enc, &c.scratch, [0, 0], &c.tex, [(tx - cx) * s, (ty - cy) * s], [mw * s, mh * s]);
+            }
+        }
+        let rect = self.frame_copy.as_ref().map_or([0.0; 4], |c| c.rect.map(|v| v as f32));
+        self.copied += u64::from(self.frame_copy.is_some());
+        self.queue.write_buffer(&self.copy_rect, 0, bytemuck::cast_slice(&rect));
+    }
+
+    /// A frame freeze (LT-140): when the game copies the frame on screen (a menu or a chunk load
+    /// opening), the picture last drawn for that draw area is kept, whole, margins and all. It
+    /// stands for the copy until VRAM no longer holds it. Writes the shader's uniform: whether
+    /// there's one, and the target's size (`size`), at which the frozen frame's quads sample it.
+    fn freeze(&mut self, enc: &mut wgpu::CommandEncoder, table: &Table, scale: u32, size: [u32; 2], left: u32) {
+        // Where the 4:3 picture starts in a picture, as a share of its width: the frozen frame is
+        // sampled by position, so a picture of another width (the field at 512, the menu at 320)
+        // stands for it if its margins are the same share.
+        let share = |left: u32, scale: u32, w: u32| (left * scale) as f64 / w.max(1) as f64;
+        let here = share(left, scale, size[0]);
+        let this = table.frozen.first().map(|&m| (table.tick, m));
+        if !self.frozen_frames {
+            self.frozen = None;
+            self.frozen_made = None;
+        } else if this.is_some() && this != self.frozen_made {
+            // The copies start at the draw area's corner: the picture last drawn for that area, if
+            // it was drawn at this scale a few ticks before at most (the app may drop a tick or
+            // two; a measurement drawing ticks here and there has none, and the game's own copy is
+            // drawn then).
+            let fresh = |at: Option<u64>| match (at, table.tick) {
+                (Some(a), Some(t)) => a < t && t - a <= FROZEN_TICKS,
+                _ => true,
+            };
+            let source = table.frozen.iter().find_map(|m| self.final_of.get(&[m.from[0], m.from[1]]).cloned()).filter(|f| {
+                f.scale == scale && fresh(f.tick) && f.tex.height() == size[1] && (share(f.left, f.scale, f.tex.width()) - here).abs() < SHARE_SLACK
+            });
+            if let Some(f) = source {
+                self.frozen_made = this;
+                let (w, h) = (f.tex.width(), f.tex.height());
+                let tex = match self.frozen.take() {
+                    Some(old) if old.tex.width() == w && old.tex.height() == h => old.tex,
+                    _ => self.texture("frozen frame", w, h, COLOUR, wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_SRC | wgpu::TextureUsages::COPY_DST),
+                };
+                enc.copy_texture_to_texture(f.tex.as_image_copy(), tex.as_image_copy(), wgpu::Extent3d { width: w, height: h, depth_or_array_layers: 1 });
+                let rects: Vec<[u16; 4]> = table.frozen.iter().map(|m| [m.to[0], m.to[1], m.from[2], m.from[3]]).collect();
+                self.frozen = Some(Frozen { tex, sum: vram_sum(&table.vram, &rects), rects, share: share(f.left, f.scale, w) });
+            } else {
+                // A new freeze with no picture of it: the old one doesn't stand for it.
+                self.frozen = None;
+            }
+        } else if self.frozen.as_ref().is_some_and(|f| !table.vram.is_empty() && vram_sum(&table.vram, &f.rects) != f.sum) {
+            // The game has drawn over its copy: the frame isn't frozen any more.
+            self.frozen = None;
+        }
+        // Drawn from in a view of the same shape only.
+        let on = self.frozen.as_ref().is_some_and(|f| f.tex.height() == size[1] && (f.share - here).abs() < SHARE_SLACK);
+        self.frozen_on = on;
+        self.frozen_renders += u64::from(on);
+        let info = [f32::from(u8::from(on)), size[0] as f32, size[1] as f32, 0.0];
+        self.queue.write_buffer(&self.frozen_info, 0, bytemuck::cast_slice(&info));
+    }
+
+    /// Whether a frozen frame's quads drew from the native picture in the last render (LT-140).
+    pub fn has_frozen(&self) -> bool {
+        self.frozen_on
+    }
+
+    /// A frame freeze's picture as it stands (LT-140, for measuring): RGBA, the whole widened
+    /// picture of the frozen frame.
+    pub fn frozen(&self) -> Option<Picture> {
+        let f = self.frozen.as_ref()?;
+        let (w, h) = (f.tex.width(), f.tex.height());
+        let mut enc = self.device.create_command_encoder(&Default::default());
+        let rgba = read(&self.device, &mut enc, &f.tex, w, h, 4);
+        self.queue.submit([enc.finish()]);
+        let rgba = rgba();
+        Some(Picture { w, h, rgba, native: Vec::new(), layer: Vec::new() })
+    }
+
+    /// The battle transition's copy of a frame as it stands (LT-116, for measuring): the VRAM rect
+    /// it stands for, and its picture (RGBA, `scale` × the rect).
+    pub fn frame_copy(&self) -> Option<([u16; 4], Picture)> {
+        let c = self.frame_copy.as_ref()?;
+        let (w, h) = (c.tex.width(), c.tex.height());
+        let mut enc = self.device.create_command_encoder(&Default::default());
+        let rgba = read(&self.device, &mut enc, &c.tex, w, h, 4);
+        self.queue.submit([enc.finish()]);
+        let rgba = rgba();
+        Some((c.rect, Picture { w, h, rgba, native: Vec::new(), layer: Vec::new() }))
     }
 
     fn texture(&self, label: &str, w: u32, h: u32, format: wgpu::TextureFormat, usage: wgpu::TextureUsages) -> wgpu::Texture {
@@ -601,6 +1015,23 @@ impl Compositor {
         let [colour, mask, order, depth] = self.targets(w, h);
         let adjusted = light.map(|u| self.lights.apply(u.clone()));
         let lit = adjusted.as_ref().zip(scene.and_then(|s| s.lit.as_ref()));
+        // The water's mirror (LT-147): when the lit look draws water, about the plane most of it
+        // lies at, through this frame's camera.
+        let mirror = match (lit, scene) {
+            (Some((u, l)), Some(s)) if u.water && self.reflections => l.camera.zip(crate::water::plane(s)),
+            _ => None,
+        };
+        let mut mirror_bytes = [0f32; MIRROR_BYTES as usize / 4];
+        if let (Some((cam, y)), Some(s)) = (mirror, scene) {
+            let clip = crate::water::mirror_clip(&cam, y, s.width as f32, s.height as f32, s.left as f32);
+            for (c, col) in clip.iter().enumerate() {
+                mirror_bytes[c * 4..c * 4 + 4].copy_from_slice(col);
+            }
+            mirror_bytes[16..20].copy_from_slice(&[y, 1.0, 1.0 / w as f32, 1.0 / h as f32]);
+        }
+        mirror_bytes[20] = if self.shallows { 1.0 } else { 0.0 };
+        self.queue.write_buffer(&self.mirror, 0, bytemuck::cast_slice(&mirror_bytes));
+        let mirror_views = mirror.map(|_| self.mirror_targets(w, h).map(|t| t.create_view(&Default::default())));
 
         // VRAM as the table starts, and the view's uniforms.
         if table.vram.len() == 1024 * 512 {
@@ -617,11 +1048,15 @@ impl Compositor {
         let f32s: Vec<u8> = [ox as f32 - left as f32, oy as f32, (dw as u32 + 2 * left) as f32, dh as f32].iter().flat_map(|v| v.to_le_bytes()).collect();
         self.queue.write_buffer(&self.view, 0, &f32s);
 
-        let (bytes3, ranges3) = match (scene, lit.is_some()) {
-            (Some(s), true) => pack_lit(s),
-            (Some(s), false) => pack(s),
+        let (bytes3, ranges3, shore_bytes) = match (scene, lit.is_some()) {
+            (Some(s), true) => pack_lit(s, mirror.map(|m| m.1)),
+            (Some(s), false) => {
+                let (b, r) = pack(s);
+                (b, r, Vec::new())
+            }
             _ => Default::default(),
         };
+        let shores = self.shores.put(&self.device, &self.queue, "shores", &shore_bytes, wgpu::BufferUsages::STORAGE);
         let vb3 = self.vb3.put(&self.device, &self.queue, "native 3D", &bytes3, wgpu::BufferUsages::VERTEX);
         for &(key, _, _) in &ranges3 {
             self.bind3d(cache, key);
@@ -673,7 +1108,18 @@ impl Compositor {
                     wgpu::BindGroupEntry { binding: 0, resource: self.light.as_entire_binding() },
                     wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(&self.shadow_map.create_view(&Default::default())) },
                     wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::Sampler(&self.shadow_cmp) },
+                    wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::TextureView(&self.ripples) },
+                    wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::Sampler(&self.ripple_sampler) },
+                    wgpu::BindGroupEntry { binding: 5, resource: self.mirror.as_entire_binding() },
+                    wgpu::BindGroupEntry { binding: 6, resource: shores.as_entire_binding() },
                 ],
+            })
+        });
+        let mirror_bind = mirror_views.as_ref().map(|[cv, _]| {
+            self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("mirrored"),
+                layout: &self.mirror_layout,
+                entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(cv) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&self.mirror_sampler) }],
             })
         });
         let mut bytes2 = Vec::with_capacity(layer.vertices.len() * Vertex::BYTES);
@@ -707,10 +1153,26 @@ impl Compositor {
             })
         });
         let clear = table.clear.map(|c| c.map(code)).map_or(wgpu::Color::BLACK, |c| wgpu::Color { r: c[0] as f64 / 255.0, g: c[1] as f64 / 255.0, b: c[2] as f64 / 255.0, a: 1.0 });
+        // The battle transition's moves (LT-116), on the queue before the table's draw.
+        let mut moves = self.device.create_command_encoder(&Default::default());
+        self.frame_moves(&mut moves, table, scale, [w, h]);
+        // A frame freeze (LT-140).
+        self.freeze(&mut moves, table, scale, [w, h], left);
+        self.queue.submit([moves.finish()]);
+        let frozen_view = self.frozen.as_ref().map_or_else(|| self.blank_copy.create_view(&Default::default()), |f| f.tex.create_view(&Default::default()));
+        let copy_view = self.frame_copy.as_ref().map_or_else(|| self.blank_copy.create_view(&Default::default()), |c| c.tex.create_view(&Default::default()));
         let (cv, mv, ov, dv) = (colour.create_view(&Default::default()), mask.create_view(&Default::default()), order.create_view(&Default::default()), depth.create_view(&Default::default()));
         fn attachment(view: &wgpu::TextureView, load: wgpu::LoadOp<wgpu::Color>) -> Option<wgpu::RenderPassColorAttachment<'_>> {
             Some(wgpu::RenderPassColorAttachment { view, resolve_target: None, ops: wgpu::Operations { load, store: wgpu::StoreOp::Store } })
         }
+        let draw3d = |pass: &mut wgpu::RenderPass<'_>| {
+            for &(key, first, n) in &ranges3 {
+                if n > 0 {
+                    pass.set_bind_group(0, self.binds3d.get(&key).unwrap_or(&self.blank3d), &[]);
+                    pass.draw(first..first + n, 0..1);
+                }
+            }
+        };
         let mut enc = self.device.create_command_encoder(&Default::default());
         if let Some((chunks, vb, ranges, cb, draw_bind)) = &shadow_draw {
             let sv = self.shadow_map.create_view(&Default::default());
@@ -741,6 +1203,24 @@ impl Compositor {
                 }
             }
         }
+        // The scene mirrored in the water (LT-147), lit as the lit pass lights it (the shadow map
+        // drawn just above), for the lit pass's water to read.
+        self.reflected = false;
+        if let (Some(b), Some([mcv, mdv])) = (&lit_bind, &mirror_views) {
+            let mut pass = enc.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("mirrored"),
+                color_attachments: &[attachment(mcv, wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT))],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment { view: mdv, depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(1.0), store: wgpu::StoreOp::Store }), stencil_ops: None }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+            });
+            pass.set_pipeline(&self.pipe_mirror);
+            pass.set_bind_group(1, b, &[]);
+            pass.set_vertex_buffer(0, vb3.slice(..));
+            draw3d(&mut pass);
+            self.reflected = true;
+            self.mirrored += 1;
+        }
         {
             let mut pass = enc.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("native 3D"),
@@ -758,21 +1238,21 @@ impl Compositor {
                 pass.set_bind_group(0, b, &[]);
                 pass.draw(0..3, 0..1);
             }
+            // The GPU's draw area for the 3D, its lines (LT-116): a widened view's columns reach the
+            // margins.
+            if let Some([_, y0, _, y1]) = table.clip3d {
+                let top = ((y0 as i32 - oy as i32).max(0) as u32 * scale).min(h);
+                let bottom = (((y1 as i32 + 1 - oy as i32).max(0) as u32) * scale).min(h);
+                pass.set_scissor_rect(0, top, w, bottom.saturating_sub(top).max(1));
+            }
             pass.set_vertex_buffer(0, vb3.slice(..));
-            let draw3d = |pass: &mut wgpu::RenderPass<'_>| {
-                for &(key, first, n) in &ranges3 {
-                    if n > 0 {
-                        pass.set_bind_group(0, self.binds3d.get(&key).unwrap_or(&self.blank3d), &[]);
-                        pass.draw(first..first + n, 0..1);
-                    }
-                }
-            };
             match &lit_bind {
                 Some(b) => {
                     pass.set_pipeline(&self.pipe_depth);
                     draw3d(&mut pass);
                     pass.set_pipeline(&self.pipe_lit);
                     pass.set_bind_group(1, b, &[]);
+                    pass.set_bind_group(2, mirror_bind.as_ref().unwrap_or(&self.blank_mirror), &[]);
                     draw3d(&mut pass);
                 }
                 None => {
@@ -789,6 +1269,11 @@ impl Compositor {
                 wgpu::BindGroupEntry { binding: 1, resource: self.filter.as_entire_binding() },
                 wgpu::BindGroupEntry { binding: 2, resource: self.view.as_entire_binding() },
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::TextureView(&ov) },
+                wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&copy_view) },
+                wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::Sampler(&self.copy_sampler) },
+                wgpu::BindGroupEntry { binding: 6, resource: self.copy_rect.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 7, resource: wgpu::BindingResource::TextureView(&frozen_view) },
+                wgpu::BindGroupEntry { binding: 8, resource: self.frozen_info.as_entire_binding() },
             ],
         });
         {
@@ -805,11 +1290,19 @@ impl Compositor {
                 if r.count == 0 {
                     continue;
                 }
-                // The draw area, from VRAM to the target.
+                // The draw area, from VRAM to the target; a billboard's in a widened view reaches
+                // the picture's edges (LT-144).
                 let x0 = ((r.clip[0] as i32 - ox as i32 + left as i32).max(0) as u32 * scale).min(w);
                 let y0 = ((r.clip[1] as i32 - oy as i32).max(0) as u32 * scale).min(h);
                 let x1 = (((r.clip[2] as i32 + 1 - ox as i32 + left as i32).max(0) as u32) * scale).min(w);
                 let y1 = (((r.clip[3] as i32 + 1 - oy as i32).max(0) as u32) * scale).min(h);
+                let (x0, x1) = match (r.margin, r.wide) {
+                    // A margin's own columns (LT-149).
+                    (Some(crate::layer2d::Side::Left), _) => (0, (left * scale).min(w)),
+                    (Some(crate::layer2d::Side::Right), _) => (((left + dw as u32) * scale).min(w), w),
+                    (None, true) => (0, w),
+                    (None, false) => (x0, x1),
+                };
                 if x1 <= x0 || y1 <= y0 {
                     continue;
                 }
@@ -822,6 +1315,8 @@ impl Compositor {
             }
         }
         let picture = self.finals[self.next_final].clone();
+        // Kept by the draw area it's of, for the battle transition to copy (LT-116).
+        self.final_of.insert([ox, oy], Final { tex: picture.clone(), left, scale, tick: table.tick });
         self.next_final = (self.next_final + 1) % self.finals.len();
         {
             let resolve = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -849,25 +1344,44 @@ impl Compositor {
     }
 }
 
-/// [`pack`] with each corner's world position and normal after it.
-fn pack_lit(scene: &Scene) -> (Vec<u8>, Vec<(TextureKey, u32, u32)>) {
+/// [`pack`] with each corner's world position, normal, fog, water (1, or 2 on the mirrored
+/// `plane`: LT-147), distance to the shore and where its triangle's stretches of shore are after
+/// it; and those stretches (LT-148): a water triangle's three, after the first (none).
+fn pack_lit(scene: &Scene, plane: Option<f32>) -> (Vec<u8>, Vec<(TextureKey, u32, u32)>, Vec<u8>) {
+    let water = |v: &crate::draw::Vertex| match (v.water, plane) {
+        (false, _) => 0.0f32,
+        (true, Some(p)) if crate::water::on_plane(v.world[1], p) => 2.0,
+        (true, _) => 1.0,
+    };
     let (w, h, left) = (scene.width.max(1) + 2 * scene.left, scene.height.max(1), scene.left as f32);
     let n: usize = scene.batches.iter().map(|b| b.corners.len()).sum();
     let mut out = Vec::with_capacity(n * LIT_BYTES as usize);
     let mut ranges = Vec::with_capacity(scene.batches.len());
+    let mut shores: Vec<[f32; 4]> = vec![crate::draw::NO_SHORE; 3];
     for b in &scene.batches {
         let first = (out.len() as u64 / LIT_BYTES) as u32;
-        for v in &b.corners {
+        let mut slot = 0u32;
+        for (k, v) in b.corners.iter().enumerate() {
+            // A triangle's first corner: its stretches, when it's water.
+            if k % 3 == 0 {
+                slot = if v.water {
+                    shores.extend_from_slice(&v.shores);
+                    (shores.len() / 3 - 1) as u32
+                } else {
+                    0
+                };
+            }
             let x = (v.screen.x + left + 0.5) / w as f32 * 2.0 - 1.0;
             let y = 1.0 - (v.screen.y + 0.5) / h as f32 * 2.0;
             let z = (v.screen.z / 65536.0).clamp(0.0, 1.0);
             out.extend_from_slice(bytemuck::cast_slice(&[x, y, z, v.uv[0] as f32, v.uv[1] as f32]));
             out.extend_from_slice(&[v.rgb[0], v.rgb[1], v.rgb[2], v.flags]);
-            out.extend_from_slice(bytemuck::cast_slice(&[v.bucket as f32, v.world[0], v.world[1], v.world[2], v.normal[0], v.normal[1], v.normal[2]]));
+            out.extend_from_slice(bytemuck::cast_slice(&[v.bucket as f32, v.world[0], v.world[1], v.world[2], v.normal[0], v.normal[1], v.normal[2], v.fog, water(v), v.shore]));
+            out.extend_from_slice(&slot.to_le_bytes());
         }
         ranges.push((b.texture, first, b.corners.len() as u32));
     }
-    (out, ranges)
+    (out, ranges, bytemuck::cast_slice(&shores).to_vec())
 }
 
 /// Queues a copy of `t` into a buffer; the closure waits and unpacks it.

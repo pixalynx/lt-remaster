@@ -229,9 +229,9 @@ The tests also run lockstep with every hook the native view uses (capture and ta
 - **Chunks.** The game holds four chunk slots: the current chunk and the neighbours ahead of the camera. On the overworld grid a wider view also needs the chunks beside those, and a longer one the rows beyond. `wide::load` reads them off the disc as each tick is resolved (once each), and `wide::frame` places them as `Field_ChunkStreamTask` places a neighbour: the view moved to the chunk's grid offset (`overworld::origin`; the captured offsets agree). Interiors, dungeons and caves are one chunk each.
 - **Polygons.** The terrain path's off-screen test takes the wider screen, and its depth test 0x3000 × the distance (`gte::Bounds`).
 
-**The 2D layer stays 4:3, in the middle.** The compositor's target grows by the margins; the 2D layer's view, scissors and dither move with the display area, so HUD, dialogue and menus come out pixel for pixel as at 4:3. Guardian's Crusade's field has no HUD at the screen's edges to anchor (its menus and dialogue are panels in the middle), so nothing moves outward. In-world effects drawn as 2D (torch flames, sparkles, blob shadows) are clipped at the 4:3 edges, as the game clips them.
+**The 2D layer stays 4:3, in the middle.** The compositor's target grows by the margins; the 2D layer's view, scissors and dither move with the display area, so HUD, dialogue and menus come out pixel for pixel as at 4:3. Guardian's Crusade's field has no HUD at the screen's edges to anchor (its menus and dialogue are panels in the middle), so nothing moves outward. In-world effects drawn as 2D (torch flames, sparkles, blob shadows) are clipped at the 4:3 edges, as the game clips them. A full-screen fade or tint is carried into the margins (LT-150, below).
 
-**Menus over the field** show it as a 2D picture: while the field menu is open the game draws no field, only a dimmed copy of the last frame. That copy is 4:3, so the menu shows between black margins.
+**Menus over the field** show it as a 2D picture: while the field menu is open the game draws no field, only a dimmed copy of the last frame. The native view keeps its own widened picture of that frame and fills the margins from it (LT-140, below).
 
 **Characters past the 4:3 edge** have no packet slot: `Npc_DrawIfVisible` gives one only to a character whose position projects within `-64..=576` on the 512-wide screen (`-60..=380` at 320) while a slot is free. Since LT-119 the crowd draws them (below). `wide::npc_gap` counts what's still left out: the placed characters in view that neither the game nor the crowd draws.
 
@@ -301,6 +301,55 @@ The panels and text match pixel for pixel; the few pixels that differ (at most 0
 - `--aspect 16:9` beside the emulated picture: 59.0 at 7.3 ms;
 - `--aspect window --view native` in a 1500 × 560 window (2.68:1): 59.5 at 6.3 ms.
 
+### A frozen frame in a widened view (LT-140)
+
+The field menu, a chunk load and battles freeze the frame on screen and show it, dimmed, under their panels:
+- **The copy.** `FUN_8018af14` copies the displayed buffer to VRAM in two halves, 160 columns each, to (320, 0) and (320, 256). `Field_ChunkStreamTask` makes the same copies inline as a chunk load starts. The takeover notes them (`Table::frozen`).
+- **The quads.** Each tick after, `FUN_8018afa0` links two `POLY_FT4`s in bucket 2 that draw the halves back across the screen, coloured 0x7C − 4·level: 0x3C in the menu, 0x80 for a chunk load, a fade in a battle. The takeover hooks it and names the two packets (`Table::frozen_quads`).
+
+The compositor keeps the whole picture it last drew for the draw area the game copied, margins and all (`composite::Frozen`). It stands for the copy until VRAM no longer holds what the game copied (a sum of the two rects). It takes the picture only if it was drawn at most six ticks before, at this scale, with margins the same share of its width; the quads sample it by position, so its own width doesn't matter. The field draws 512 wide in free roam and the menu 320, so the pictures last drawn for each draw area are kept through a change of size.
+
+The 2D layer marks the two quads (`Vertex::frozen`). The shader draws them from that picture at their own pixel, dimmed by their colour, so the middle shows the remastered frame, not the game's 1× copy. In a widened view each quad is copied into the margin on the side it reaches (`layer2d::frozen_copies`), drawn in that margin only. A full-screen quad drawn over a frozen frame is carried into the margins as well: a chunk load fades its frozen frame out with a 640 × 448 subtract quad, and the margins fade with the middle (LT-150, below, carries such fades over the live field too).
+
+Without a picture, the quads draw the game's copy as before, and the margin copies draw nothing. That happens when a measurement draws only some ticks, or when the native view starts with the menu already open. `check::look`, which compares with the game's picture, turns the frozen frame off (`Compositor::frozen_frames`): like the native 3D, it's the native view's own.
+
+**In the app** the emulator thread drops a tick when the native thread is still busy, and in the menu the game ticks every frame. A dropped tick's VRAM copies (a freeze's, and the battle transition's moves) are carried on to the next tick that gets through, so a freeze isn't lost with its tick.
+
+**Results** (`tests/frozen.rs`, the menu scene, lit, 2×, every tick drawn):
+- **The copy.** One freeze (frame 4152). The picture kept is, bit for bit, the native picture of the frame on screen. All 160 menu ticks draw from it.
+- **The margins.** At 16:9 (15,196,160 margin pixels) and 21:9 (34,406,400), every margin pixel is drawn and within a 5-bit step of that picture dimmed by 0x3C/0x80 (worst 7). So are 99.7 % of the middle's outer two columns; the rest is the cursor.
+- **The panels.** Drawing each tick again without the copies changes no middle pixel. Against the 4:3 view, wherever the two frozen pictures agree (99.4–99.5 % of the middle; the widened native 3D differs at a few edges), every middle pixel is the 4:3 picture's.
+
+The other freezes in the test set (21:9 and 16:9), each kept bit for bit, every margin pixel drawn:
+- battle-1 and battle-late: the margins are within a step of the frozen frame dimmed.
+- The chunk loads in dungeon, door and zeppetto: the margins fade with the middle.
+
+**In the app** (`lt-remaster --host`, the menu scene's tape played in, 2×, lit, 60 Hz, 16:9, muted): the margins show the frozen village dimmed like the middle, and the middle shows the remastered frame under the panels. 59.5 native frames a second, 6.1 ms a frame, 2 ticks dropped.
+
+### Full-screen fades in a widened view (LT-150)
+
+The game fades the whole screen with a single 2D quad that the GPU clips to the 4:3:
+- **A chunk load** fades out over its frozen frame and back in over the live field with a 640 × 448 raw, subtracting `POLY_FT4` in bucket 0. Each tick it samples an 8 × 4 swatch of one grey, further along a ramp. It's linked from one of two buffers (0x801CCF88 and 0x801CA740), and it's in the dungeon, door, zeppetto, first-flight and both battle scenes.
+- **The battle loading screen** (`Battle_LoadingScreenTask`) tints the screen with a flat, subtracting quad, 320 × 224 in bucket 3, colour (0x0E, 0x18, 0x18).
+
+Kept to the 4:3, the margins' native 3D stayed at full brightness while the middle went to black. The 2D layer now carries any such quad into both margins, whatever the table (`layer2d::screen_copies`). The quad must make an axis-aligned rectangle covering the screen. Its copies are drawn whole widths left and right, each in a margin only, at the pixel centres, undithered. Each copy keeps the quad's bucket, so it sorts against the native 3D as the quad does.
+
+Only a quad of one colour is carried (`layer2d::one_colour`): one vertex colour (or a raw texture), and every texel its texture coordinates span alike in the table's VRAM, through its CLUT and texture window. A full-screen picture would be repeated by the copies, so it stays 4:3. A quad with margin copies of its own (a frozen frame's quads, a battle's sky, the first flight's sky, billboards) isn't carried this way. `layer2d::Options::fades_4_3` keeps fades to the 4:3, for checks.
+
+**Results** (`tests/fades.rs`, lit, 2×, every tick drawn; `check::fades` draws each tick with a fade carried four ways: as the app does, without the fade, with it kept to the 4:3, and at 4:3):
+- **The margins fade like the middle.** Compare each darkened tick with the same tick drawn without the fade. In each colour channel, within each band of the unfaded value (32 bands), the margins come out darker by the same amount as the middle's outer 8 columns a side (within 0.05). Comparing like values keeps this fair to a subtracting fade, which takes the same off every channel and stops at black.
+
+  | Scene | Fade ticks | Darkened | Worst gap, 16:9 | Worst gap, 21:9 | Kept to the 4:3 |
+  |---|---|---|---|---|---|
+  | dungeon | 179 | 133 | 0.010 | 0.011 | 0.87 |
+  | door | 213 | 138 | 0.009 | 0.006 | 0.89 |
+
+  Both scenes' fades reach black, in the margins too.
+- **Panels, text and effects stay 4:3.** Drawing each fade tick again with the fade kept to the 4:3 changes no middle pixel (dungeon, door, battle-1, at 16:9 and 21:9). The 2D layer alone in the middle is the 4:3 view's, pixel for pixel: 13.2 M, 21.6 M and 129.3 M pixels. LT-114/4's HUD check and LT-149/2 pass.
+- **The other scenes** at 21:9: first-flight's fade-in has a worst gap of 0.007 (0.997 kept to the 4:3), battle-1's 0.008 (0.86), battle-late's 0.017 (0.48). The battle loading screen's tint is carried too, but its margins are black there, so it has nothing to darken.
+
+**In the app** (`lt-remaster --host`, the door scene's tape played in to the middle of its fade-in, 2×, lit, 16:9, muted): the whole widened picture is darkened evenly, with no bright margins.
+
 ## Characters without a slot (LT-119)
 
 The game draws at most five NPCs (and four doors or chests) at once, and only those whose position projects within `-64..=576` (the 512 mode; `-60..=380` at 320): each takes a packet slot, whose part record holds the posed vertices `Model_DrawParts` draws. Past the 4:3 edge, or past the five, a character has no posed mesh. Three ways were weighed:
@@ -352,6 +401,64 @@ LT_DISC=… LT_TESTSET=… cargo test --release -p lt-native --test crowd -- --i
 **At the edge** (`lt-native wide`, a tick every 30 frames): the crowd draws, in the margins, 14 / 36 characters in the village at 16:9 / 21:9 (and 6 more at 16:9 inside the 4:3 view, past the game's five), 3 / 44 on the walk out of the house, 22 / 40 in Trisken, 2 / 42 in the bedroom scene, 5 / 14 behind the menu, and the cave's chest at 21:9 (29 ticks). Characters in view that nothing draws: 0 in every scene at both aspects. Trisken at 21:9 has a villager walking at the right edge, posed mid-stride, that the game alone leaves out.
 
 **In the app** (New Game to the village, 21:9, 2×, lit, 60 Hz, M1 Pro under heavy load, load averages 8–20): 60 native frames a second, 10–15 ms each. Back-to-back runs with the crowd switched off gave the same within that noise (15.0 against 15.1 ms, 10.0 against 12.0 ms).
+
+## Battles (LT-116)
+
+Battles draw through OVR03 (at 0x80139000, in battle only): the actors and Toys by `FUN_80144b48`, the arena by its task `func_8014B4A4` through `Model_DrawParts`' second entry, or by the hand-written `FUN_8014c97c` while a battle light is set. The same part records as the field's, so the native view takes them over as it takes characters, through the battle camera (the view at ctx+0x98, H 400, 320 × 224).
+
+**The light.** Battle is where the game lights by normals: the arena's polygons all, the Knights', the Baby's and the enemies' lit classes. Everything about its light is in the GTE when each draw is made, so the capture takes the registers with it (`lt_scene::GteLight`):
+- the light matrix: the world's lights (`D_8014E440`, two white lights of 0.5 from above, front left and back right) times the model's rotation;
+- the colour matrix and the back colour (0x800 modulating by 1.0): per actor, with every flash (`Battle_BlendActorLight`), dim (an attack takes all to 0.44) and fade-in (the arena's back colour climbs from 227 to 2,048 over a few ticks).
+
+Each tick also keeps the area's base light (`D_8014E300[1]`) to measure a flash against.
+
+**The original look** runs `Model_DrawParts`' own GTE operations on PSoXide's GTE with those registers, each lit corner with its normal from the file (`lt_assets::MeshData::normals`): NCS and NCT for the textured classes (the light alone, modulating the texture), NCCS and NCCT for the untextured (the light times the polygon's colour). `draw::LightShade`.
+
+**The lit look** lights the same polygons by their real normals, turned to world space, under a rig made of the game's light (`light::Rig::battle`): the brighter light is the key and casts the shadow, the other a fill (a second, shadowless light in `lit.wgsl`), the back colour the ambient. Each actor's albedo is tinted by its own light against the base (`draw::flash`), so the flashes and dims show, lit. The actors' blob shadows (`BattleFx_DrawActorShadowQuads`, two quads in each actor's record) give way to the real ones.
+
+**The arena light** (`Battle_SetLightSource`, a Toy's ability) is the arena drawn by `FUN_8014c97c`: one base colour (NCS of the normal (0, 0, 0x800)), and per corner the light's colour while `|vertex + offset|² >> 10` is under its strength, falling by the excess past it, channel by channel never under the base (`draw::arena_colour`). The lit look makes it a lamp at minus the offset, falling off the same way, adding what the light has over the base; it lights the actors too, which the game's doesn't. No scene reaches it, so a probe sets it each tick (`play::Probe::arena_light`).
+
+**Sorting and clipping.** A part drawn through the second entry keys on its farthest corner, not its nearest (`gte::Path::ModelFar`: the arena; in the field, doors and chests). The effects stay on the 2D layer and sort against the native 3D by bucket. A battle clips its world to the lines above the status panel (a draw area to line 175, set at the table's far end, the panel's own reset in front): the native 3D takes the draw area in force at its first packet (`Table::clip3d`), its lines only, so a widened view keeps its margins. It shows while the arena fades in, before the panel is drawn. The effects check (`check::field`) leaves packets that only set the GPU's environment out of what it hides.
+
+**The transition** (`Battle_LoadingScreenTask`) copies a draw buffer (the frame last drawn there) into VRAM at (320, 0) with `MoveImage`, then each tick moves single columns and rows of the copy about and draws two quads of it, swirling. The takeover notes its moves (`Table::moves`); the compositor keeps each picture by its draw area, copies the one the game copied in its place and makes every move on it at N× (`composite::FrameCopy`); the 2D layer samples it, between texels too, wherever a 15-bit texel lies in it. The swirl is the remastered field. The test set gained `battle-start` for it: 90 frames of walking into battle-1, the transition and the first turn (1,200 frames; the 19 scenes before it unchanged).
+
+**The guards.** OVR02 and OVR04 share 0x801DF000: in battle OVR04's code runs at `WorldChunk_DrawObjects`' and `WorldChunk_DrawObjectMesh`'s addresses, and their guard words keep them quiet. A caller's address alone isn't enough either: `lt_scene::npc_call` checks OVR02's word at `Npc_DrawIfVisible` before taking a call for an NPC.
+
+**Between ticks** a battle blends in the arena's one world (no chunk to rebase on). In a widened view, battles draw no neighbour chunks and no crowd (the field's records wait for the battle's end).
+
+### Checks
+
+```sh
+LT_DISC=… LT_TESTSET=… cargo test --release -p lt-native --test battle -- --ignored --test-threads=1   # @LT-116/1–4
+target/release/lt-native composite "<Guardian's Crusade (USA).bin>" <set> battle-1 --look lit --out DIR
+```
+
+### Results
+
+2026-11-10, test set at core `psoxide-b27fff9` (20 scenes).
+
+- **Drawn natively** (a tick every 60 frames): every actor, Toy and the arena resolve to their files with no misses (battle-1: the Knight and two enemies; battle-late: Darkbeat, the Baby and two enemies), 400–1,500 packets a tick set aside; every lit corner has its normal (11,505 in battle-1, 10,152 in battle-late). Coverage 100% in every battle tick.
+- **Colours** (mean difference per channel, the original look's native pixels against the game's, the GPU's dither and 5-bit truncation included): battle-1 6.3 (18.8 with the lighting off), battle-late 4.5 (7.3); the field's own ticks measure 5–10.
+- **The dim:** the game at 0.47 of its brightness, the original look 0.49, the lit look 0.42.
+- **The arena light** (forced: 255, 70, 40, strength 400, 200 over the arena's centre): the original look 6.6 from the game; lit, the arena's red up 8.5, green and blue unchanged; the actors' red up 36.8, where the game's actors don't change.
+- **Effects** (2D packets in front): 98.8–100% agree where they show; the 2D layer 100%.
+- **The transition:** the copy is the native picture of the frame copied, bit for bit; 944 moves made on it, all as the game's; 236 swirl ticks drawn from it; gone once the battle starts.
+- **The guards:** in the three battle scenes no field hook fires in battle, no battle draw is taken for a field one, no battle hook fires outside; the guard words held the field's hooks back 4,992 times. battle-start in lockstep with the native view's hooks: no difference over 900 frames.
+- **Between ticks:** battle-1 blends 708 of 713 pairs (camera cuts snap), battle-late 803 of 808.
+- **Time** (lit, 7× = 1,568 lines, a tick every 30 frames): battle-1 median 9.2 ms, 90th percentile 11.4 ms; battle-late 9.5 and 11.7 ms; one tick of 25–28 ms each where the battle ends and the field's assets are read again. The village measures 9.9 ms in the same run.
+- **In the app** (`lt-remaster --host`, 2×, lit, 60 Hz, 16:9, muted): battle-1 at 59.1 native frames a second, 8.2 ms a frame. The widened view takes the arena's 3D into the margins, and the sky with it (LT-149, below).
+
+### The sky in a widened view (LT-149)
+
+A battle's sky is 2D: `func_8014B4A4` links POLY_FT4s into the farthest bucket, a strip of 128-pixel tiles (`D_8014EB68`: three textures, so it repeats every 384 pixels, slid by the camera's yaw), the fill below it to line 200 (`D_8014ED48`, one texel) and, with the horizon low, the fill above it (`D_8014EDD8`, an 8 × 8 texel block). The takeover names them (`takeover::battle_sky`, in a battle's table only: the field has other data there).
+
+In a widened view the 2D layer carries them on into the margins (`layer2d::battle_sky_copies`) and leaves the game's own packets as they are, clipped to its 4:3 as the GPU clips them:
+- each tile of the strip is copied in place and whole periods left and right, drawn only in the margin it reaches (`Run::margin`);
+- each fill is carried past its edges with that edge's texel, from a pixel inside, so the margin's edge cuts it whole.
+
+The copies are new pixels: interpolated at the pixel centres, undithered.
+
+**Results** (battle-1 and battle-late, a tick every 120 frames, 16:9 and 21:9, the original look at 1×): on the lines where the 4:3 picture's edges are sky, 163,312 margin pixels, none empty (153,843 empty without the copies). The copies change no pixel of the 4:3 middle, and its 851,191 2D pixels (the panel, the game's sky, effects) are the 4:3 picture's. 4,379 native 3D pixels of the middle differ from the 4:3 picture's: a polygon's edge, or the winner where two lie at one depth, a pixel apart in the widened target (LT-114's).
 
 ## The gate
 

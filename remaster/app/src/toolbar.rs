@@ -40,10 +40,11 @@ impl View {
     pub fn to_text(&self) -> String {
         let on = |b: bool| if b { "on" } else { "off" };
         format!(
-            "look={}\nshadows={}\nlamps={}\naspect={}\nfps={}\ndistance={}\nview={}\nstats={}\ntoolbar={}\n",
+            "look={}\nshadows={}\nlamps={}\nwater={}\naspect={}\nfps={}\ndistance={}\nview={}\nstats={}\ntoolbar={}\n",
             if self.lit { "lit" } else { "original" },
             on(self.lights.shadows),
             on(self.lights.lamps),
+            on(self.lights.water),
             ASPECTS[self.aspect].0,
             self.fps,
             self.distance,
@@ -63,6 +64,7 @@ impl View {
                 "look" => self.lit = v != "original",
                 "shadows" => self.lights.shadows = on,
                 "lamps" => self.lights.lamps = on,
+                "water" => self.lights.water = on,
                 "aspect" => {
                     if let Some(i) = ASPECTS.iter().position(|(n, _)| n.eq_ignore_ascii_case(v)) {
                         self.aspect = i;
@@ -226,6 +228,9 @@ pub fn show(ctx: &egui::Context, dark: bool, view: &mut View) -> f32 {
             if toggle(ui, &p, "Lamps", view.lights.lamps, view.lit) {
                 view.lights.lamps = !view.lights.lamps;
             }
+            if toggle(ui, &p, "Water", view.lights.water, view.lit) {
+                view.lights.water = !view.lights.water;
+            }
             ui.add_space(4.0);
             let aspects: Vec<(String, usize)> = ASPECTS.iter().enumerate().map(|(i, (n, _))| (n.to_string(), i)).collect();
             if let Some(v) = group(ui, &p, "Aspect", &aspects, view.aspect, true) {
@@ -264,9 +269,21 @@ mod tests {
 
     #[test]
     fn a_view_saves_and_reads_back() {
-        let v = View { lit: false, lights: Lights { shadows: false, lamps: true }, aspect: 2, fps: 120, distance: 3.0, native_only: false, stats: true, toolbar: false };
+        let v = View { lit: false, lights: Lights { shadows: false, lamps: true, water: false }, aspect: 2, fps: 120, distance: 3.0, native_only: false, stats: true, toolbar: false };
         assert_eq!(standard().with_text(&v.to_text()), v);
+        assert!(v.to_text().contains("lamps=on\nwater=off\n"));
         assert!(v.to_text().contains("aspect=16:9\nfps=120\n"));
+    }
+
+    /// @LT-146/2 (the switch): Water is a Lights switch like Shadows and Lamps, kept in the window's
+    /// settings, on unless turned off.
+    #[test]
+    fn lt146_2_water_is_a_lights_switch() {
+        assert!(standard().lights.water);
+        let off = standard().with_text("water=off");
+        assert!(!off.lights.water && off.lights.shadows && off.lights.lamps);
+        assert!(off.to_text().contains("water=off"));
+        assert_eq!(standard().with_text(&off.to_text()), off);
     }
 
     #[test]

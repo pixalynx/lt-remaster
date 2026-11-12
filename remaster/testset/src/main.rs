@@ -51,6 +51,27 @@ fn walk(t: u64) -> u16 {
     [pad::UP, pad::RIGHT, pad::DOWN, pad::LEFT][((t / 90) % 4) as usize] | if t % 200 < 6 { pad::CROSS } else { 0 }
 }
 
+/// Talking: ✕ every 60 frames, through a scene's lines.
+fn talk(t: u64) -> u16 {
+    if t % 60 < 6 {
+        pad::CROSS
+    } else {
+        0
+    }
+}
+
+/// The first flight's steering (LT-118's probe): in each 300 frames, a pad held every other 60
+/// frames from up, left, up, right, ✕ and none in turn.
+fn steer(f: u64) -> u16 {
+    const PADS: [u16; 6] = [0, pad::UP, pad::LEFT, pad::UP, pad::RIGHT, pad::CROSS];
+    let (step, j) = (f / 300, f % 300);
+    if (j / 60) % 2 == 0 {
+        PADS[((step + j / 60) % 6) as usize]
+    } else {
+        0
+    }
+}
+
 /// Fighting: ✕ every 40 frames.
 fn fight(t: u64) -> u16 {
     if t % 40 < 6 {
@@ -91,10 +112,19 @@ impl Builder {
 
     /// [`Builder::warp`], standing the Knight nearest (`x`, `z`).
     fn warp_near(&self, m: &mut Machine, chunk: u16, x: i32, z: i32) -> Result<(), String> {
+        self.warp_planted(m, chunk, x, z, &[])
+    }
+
+    /// [`Builder::warp_near`], setting story `flags` on arrival, before the Knight is stood there:
+    /// a talk trigger on the spot runs as he lands.
+    fn warp_planted(&self, m: &mut Machine, chunk: u16, x: i32, z: i32, flags: &[u16]) -> Result<(), String> {
         m.until(600, |_| 0, |m| m.field().idle()).map(|_| ())?;
         m.write(CTX + 0x50, &[(chunk & 0xFF) as u8, (chunk >> 8) as u8 | 0x80]);
         m.run(10, |_| 0)?;
         m.until(900, |_| 0, |m| m.field().on_field() && m.field().cur == chunk)?.ok_or(format!("never idle on chunk {chunk}"))?;
+        for &f in flags {
+            m.set_flag(f);
+        }
         let w = WorldDisc { image: &self.disc, table: &self.table, exe: &self.exe };
         if let Ok(c) = w.chunk(chunk as u32) {
             let walk = Walk::of_chunk(chunk as u32, &c, &[]);
@@ -112,11 +142,11 @@ impl Builder {
         Ok(())
     }
 
-    /// Walks squares until a random battle starts (up to 2 minutes).
-    fn encounter(&self, m: &mut Machine) -> Result<(), String> {
-        m.until(7200, walk, |m| m.field().mode == MODE_BATTLE)?.ok_or("no encounter in 2 minutes of walking")?;
+    /// Walks squares until a random battle starts (up to 2 minutes); the frames walked.
+    fn encounter(&self, m: &mut Machine) -> Result<u64, String> {
+        let walked = m.until(7200, walk, |m| m.field().mode == MODE_BATTLE)?.ok_or("no encounter in 2 minutes of walking")? + 1;
         m.run(60, |_| 0)?;
-        Ok(())
+        Ok(walked)
     }
 }
 
@@ -177,8 +207,12 @@ fn build(disc: &Path, card_path: &Path, set: &Path) -> Result<(), String> {
     let mut m = from_village(&b)?;
     b.warp(&mut m, 80)?;
     b.scene("overworld", "the overworld (chunk 80), walking across chunk seams", &mut m, |t| [pad::RIGHT, pad::UP, pad::LEFT][((t / 400) % 3) as usize], TAPE)?;
-    b.encounter(&mut m)?;
+    let (before, before_frame, before_card) = (m.save_state()?, m.frame, m.card_now());
+    let walked = b.encounter(&mut m)?;
     b.scene("battle-1", "a level-1 random battle on chunk 80, ✕ throughout", &mut m, fight, 2400)?;
+    // The way into that battle (LT-116's transition): the same walk, from 90 frames before it starts
+    // (kept for the end of the set, so the scenes before stay as they were).
+    let into_battle = (before, before_frame, before_card, walked);
 
     // An interior and a dungeon.
     let mut m = from_village(&b)?;
@@ -199,6 +233,35 @@ fn build(disc: &Path, card_path: &Path, set: &Path) -> Result<(), String> {
     let mut m = from_village(&b)?;
     b.warp_near(&mut m, 348, 909, 904)?;
     b.scene("lamps", "an inn's bar with table lamps (chunk 348), standing", &mut m, |_| 0, TAPE)?;
+
+    // The Elder's gift (LT-142): Mr. O'Neal jumps out of the box to the Knight, an actor drawn by an
+    // event task (Event_ActorApproachKnightTask, not the actor loop). The Elder's talk trigger in
+    // his house (chunk 403) runs with flags 0x82 (places the Elder there) and 0x0D (the trigger's
+    // own) planted; ✕ through the lines, 600 frames before the box opens.
+    let mut m = from_village(&b)?;
+    b.warp_planted(&mut m, 403, 1360, -1568, &[0x82, 0x0D])?;
+    m.run(600, talk)?;
+    b.scene("gift", "the Elder's gift (chunk 403, flags planted): Mr. O'Neal jumps out of the box to the Knight", &mut m, |i| talk(600 + i), TAPE)?;
+
+    // The first flight (LT-143): OVR24's sky scene, the Knight on the Baby dragon over a fogged sea
+    // and islands until Karmine flies in. From the overworld scene's start, with story flag 0xBA
+    // cleared (before the world opens up) and root mode 28, as `Event_StartFlightSceneTask` asks
+    // for it: `GameMode_FlightSceneSetupTask` loads OVR24 and runs mode 27. Steered as LT-118's
+    // probe, its first 300 frames the load.
+    let mut m = from_village(&b)?;
+    b.warp(&mut m, 80)?;
+    m.clear_flag(0xBA);
+    m.write(0x801C_69C4, &28u32.to_le_bytes());
+    m.write(0x801C_69E8, &[1]);
+    m.write(CTX + 0x4A, &[0, 0]);
+    m.run(300, steer)?;
+    b.scene("first-flight", "the first flight (OVR24, flag 0xBA cleared, root mode 28): the sea and islands, then Karmine", &mut m, |i| steer(300 + i), 2700)?;
+
+    // The village's water (LT-146): the pond at its west side (chunk 78, about (-886, -437)),
+    // walking about by it.
+    let mut m = from_village(&b)?;
+    b.warp_near(&mut m, 78, -886, -437)?;
+    b.scene("water", "the village's pond (chunk 78), walking about by it", &mut m, walk, TAPE)?;
 
     // The way out of the house: the New Game tape from the cutscene's start, from 300 frames before
     // the village is first the current chunk.
@@ -234,11 +297,30 @@ fn build(disc: &Path, card_path: &Path, set: &Path) -> Result<(), String> {
     m.run(300, |_| 0)?;
     b.scene("flight", "flying over the world map", &mut m, |t| [pad::UP, pad::LEFT, pad::UP, pad::RIGHT][((t / 300) % 4) as usize], TAPE)?;
 
+    // Zeppetto's farewell (LT-142): he flickers out (Event_ActorFlickerInTask) and Mr. O'Neal hops to
+    // the Knight (the approach, as it runs in Zeppetto's house). From the late save, with flag 0xF6
+    // (every Living Toy found) planted; the Knight stood facing him, ✕ to talk and through the
+    // lines, 1,200 frames before he goes.
+    let mut m = Machine::from_state(&image, &late_card, &late, late_frame)?;
+    b.warp_planted(&mut m, 346, 0, -1056, &[0xF6])?;
+    for at in [0xC, 0xE, 0x10] {
+        m.write(KNIGHT + at, &[0, 0]);
+    }
+    m.run(1200, talk)?;
+    b.scene("zeppetto", "Zeppetto's farewell (chunk 346, flag 0xF6 planted): he flickers out, Mr. O'Neal hops to the Knight", &mut m, |i| talk(1200 + i), TAPE)?;
+
     // A late random battle on chunk 114.
     let mut m = Machine::from_state(&image, &late_card, &late, late_frame)?;
     b.warp(&mut m, 114)?;
     b.encounter(&mut m)?;
     b.scene("battle-late", "a random battle on chunk 114 with the late party, ✕ throughout", &mut m, fight, 2400)?;
+
+    // Into battle-1 (LT-116): the transition copies the field on screen and swirls it away.
+    let (before, before_frame, before_card, walked) = into_battle;
+    let mut m = Machine::from_state(&image, &before_card, &before, before_frame)?;
+    let from = walked.saturating_sub(90);
+    m.run(from, walk)?;
+    b.scene("battle-start", "into battle-1 (chunk 80): 90 frames of walking, the transition, the battle's first turn", &mut m, move |i| if i < 150 { walk(from + i) } else { fight(i) }, TAPE)?;
 
     let manifest = format!(
         "core {CORE}\nexe_sha1 {exe_sha1}\ncard {} sha1 {}\nbuilt_in {:.0} s\nscenes {}\n{}\n",

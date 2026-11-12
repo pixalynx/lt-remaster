@@ -312,11 +312,23 @@ pub fn function_at(mem: &impl Memory, pc: u32) -> Option<(&'static Symbol, u32)>
     in_unit(unit, pc)
 }
 
+/// A unit's place in [`SYMBOLS`]' order: main first, then the overlays by number.
+fn unit_order(u: Unit) -> u16 {
+    match u {
+        Unit::Main => 0,
+        Unit::Overlay(n) => 1 + u16::from(n),
+    }
+}
+
 /// The function of `unit` holding `pc`, and the offset into it.
 pub fn in_unit(unit: Unit, pc: u32) -> Option<(&'static Symbol, u32)> {
-    let start = SYMBOLS.partition_point(|s| s.unit != unit);
+    // SYMBOLS is sorted by unit then address: the unit's block is where the order key equals it.
+    // (A `s.unit != unit` predicate isn't a partition for an overlay in the middle, and the
+    // binary search found OVR03's functions nowhere.)
+    let key = unit_order(unit);
+    let start = SYMBOLS.partition_point(|s| unit_order(s.unit) < key);
     let syms = &SYMBOLS[start..];
-    let syms = &syms[..syms.partition_point(|s| s.unit == unit)];
+    let syms = &syms[..syms.partition_point(|s| unit_order(s.unit) == key)];
     let i = syms.partition_point(|s| s.addr <= pc);
     let s = syms.get(i.checked_sub(1)?)?;
     (pc < s.addr + s.size).then(|| (s, pc - s.addr))
@@ -325,6 +337,14 @@ pub fn in_unit(unit: Unit, pc: u32) -> Option<(&'static Symbol, u32)> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn every_function_is_found_in_its_unit() {
+        for s in SYMBOLS {
+            assert_eq!(in_unit(s.unit, s.addr).map(|(f, o)| (f.name, o)), Some((s.name, 0)), "{s:?}");
+            assert_eq!(in_unit(s.unit, s.addr + s.size - 4).map(|(f, _)| f.name), Some(s.name), "{s:?}");
+        }
+    }
 
     #[test]
     fn symbols_sort_by_unit_then_address() {

@@ -50,15 +50,17 @@ impl Look {
 }
 
 /// Which parts of the lighting are on (the remaster window's Lights toggles, LT-117): the main
-/// light's shadows and the lamps. Off, the rig's sun, sky and baked colours still light the scene.
+/// light's shadows, the lamps and the water (LT-146). Off, the rig's sun, sky and baked colours
+/// still light the scene.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Lights {
     pub shadows: bool,
     pub lamps: bool,
+    pub water: bool,
 }
 
 impl Lights {
-    pub const ALL: Lights = Lights { shadows: true, lamps: true };
+    pub const ALL: Lights = Lights { shadows: true, lamps: true, water: true };
 
     /// `u` with what's off taken out (no shadow pass runs without a map).
     pub fn apply(self, mut u: Uniforms) -> Uniforms {
@@ -67,6 +69,9 @@ impl Lights {
         }
         if !self.lamps {
             u.points.clear();
+        }
+        if !self.water {
+            u.water = false;
         }
         u
     }
@@ -198,11 +203,24 @@ pub struct Normals {
     chunks: HashMap<MeshKey, Arc<Vec<V3>>>,
     lamps: HashMap<MeshKey, Arc<Vec<Lamp>>>,
     casters: HashMap<MeshKey, Arc<Vec<u8>>>,
+    water: HashMap<(MeshKey, lt_assets::TextureKey), Arc<Vec<bool>>>,
+    shore: HashMap<(MeshKey, lt_assets::TextureKey), Arc<Vec<crate::water::ShoreAt>>>,
 }
 
 impl Normals {
     pub fn chunk(&mut self, key: MeshKey, corners: &[Corner]) -> Arc<Vec<V3>> {
         self.chunks.entry(key).or_insert_with(|| Arc::new(smooth_normals(&corners.iter().map(|c| c.pos.map(|v| v as f32)).collect::<Vec<_>>()))).clone()
+    }
+
+    /// Which of the mesh's corners are water (LT-146, [`crate::water::corners`]), with its atlas.
+    pub fn water(&mut self, key: MeshKey, texture: lt_assets::TextureKey, corners: &[Corner], tex: Option<&lt_assets::mesh::TextureData>) -> Arc<Vec<bool>> {
+        self.water.entry((key, texture)).or_insert_with(|| Arc::new(crate::water::corners(corners, tex))).clone()
+    }
+
+    /// Each of the mesh's corners' distance to the shore (LT-148, [`crate::water::shore`]), its
+    /// water being `water` (what [`Normals::water`] gave): worked out once a mesh.
+    pub fn shore(&mut self, key: MeshKey, texture: lt_assets::TextureKey, corners: &[Corner], water: &[bool]) -> Arc<Vec<crate::water::ShoreAt>> {
+        self.shore.entry((key, texture)).or_insert_with(|| Arc::new(crate::water::shore(corners, water))).clone()
     }
 
     pub fn lamps(&mut self, key: MeshKey, corners: &[Corner]) -> Arc<Vec<Lamp>> {
@@ -239,6 +257,9 @@ pub struct Lamp {
     pub reach: f32,
     /// Distinct painted positions it was found from.
     pub corners: u32,
+    /// Zero for a lamp from the art; the battle arena's light (LT-116) falls off as the game's does:
+    /// its full colour within `inner`, then linearly in the distance squared to nothing at `reach`.
+    pub inner: f32,
 }
 
 /// A corner's paint is firelight: textured and modulated, red at least 200 (1.56× neutral), green
@@ -288,7 +309,7 @@ pub fn lamps(corners: &[Corner]) -> Vec<Lamp> {
         .map(|(sum, rgb, n, radius)| {
             let centre = sum.map(|v| v / n as f32);
             let top = rgb.iter().copied().fold(1.0f32, f32::max);
-            Lamp { pos: add(centre, [0.0, -LAMP_LIFT, 0.0]), colour: rgb.map(|v| v / top), reach: (radius * 1.5).max(220.0), corners: n }
+            Lamp { pos: add(centre, [0.0, -LAMP_LIFT, 0.0]), colour: rgb.map(|v| v / top), reach: (radius * 1.5).max(220.0), corners: n, inner: 0.0 }
         })
         .collect()
 }
@@ -302,6 +323,8 @@ pub enum Area {
     Interior,
     /// Caves, towers, castles.
     Dungeon,
+    /// A battle (LT-116): lit by the game's own battle light ([`Rig::battle`]).
+    Battle,
 }
 
 /// Dungeons by chunk id (research 03, "Overworld vs town vs dungeon" and the area table): the Cave
@@ -314,10 +337,15 @@ const OUTDOOR_PAST_GRID: &[(u16, u16)] = &[(372, 372)];
 const GRID_CHUNKS: u16 = 324;
 /// The field context's mode while flying (`ctx+0x43`).
 const MODE_FLIGHT: u8 = 3;
+/// How strong a battle light is in the lit look for each 1.0 of the game's modulation (a back colour
+/// of 0x800 modulates the texture by 1.0; each light adds up to its colour times 2 on top).
+const BATTLE_LIGHT: f32 = 0.5;
 
 pub fn area(chunk: u16, mode: u8) -> Area {
     let within = |list: &[(u16, u16)]| list.iter().any(|&(a, b)| (a..=b).contains(&chunk));
-    if mode == MODE_FLIGHT {
+    if mode == lt_assets::BATTLE_MODE {
+        Area::Battle
+    } else if mode == MODE_FLIGHT {
         Area::Outdoor
     } else if within(DUNGEONS) {
         Area::Dungeon
@@ -346,6 +374,9 @@ pub struct Rig {
     pub exposure: f32,
     /// Each lamp's strength (times its paint's colour).
     pub lamp: f32,
+    /// A second light without a shadow (battle's, LT-116): the direction it travels and its colour.
+    pub fill_dir: V3,
+    pub fill: V3,
 }
 
 impl Rig {
@@ -363,6 +394,8 @@ impl Rig {
                 delit: 0.5,
                 exposure: 1.0,
                 lamp: 1.1,
+                fill_dir: [0.0, 1.0, 0.0],
+                fill: [0.0; 3],
             },
             // A room: soft light from above, warm walls, the lamps doing the rest.
             Area::Interior => Rig {
@@ -375,6 +408,8 @@ impl Rig {
                 delit: 0.4,
                 exposure: 1.0,
                 lamp: 1.4,
+                fill_dir: [0.0, 1.0, 0.0],
+                fill: [0.0; 3],
             },
             // Dim and cool, so lamps carry the scene.
             Area::Dungeon => Rig {
@@ -387,12 +422,57 @@ impl Rig {
                 delit: 0.3,
                 exposure: 1.0,
                 lamp: 1.8,
+                fill_dir: [0.0, 1.0, 0.0],
+                fill: [0.0; 3],
             },
+            // The game's base battle light (two white lights of 0.5 from above, front left and back
+            // right, a back colour of 0.5) for a battle tick that recorded none.
+            Area::Battle => Rig::battle(&lt_scene::GteLight {
+                llm: [[-2365, -2365, 2365], [2365, -2365, -2365], [0, -4096, 0]],
+                lcm: [[0x800, 0x800, 0], [0x800, 0x800, 0], [0x800, 0x800, 0]],
+                bk: [0x800; 3],
+            }),
+        }
+    }
+
+    /// The lit look's rig from the game's battle light (LT-116, `lt_scene::Record::battle_light`):
+    /// - the key is the brighter of its two lights, casting the shadow; the other is the fill;
+    /// - the back colour is the ambient, a little brighter from above than from below;
+    /// - each 1.0 of the game's modulation is [`BATTLE_LIGHT`] of light.
+    ///
+    /// The game's lights are directions toward the light (Y down); a rig's travel the other way.
+    pub fn battle(l: &lt_scene::GteLight) -> Rig {
+        let toward = |i: usize| norm(l.llm[i].map(|v| v as f32));
+        let colour = |j: usize| [0, 1, 2].map(|c| l.lcm[c][j] as f32 / 4096.0 * 2.0 * BATTLE_LIGHT);
+        let back = l.bk.map(|v| v as f32 / 4096.0 * 2.0 * BATTLE_LIGHT);
+        let strength = |j: usize| colour(j).iter().sum::<f32>();
+        let (key, fill) = if strength(1) > strength(0) { (1, 0) } else { (0, 1) };
+        let away = |v: V3| v.map(|x| -x);
+        // More of the light from the key than the game gives it, less from all round: the same
+        // brightness lit, with the shapes and their shadows reading.
+        let scale = |v: V3, k: f32| v.map(|x| x * k);
+        Rig {
+            area: Area::Battle,
+            sun_dir: away(toward(key)),
+            sun: scale(colour(key), 1.35),
+            sky: scale(back, 0.95),
+            ground: scale(back, 0.6),
+            baked: 1.0,
+            delit: 0.4,
+            exposure: 1.0,
+            // A lamp's colour is what the game's vertex colour rises by (1.0 = 128,
+            // `crate::draw::arena_lamp`), over the light the rig gives the ground.
+            lamp: 2.0 * BATTLE_LIGHT,
+            fill_dir: away(toward(fill)),
+            fill: scale(colour(fill), 0.75),
         }
     }
 
     pub fn for_record(r: &Record) -> Rig {
-        Rig::of(area(r.chunk, r.mode))
+        match (area(r.chunk, r.mode), r.battle_light.as_ref()) {
+            (Area::Battle, Some(l)) => Rig::battle(l),
+            (a, _) => Rig::of(a),
+        }
     }
 }
 
@@ -415,14 +495,23 @@ pub struct Uniforms {
     pub shadow_on: bool,
     /// World units a shadow-map texel covers.
     pub texel: f32,
-    pub points: Vec<(V3, f32, V3)>,
+    /// Point lights: position, reach, colour, and the inner radius of one that falls off as the
+    /// battle arena's light does (0 for a lamp; [`Lamp::inner`]).
+    pub points: Vec<(V3, f32, V3, f32)>,
     /// A debug view instead of the colour (`LT_LIGHT_DEBUG`): 1 the main light's visibility, 2 the
-    /// normals, 3 the shadow map's depth against the receiver's, 4 the lamps' light.
+    /// normals, 3 the shadow map's depth against the receiver's, 4 the lamps' light, 5 the water
+    /// (LT-146, white).
     pub debug: u32,
+    /// The colour a polygon's fog (`draw::Vertex::fog`) blends toward: the first flight's far
+    /// colour (LT-143, the GTE's RFC/GFC/BFC), 0..1.
+    pub fog: V3,
+    /// The water (LT-146): drawn as water, and the waves' clock in seconds ([`crate::water::clock`]).
+    pub water: bool,
+    pub time: f32,
 }
 
 impl Uniforms {
-    pub const BYTES: usize = 16 * 6 + 64 + 16 + 16 * 2 * MAX_POINTS;
+    pub const BYTES: usize = 16 * 6 + 64 + 16 + 16 * 2 * MAX_POINTS + 16 + 16 + 32;
 
     pub fn bytes(&self) -> Vec<u8> {
         let mut f: Vec<f32> = Vec::with_capacity(Self::BYTES / 4);
@@ -440,13 +529,17 @@ impl Uniforms {
         f.extend_from_slice(&[self.texel, if self.shadow_on { 1.0 } else { 0.0 }, 1.0 / SHADOW_SIZE as f32, self.debug as f32]);
         for k in 0..MAX_POINTS {
             match self.points.get(k) {
-                Some(&(p, reach, c)) => {
+                Some(&(p, reach, c, inner)) => {
                     v4(&mut f, p, reach);
-                    v4(&mut f, c, 0.0);
+                    v4(&mut f, c, inner);
                 }
                 None => f.extend_from_slice(&[0.0; 8]),
             }
         }
+        v4(&mut f, self.fog, 0.0);
+        f.extend_from_slice(&[self.time, if self.water { 1.0 } else { 0.0 }, 0.0, 0.0]);
+        v4(&mut f, r.fill_dir, 0.0);
+        v4(&mut f, r.fill, 0.0);
         f.iter().flat_map(|v| v.to_le_bytes()).collect()
     }
 }
@@ -514,15 +607,24 @@ pub fn uniforms(r: &Record, scene: &crate::draw::Scene) -> Option<Uniforms> {
         texel: fit.map_or(1.0, |f| f.1),
         points,
         debug: std::env::var("LT_LIGHT_DEBUG").ok().and_then(|v| v.parse().ok()).unwrap_or(0),
+        fog: sky_fog(r),
+        water: true,
+        time: crate::water::clock(r.frame, r.frame, 0.0),
     })
 }
 
+/// The first flight's far colour (control registers 21–23, 12.4 fixed point), 0..1; black elsewhere
+/// (no polygon has fog there).
+pub fn sky_fog(r: &Record) -> V3 {
+    r.sky_gte.as_ref().map_or([0.0; 3], |g| [21, 22, 23].map(|i| ((g.control[i] as i32 >> 4).clamp(0, 255)) as f32 / 255.0))
+}
+
 /// The lamps nearest `centre` (what's on screen), at most [`MAX_POINTS`], as point lights.
-pub fn nearest_lamps(lamps: &[Lamp], centre: V3, strength: f32) -> Vec<(V3, f32, V3)> {
+pub fn nearest_lamps(lamps: &[Lamp], centre: V3, strength: f32) -> Vec<(V3, f32, V3, f32)> {
     let mut v: Vec<&Lamp> = lamps.iter().collect();
     let d = |l: &Lamp| dot(sub(l.pos, centre), sub(l.pos, centre));
     v.sort_by(|a, b| d(a).total_cmp(&d(b)));
-    v.into_iter().take(MAX_POINTS).map(|l| (l.pos, l.reach, l.colour.map(|c| c * strength))).collect()
+    v.into_iter().take(MAX_POINTS).map(|l| (l.pos, l.reach, l.colour.map(|c| c * strength), l.inner)).collect()
 }
 
 #[cfg(test)]
@@ -531,10 +633,10 @@ mod lights_tests {
 
     #[test]
     fn lights_off_take_out_the_shadow_and_the_lamps() {
-        let u = Uniforms { rig: Rig::of(Area::Outdoor), eye: [0.0; 3], shadow: [[0.0; 4]; 4], shadow_on: true, texel: 1.0, points: vec![([0.0; 3], 100.0, [1.0; 3])], debug: 0 };
+        let u = Uniforms { rig: Rig::of(Area::Outdoor), eye: [0.0; 3], shadow: [[0.0; 4]; 4], shadow_on: true, texel: 1.0, points: vec![([0.0; 3], 100.0, [1.0; 3], 0.0)], debug: 0, fog: [0.0; 3], water: true, time: 0.0 };
         assert_eq!(Lights::ALL.apply(u.clone()), u);
-        let off = Lights { shadows: false, lamps: false }.apply(u.clone());
-        assert!(!off.shadow_on && off.points.is_empty());
+        let off = Lights { shadows: false, lamps: false, water: false }.apply(u.clone());
+        assert!(!off.shadow_on && off.points.is_empty() && !off.water);
         assert_eq!(off.rig, u.rig);
     }
 }
@@ -596,7 +698,7 @@ mod tests {
         // The caster is nearer the sun than the receiver under it.
         assert!(clip(cast[0])[2] < clip([100.0, 0.0, 100.0])[2]);
         assert!(texel > 0.0 && texel < 1.0);
-        assert_eq!(Uniforms { rig: Rig::of(Area::Outdoor), eye: [0.0; 3], shadow: m, shadow_on: true, texel, points: vec![], debug: 0 }.bytes().len(), Uniforms::BYTES);
+        assert_eq!(Uniforms { rig: Rig::of(Area::Outdoor), eye: [0.0; 3], shadow: m, shadow_on: true, texel, points: vec![], debug: 0, fog: [0.0; 3], water: true, time: 0.0 }.bytes().len(), Uniforms::BYTES);
     }
 
     #[test]

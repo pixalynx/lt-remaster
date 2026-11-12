@@ -31,8 +31,8 @@ const FIELD: &[&str] = &["village", "overworld", "interior", "dungeon", "late", 
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    if args.len() < 3 || !matches!(args[0].as_str(), "gate" | "lockstep" | "composite" | "check" | "light" | "bench" | "motion" | "wide" | "characters") {
-        eprintln!("lt-native gate|lockstep|composite|check|light|bench|motion|wide|characters <disc.bin> <set> [scene…] …");
+    if args.len() < 3 || !matches!(args[0].as_str(), "gate" | "lockstep" | "composite" | "check" | "light" | "bench" | "motion" | "wide" | "characters" | "billboards" | "moving" | "events") {
+        eprintln!("lt-native gate|lockstep|composite|check|light|bench|motion|wide|characters|billboards|moving|events <disc.bin> <set> [scene…] …");
         std::process::exit(2);
     }
     let run = match args[0].as_str() {
@@ -44,6 +44,9 @@ fn main() {
         "motion" => motion(&args[1..]),
         "wide" => wide(&args[1..]),
         "characters" => characters(&args[1..]),
+        "billboards" => billboards(&args[1..]),
+        "moving" => moving(&args[1..]),
+        "events" => events(&args[1..]),
         _ => lockstep(&args[1..]),
     };
     match run {
@@ -57,6 +60,117 @@ fn main() {
             std::process::exit(2);
         }
     }
+}
+
+/// LT-144's measurements (`billboards <disc> <set> [scene…] [--aspect A] [--every N] [--out DIR]
+/// [--knight X,Z]`):
+/// the field's billboards at 2× in a widened view (16:9 unless given), by kind: drawn natively,
+/// put back, in the margins; the smoke rebuild against the game's puffs; the blob shadows by look.
+/// Fails when a billboard packet isn't drawn as one, or the rebuild differs from the game's puffs.
+fn billboards(args: &[String]) -> Result<bool, String> {
+    use lt_native::wide::Reach;
+    let path = PathBuf::from(&args[0]);
+    let set = PathBuf::from(&args[1]);
+    let (mut names, mut aspect, mut every, mut out, mut knight) = (Vec::new(), 16.0 / 9.0, 30u64, None, None);
+    let mut i = 2;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--aspect" => {
+                aspect = args.get(i + 1).and_then(|a| Reach::parse_aspect(a)).ok_or("--aspect 16:9")?;
+                i += 1;
+            }
+            "--knight" => {
+                let v: Vec<i16> = args.get(i + 1).ok_or("--knight X,Z")?.split(',').filter_map(|v| v.parse().ok()).collect();
+                knight = Some([*v.first().ok_or("--knight X,Z")?, *v.get(1).ok_or("--knight X,Z")?]);
+                i += 1;
+            }
+            "--every" => {
+                every = args.get(i + 1).and_then(|s| s.parse().ok()).ok_or("--every N")?;
+                i += 1;
+            }
+            "--out" => {
+                out = Some(PathBuf::from(args.get(i + 1).ok_or("--out DIR")?));
+                i += 1;
+            }
+            s => names.push(s.to_string()),
+        }
+        i += 1;
+    }
+    if names.is_empty() {
+        names = FIELD.iter().map(|s| s.to_string()).collect();
+    }
+    if let Some(o) = &out {
+        std::fs::create_dir_all(o).map_err(|e| e.to_string())?;
+    }
+    let image = Image::open(&path)?;
+    let disc = Disc::open(&path)?;
+    let files = disc.files();
+    let mut assets = Assets::new(&files, ModelIndex::build(&files));
+    let gpu = Wgpu::headless().ok_or("no GPU adapter")?;
+    let mut comp = lt_native::composite::Compositor::new(&gpu);
+    let mut cache = Cache::new(gpu);
+    let mut ok = true;
+    for name in &names {
+        let (s, state) = Scene::load(&set, name)?;
+        let b = lt_native::check::billboards_at(&image, &s, &state, knight, Reach::new(aspect, 1.0), every, &mut assets, &mut cache, &mut comp, out.as_deref().map(|o| (o, name.as_str())))?;
+        println!("{}", b.text(name));
+        ok &= b.missed == 0 && b.puff_corners_same == b.puff_corners;
+    }
+    Ok(ok)
+}
+
+/// LT-145's measurements (`moving <disc> <set> [scene…]`): the field's billboards in the frames
+/// between ticks at 60 and 120 Hz (2 and 4 frames a tick), with no GPU. Fails when a billboard
+/// holds still for a frame while it moves over the tick, pops at a tick, or a blob shadow strays
+/// from its character by half a pixel or more.
+fn moving(args: &[String]) -> Result<bool, String> {
+    let path = PathBuf::from(&args[0]);
+    let set = PathBuf::from(&args[1]);
+    let mut names: Vec<String> = args[2..].to_vec();
+    if names.is_empty() {
+        names = ["village", "overworld", "flight"].iter().map(|s| s.to_string()).collect();
+    }
+    let image = Image::open(&path)?;
+    let disc = Disc::open(&path)?;
+    let files = disc.files();
+    let mut assets = Assets::new(&files, ModelIndex::build(&files));
+    let mut ok = true;
+    for name in &names {
+        let (s, state) = Scene::load(&set, name)?;
+        for k in [2, 4] {
+            let m = lt_native::check::moving(&image, &s, &state, k, &mut assets)?;
+            println!("{}", m.text(name, k));
+            ok &= m.repeated == 0 && m.pop_a < 0.01 && m.pop_b < 0.01 && m.shadow_stray < 0.5;
+        }
+    }
+    Ok(ok)
+}
+
+/// LT-142's measurements (`events <disc> <set> [scene…]`): the actors two event tasks draw
+/// themselves (Mr. O'Neal's approach, Zeppetto's flicker), in the gift and zeppetto scenes. Fails
+/// when one isn't captured, resolved and set aside, or the lit view doesn't draw it.
+fn events(args: &[String]) -> Result<bool, String> {
+    let path = PathBuf::from(&args[0]);
+    let set = PathBuf::from(&args[1]);
+    let mut names: Vec<String> = args[2..].to_vec();
+    if names.is_empty() {
+        names = ["gift", "zeppetto"].iter().map(|s| s.to_string()).collect();
+    }
+    let image = Image::open(&path)?;
+    let disc = Disc::open(&path)?;
+    let files = disc.files();
+    let mut assets = Assets::new(&files, ModelIndex::build(&files));
+    let gpu = Wgpu::headless().ok_or("no GPU")?;
+    let mut comp = lt_native::composite::Compositor::new(&gpu);
+    let mut cache = Cache::new(gpu);
+    let mut ok = true;
+    for name in &names {
+        let (s, state) = Scene::load(&set, name)?;
+        let e = lt_native::check::event_actors(&image, &s, &state, 8, &mut assets, &mut cache, &mut comp)?;
+        println!("{}", e.text(name));
+        ok &= e.characters > 0 && e.resolved == e.characters && e.posed == e.parts && e.placed == e.parts && e.kept == 0 && e.aside > 0 && e.lit > 0;
+    }
+    Ok(ok)
 }
 
 /// LT-119's measurements (`characters <disc> <set> [scene…]`): which record fields of an NPC
@@ -232,6 +346,8 @@ fn gate(args: &[String]) -> Result<bool, String> {
             worst.map_or(0.0, |w| w.agreement() * 100.0),
             worst.map(|w| w.tick_frame)
         );
+        let (cp, cc, ce) = r.samples.iter().fold((0u64, 0u64, 0u64), |a, s| (a.0 + s.colour_pixels, a.1 + s.colour_close, a.2 + s.colour_error));
+        println!("{name}: colour within {} of the game's on {:.3}% of {cp} pixels both draw (mean difference {:.2})", lt_native::gate::COLOUR_CLOSE, 100.0 * cc as f64 / cp.max(1) as f64, ce as f64 / cp.max(1) as f64);
         let mut causes: std::collections::BTreeMap<String, u64> = Default::default();
         for smp in &r.samples {
             for (k, v) in &smp.causes {

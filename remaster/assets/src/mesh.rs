@@ -44,6 +44,10 @@ pub struct MeshData {
     pub corners: Vec<Corner>,
     /// Per range (chunk group or model object): first corner and corner count.
     pub ranges: Vec<(u32, u32)>,
+    /// Each corner's normal from the file (4.12, rest pose), for a polygon the GTE lights
+    /// (`lt_core::mesh::flag::LIT`); zero for a prelit one (LT-116). Not uploaded: the renderer
+    /// turns them to world space and lights the battle with them.
+    pub normals: Vec<[i16; 3]>,
 }
 
 impl MeshData {
@@ -54,6 +58,7 @@ impl MeshData {
         let mut out = MeshData {
             corners: Vec::with_capacity(m.polys.len() * 6),
             ranges: Vec::with_capacity(m.groups.len()),
+            normals: Vec::with_capacity(m.polys.len() * 6),
         };
         for (g, grp) in m.groups.iter().enumerate() {
             let first = out.corners.len() as u32;
@@ -74,6 +79,8 @@ impl MeshData {
                             rgb: [p.rgb[c][0], p.rgb[c][1], p.rgb[c][2]],
                             flags: p.flags,
                         });
+                        let lit = p.flags & lt_core::mesh::flag::LIT != 0;
+                        out.normals.push(if lit { m.normals.get(p.nrm[c] as usize).copied().unwrap_or_default() } else { [0; 3] });
                     }
                 }
             }

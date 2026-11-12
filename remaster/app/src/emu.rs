@@ -21,7 +21,9 @@
 //! window's own GPU device and the window draws the result from there: nothing is read back. At
 //! `--fps` 60 or 120 it draws 2 or 4 frames a tick, blending the last two ticks (LT-113), one tick
 //! behind. The emulator never waits: when the native thread is still busy the tick is dropped, and
-//! counted. At a wider aspect or a longer distance (LT-114, [`Shared::reach`]) it reads the
+//! counted. A dropped tick's VRAM copies (a frame freeze's, LT-140, and the battle transition's) are
+//! carried on to the next tick that gets through, so the native view still takes its picture of the
+//! frame the game copied. At a wider aspect or a longer distance (LT-114, [`Shared::reach`]) it reads the
 //! neighbour chunks that needs as each tick is resolved, and draws past the 4:3 edges.
 //!
 //! **The disc's assets.** The native thread reads its assets off the disc the core reads
@@ -231,6 +233,9 @@ pub struct Draws {
     tx: SyncSender<ToDraw>,
     shared: Arc<Shared>,
     new_game: bool,
+    /// The VRAM copies of ticks dropped since the last that got through: a frame freeze's (LT-140)
+    /// and the battle transition's (LT-116).
+    carried: (Vec<lt_native::takeover::ImageMove>, Vec<lt_native::takeover::ImageMove>),
 }
 
 impl Draws {
@@ -240,7 +245,7 @@ impl Draws {
         let first = Player::hooks().len();
         let mut table = Player::hooks();
         table.extend(watched());
-        Ok(Draws { player: Player::default(), hooks: Hooks::new(table)?, first, tx, shared, new_game })
+        Ok(Draws { player: Player::default(), hooks: Hooks::new(table)?, first, tx, shared, new_game, carried: Default::default() })
     }
 
     /// Sets the hooks on `cpu` (a new CPU, after a boot or a state, has none).
@@ -255,10 +260,22 @@ impl Draws {
         self.player.begin(frame);
         let (first, player) = (self.first, &mut self.player);
         self.hooks.run_frame(cpu, bus, &mut |c: &lt_emu_hooks::Call| if c.hook < first { player.call(c) } else { Action::Continue })?;
-        for drawn in self.player.end() {
+        for mut drawn in self.player.end() {
+            // The copies of ticks dropped before it: a newer freeze stands for an older one; the
+            // transition's moves go in order.
+            let (frozen, moves) = std::mem::take(&mut self.carried);
+            if drawn.table.frozen.is_empty() {
+                drawn.table.frozen = frozen;
+            }
+            if !moves.is_empty() {
+                drawn.table.moves = moves.into_iter().chain(std::mem::take(&mut drawn.table.moves)).collect();
+            }
             match self.tx.try_send(ToDraw { drawn, ram: bus.ram()[..RAM].to_vec(), scratch: lt_emu_hooks::read(bus, SCRATCH, 0x400) }) {
                 Ok(()) | Err(TrySendError::Disconnected(_)) => {}
-                Err(TrySendError::Full(_)) => self.shared.stats.lock().unwrap().native_dropped += 1,
+                Err(TrySendError::Full(t)) => {
+                    self.shared.stats.lock().unwrap().native_dropped += 1;
+                    self.carried = (t.drawn.table.frozen, t.drawn.table.moves);
+                }
             }
         }
         if self.shared.show_picture.load(Ordering::Relaxed) {

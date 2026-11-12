@@ -21,9 +21,29 @@
 //!   game still at 30.
 //! - [`wide`] widens the view past 4:3 and the draw distance past the game's (LT-114): the game's
 //!   object test widened, neighbour chunks off the disc, the 2D layer kept 4:3 in the middle.
+//! - [`billboard`] finds the field's billboards in each table (sparkles, smoke, shadows) for the
+//!   2D layer to draw at the native scale and into a widened view's margins (LT-144), and moves
+//!   them with the camera between ticks (LT-145); [`smoke`] rebuilds the chimney smoke the game
+//!   leaves out of a widened view.
 //! - [`crowd`] draws the NPCs the game gives no packet slot (LT-119), posed from their records with
 //!   a shadow of the game's animation.
+//! - The first flight's sky (LT-143, OVR24) is drawn as chunks are: its cells' NCDS colours and
+//!   depth cue run on PSoXide's GTE for the original look ([`draw::SkyShade`]), and the depth cue
+//!   fogs the lit look.
+//! - [`water`] finds the game's water (level, water-blue polygons) and the lit look draws it as
+//!   water: moving waves, the sky reflected, the sun's glints (LT-146), the scene mirrored about its
+//!   plane in a pass of its own (LT-147), and shallows, foam and caustics by the shore (LT-148).
+//! - Battles (LT-116) are drawn as the field is: the actors, Toys and arena natively through the
+//!   battle camera, their lit polygons coloured by the game's own GTE operations with the light the
+//!   capture took ([`draw::LightShade`], the arena light by [`draw::arena_colour`]); the lit look by
+//!   their real normals under a rig made of the game's battle light ([`light::Rig::battle`]). The
+//!   battle transition swirls the native picture of the field away ([`composite`]).
+//! - A frozen frame (LT-140: the field menu's, a chunk load's, a battle's) is drawn from the native
+//!   picture of that frame, and in a widened view carried on into the margins ([`composite`],
+//!   [`layer2d`]). So is a full-screen fade or tint, over a frozen frame or the live field (LT-150,
+//!   [`layer2d`]).
 
+pub mod billboard;
 pub mod check;
 pub mod composite;
 pub mod crowd;
@@ -35,5 +55,7 @@ pub mod layer2d;
 pub mod light;
 pub mod play;
 pub mod raster;
+pub mod smoke;
 pub mod takeover;
+pub mod water;
 pub mod wide;

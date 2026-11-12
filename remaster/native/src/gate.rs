@@ -2,8 +2,9 @@
 //!
 //! **The emulated coverage** comes from two runs from one saved state:
 //! - **A:** the game as it is.
-//! - **B:** the same input, with the first tick's terrain (`WorldChunk_DrawObjects`) and characters
-//!   (`Model_DrawParts` from `Npc_DrawIfVisible`) not drawn.
+//! - **B:** the same input, with the first tick's terrain (`WorldChunk_DrawObjects`, and the first
+//!   flight's cells, `func_80133914`) and characters (`Model_DrawParts` for a character,
+//!   `lt_scene::character_call`) not drawn.
 //!
 //! The GPU draws a tick during the next one and the display flips after that, so the first picture
 //! where A and B differ is that tick's. A pixel is covered where A ≠ B.
@@ -18,7 +19,12 @@
 //! - a margin at the screen's edges.
 //!
 //! Semi-transparent overlays (the compass, torch flames) still differ between A and B where geometry
-//! is under them, so they don't hide it.
+//! is under them, so they don't hide it. The first flight paints its sky as a gradient over the
+//! whole screen behind everything (`D_80135188`, LT-143): both runs leave it out, or B would show
+//! no clear colour at all.
+//!
+//! **Colour:** where both cover a pixel, how far the native colour is from the emulated one (PS1
+//! dithering and 15-bit colour put a few steps between equal colours).
 //!
 //! **The native coverage** is the same tick from A's capture: resolved by lt-assets, projected by
 //! [`crate::gte`], rasterized by [`crate::raster`].
@@ -29,10 +35,11 @@ use emulator_core::ButtonState;
 use lt_assets::gpu::{Cache, Wgpu};
 use lt_assets::{Assets, Frame};
 use lt_emu_hooks::{Action, Call, Handler, Hook, Hooks};
-use lt_scene::{hooks, Capture, Record, DRAW_OBJECTS, DRAW_OBJECTS_WORD, MODEL_DRAW_PARTS, MODEL_DRAW_PARTS_2, NPC_DRAW, NPC_DRAW_SIZE};
+use lt_scene::{hooks, Capture, Record, DRAW_OBJECTS, DRAW_OBJECTS_WORD, MODEL_DRAW_PARTS, MODEL_DRAW_PARTS_2, SKY_CELL, SKY_CELL_WORD};
 use lt_testset::{Image as Disc, Machine, Scene};
 
 use crate::draw;
+use crate::takeover::SKY_GRADIENT;
 use crate::gte::Precision;
 use crate::raster::{Image, Raster};
 
@@ -44,6 +51,8 @@ pub const CLEAR: [u8; 3] = [0xFF, 0x00, 0xFF];
 pub const PUT_DRAW_ENV: u32 = 0x801A_4D18;
 /// Frames a branch runs: the tick (up to 3 frames), the next while the GPU draws it, the flip.
 const BRANCH_FRAMES: usize = 10;
+/// A colour within this many steps (of 255, any channel) is the same colour.
+pub const COLOUR_CLOSE: u8 = 16;
 
 /// The capture, and a skip of the first tick's geometry draws (branch B).
 struct Brancher {
@@ -53,11 +62,6 @@ struct Brancher {
     starts: u32,
     in_first: bool,
     skipped: u32,
-}
-
-fn within(ra: u32, start: u32, size: u32) -> bool {
-    let (ra, start) = (ra & 0x1FFF_FFFF, start & 0x1FFF_FFFF);
-    ra > start && ra <= start + size
 }
 
 impl Handler for Brancher {
@@ -75,6 +79,12 @@ impl Handler for Brancher {
         }
         if c.hook - self.base == 3 {
             c.write(c.arg(0) + 0x19, &CLEAR);
+            // The first flight's gradient sky: its packets emptied (the GPU walks past them).
+            if c.read_u32(SKY_CELL) == SKY_CELL_WORD {
+                for g in SKY_GRADIENT {
+                    c.write(g + 3, &[0]);
+                }
+            }
             return Action::Continue;
         }
         if !self.skip || !self.in_first {
@@ -86,9 +96,14 @@ impl Handler for Brancher {
                 // `WorldChunk_DrawObjects` returns the packet pointer it was given, unmoved.
                 Action::Return(Some(c.arg(1)))
             }
-            _ if within(c.ra(), NPC_DRAW, NPC_DRAW_SIZE) => {
+            1 | 2 if lt_scene::character_call(c) => {
                 self.skipped += 1;
                 Action::Return(None)
+            }
+            // `func_80133914` returns the packet cursor it was given, unmoved.
+            4 => {
+                self.skipped += 1;
+                Action::Return(Some(c.arg(2)))
             }
             _ => Action::Continue,
         }
@@ -103,6 +118,7 @@ fn table() -> (Hooks, usize) {
     v.push(Hook::replace("gate: skip Model_DrawParts", MODEL_DRAW_PARTS));
     v.push(Hook::replace("gate: skip Model_DrawParts (second entry)", MODEL_DRAW_PARTS_2));
     v.push(Hook::observe("gate: clear to magenta", PUT_DRAW_ENV));
+    v.push(Hook::replace("gate: skip func_80133914", SKY_CELL).guarded(SKY_CELL_WORD));
     (Hooks::new(v).expect("the gate's hook table"), n)
 }
 
@@ -167,6 +183,11 @@ pub struct Sample {
     pub clear: [u8; 3],
     pub polygons: u64,
     pub culled: u64,
+    /// Pixels both cover, those within [`COLOUR_CLOSE`] of the emulated colour, and the sum of the
+    /// largest channel difference over them.
+    pub colour_pixels: u64,
+    pub colour_close: u64,
+    pub colour_error: u64,
     /// The report image: emulated, native, mismatch and the emulated frame without the tick's
     /// geometry, stacked.
     pub report: Option<Picture>,
@@ -194,7 +215,9 @@ pub fn sample(disc: &Arc<Disc>, card: &[u8], state: &[u8], frame: u64, tape: &[u
     let a = branch(disc, card, state, frame, tape, false, Some(assets))?;
     let b = branch(disc, card, state, frame, tape, true, None)?;
     let Some((record, f)) = a.first else { return Ok(None) };
-    if b.skipped == 0 {
+    // The field's gate: a battle (LT-116) is lit and clipped as LT-110's unlit raster isn't
+    // (`tests/battle.rs` measures it).
+    if b.skipped == 0 || record.mode == lt_assets::BATTLE_MODE {
         return Ok(None);
     }
     // The tick's picture: of those where A and B differ, the one where B shows the most clear colour
@@ -246,6 +269,11 @@ pub fn compare(a: &Picture, b: &Picture, native: &Image) -> Sample {
                 match (emu, nat) {
                     (true, true) => {
                         s.agree += 1;
+                        let (e, no) = (px(a, x, y), ((y * native.w + x) * 4) as usize);
+                        let d = (0..3).map(|i| e[i].abs_diff(native.rgba[no + i])).max().unwrap_or(0);
+                        s.colour_pixels += 1;
+                        s.colour_close += u64::from(d <= COLOUR_CLOSE);
+                        s.colour_error += d as u64;
                         COVERED
                     }
                     (false, false) => {

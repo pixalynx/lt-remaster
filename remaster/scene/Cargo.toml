@@ -10,6 +10,8 @@ publish = false
 emulator-core = { git = "https://github.com/pixalynx/PSoXide-emulator", rev = "b27fff97dc9b265d776fb031ca0c920c0f243f95" }
 lt-emu-hooks = { path = "../../emu-host/hooks" }
 gc-sys = { path = "../../app/crates/gc-sys" }
+# The census (LT-118) reads main's and the overlays' code off the disc.
+lt-core = { path = "../../app/crates/lt-core" }
 lt-testset = { path = "../testset" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
