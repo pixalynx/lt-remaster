@@ -826,7 +826,7 @@ dependencies = [
 
 [[package]]
 name = "gc-sys"
-version = "0.1.26"
+version = "0.1.27"
 
 [[package]]
 name = "gethostname"
@@ -1298,7 +1298,7 @@ dependencies = [
 
 [[package]]
 name = "lt-core"
-version = "0.1.26"
+version = "0.1.27"
 dependencies = [
  "crc32fast",
  "encoding_rs",
@@ -1374,7 +1374,7 @@ dependencies = [
 
 [[package]]
 name = "lt-remaster"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "bytemuck",
  "egui",
