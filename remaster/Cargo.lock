@@ -826,7 +826,7 @@ dependencies = [
 
 [[package]]
 name = "gc-sys"
-version = "0.1.25"
+version = "0.1.26"
 
 [[package]]
 name = "gethostname"
@@ -1298,7 +1298,7 @@ dependencies = [
 
 [[package]]
 name = "lt-core"
-version = "0.1.25"
+version = "0.1.26"
 dependencies = [
  "crc32fast",
  "encoding_rs",
@@ -1321,7 +1321,7 @@ dependencies = [
 
 [[package]]
 name = "lt-emu-host"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "cpal",
  "emulator-core",
@@ -1374,7 +1374,7 @@ dependencies = [
 
 [[package]]
 name = "lt-remaster"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "bytemuck",
  "egui",
